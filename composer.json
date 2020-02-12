@@ -1,29 +1,23 @@
 {
-    "name": "dvelum/dvelum",
+    "name": "dvelum/dvelum-core",
     "version": "3.0.0-dev",
     "type": "project",
-    "description": "PHP/ExtJS-based web development platform",
-    "keywords": ["dvelum","php","extjs", "IDE", "orm"],
-    "homepage": "https://github.com/dvelum/dvelum",
-    "license": "GPL-3.0-only",
+    "description": "DVelum 3.x core",
+    "keywords": ["dvelum","php"],
+    "homepage": "https://github.com/dvelum/dvelum-core",
+    "license": "MIT",
     "authors": [
         {
             "name": "Kirill Yegorov",
-            "email": "kirill@dvelum.com",
             "role": "Founder, Developer"
-        },{
-            "name": "Andrew Zamotaev",
-            "role": "Developer"
         },{
             "name": "Sergey Leschenko",
             "role": "Developer"
         }
     ],
     "support": {
-        "email": "support@dvelum.com",
         "issues": "https://github.com/dvelum/dvelum/issues",
-        "source": "https://github.com/dvelum/dvelum",
-        "docs": "https://docs.dvelum.net"
+        "source": "https://github.com/dvelum/dvelum-core"
     },
     "config": {
         "preferred-install": "dist",
@@ -40,22 +34,11 @@
         "zendframework/zend-db": "^2.9.1",
         "zendframework/zend-mail": "^2.8",
         "psr/log": "^1.0",
-        "dvelum/extjs": "^6.2.0",
-        "dvelum/module-designer": "^1.5.4",
-        "matthiasmullie/minify": "~1.3",
-        "ckeditor/ckeditor":"^4.9"
-    },
-    "extra": {
-        "installer-types": ["js-library","dvelum3-module", "library"],
-        "installer-paths": {
-            "www/js/lib/ckeditor": ["ckeditor/ckeditor"],
-            "www/js/lib/{$name}": ["type:js-library"],
-            "modules/{$vendor}/{$name}":["type:dvelum3-module"]
-        }
+        "matthiasmullie/minify": "~1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7",
-        "phpstan/phpstan": "^0.10",
+        "phpunit/phpunit": "^9",
+        "phpstan/phpstan": "^0.12",
         "codacy/coverage": "dev-master"
     }
 }

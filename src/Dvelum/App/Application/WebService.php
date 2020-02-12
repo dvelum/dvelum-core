@@ -27,17 +27,10 @@
  */
 declare(strict_types=1);
 
-namespace Dvelum\Validator;
+namespace Dvelum\App\Application;
 
-class Alphanum implements ValidatorInterface
-{
-	/**
-	 * Validate value
-	 * @param string $value
-	 * @return boolean
-	 */
-	static public function validate($value)
-	{
-		return !filter_var($value , FILTER_VALIDATE_REGEXP, array('options'=>array('regexp'=>"/[^A-Za-z0-9_]/i")));
-	}
+use Dvelum\App\Application;
+
+class WebService extends Application{
+
 }

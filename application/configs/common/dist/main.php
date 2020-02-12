@@ -161,7 +161,11 @@ return array(
     /*
      * Application class
      */
-    'application' => '\\Dvelum\\App\\Application',
+    'application' => '\\Dvelum\\App\\Application\\WebService',
+    /*
+     * DB Manager
+     */
+    'db_manager' => '\\Dvelum\\Db\\Manager',
     /*
      * Vendor library path
      */
