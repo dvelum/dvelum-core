@@ -32,6 +32,9 @@ use Dvelum\Response;
 
 class Stub extends Response
 {
+    /**
+     * @var array
+     */
     protected $headers = [];
 
     static public function factory()

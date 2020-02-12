@@ -34,9 +34,9 @@ class Alphanum implements ValidatorInterface
 	/**
 	 * Validate value
 	 * @param string $value
-	 * @return boolean
+	 * @return bool
 	 */
-	static public function validate($value)
+	static public function validate($value) :bool
 	{
 		return !filter_var($value , FILTER_VALIDATE_REGEXP, array('options'=>array('regexp'=>"/[^A-Za-z0-9_]/i")));
 	}

@@ -34,9 +34,9 @@ class Pagecode implements ValidatorInterface
 	/**
      * Validation method
      * @param mixed $value
-     * @return boolean
+     * @return bool
      */
-	static public function validate($value)
+	static public function validate($value) : bool
 	{
 		return !filter_var($value , FILTER_VALIDATE_REGEXP, array('options'=>array('regexp'=>"/[^a-z0-9_-]/i")));
 	}

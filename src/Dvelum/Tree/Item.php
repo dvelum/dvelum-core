@@ -127,27 +127,10 @@ class Item implements \ArrayAccess
         $this->order = $order;
     }
 
-    public function offsetExists($offset): bool
-    {
-        return isset($this->$offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->$offset;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->$offset = $value;
-    }
-
-    public function offsetUnset($offset)
-    {
-        $this->$offset = null;
-    }
-
-    public function __toArray()
+    /**
+     * @return array
+     */
+    public function __toArray() : array
     {
         return [
             'id' => $this->id,
@@ -156,4 +139,43 @@ class Item implements \ArrayAccess
             'order' => $this->order
         ];
     }
+
+    // ====== Start of ArrayAccess implementation =========
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset): bool
+    {
+        return isset($this->$offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return mixed
+     */
+    public function offsetGet($offset)
+    {
+        return $this->$offset;
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value) : void
+    {
+        $this->$offset = $value;
+    }
+
+    /**
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset) : void
+    {
+        $this->$offset = null;
+    }
+    //======= End of ArrayAccess implementation ========
 }

@@ -39,7 +39,9 @@ class Factory
 {
     const LOCAL = 1;
     const SESSION = 2;
-
+    /**
+     * @var array
+     */
     static protected $instances = [];
 
     /**
@@ -57,13 +59,11 @@ class Factory
                     self::$instances[$type][$name] = new \Dvelum\Store\Local($name);
                 }
                 return self::$instances[$type][$name];
-                break;
             case self::SESSION :
                 if (!isset(self::$instances[$type][$name])) {
                     self::$instances[$type][$name] = new \Dvelum\Store\Session($name);
                 }
                 return self::$instances[$type][$name];
-                break;
             default:
                 throw new \Exception('Undefined type' . $type);
         }

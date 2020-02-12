@@ -53,8 +53,13 @@ class Request
      * @var array
      */
     protected $parts = [];
-
+    /**
+     * @var array
+     */
     protected $updatedGet = [];
+    /**
+     * @var array
+     */
     protected $updatedPost = [];
 
     /**
@@ -80,6 +85,10 @@ class Request
         $this->parts = $this->detectParts($this->uri);
     }
 
+    /**
+     * @param string $string
+     * @return string
+     */
     protected function parseUri(string $string) : string
     {
         if(strpos($string , '?')!==false) {
@@ -94,7 +103,7 @@ class Request
             '.json'
         ) , '' , $string);
 
-        return preg_replace("/[^A-Za-z0-9_\.\-\/]/i" , '' , $string);
+        return (string)preg_replace("/[^A-Za-z0-9_\.\-\/]/i" , '' , $string);
     }
 
 
@@ -473,8 +482,9 @@ class Request
     /**
      * Set request URI
      * @param string $uri
+     * @return void
      */
-    public function setUri($uri)
+    public function setUri($uri) : void
     {
         $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);

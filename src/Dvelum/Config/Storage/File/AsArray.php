@@ -55,8 +55,8 @@ class AsArray implements StorageInterface
     /**
      * Get config by local path
      * @param string $localPath
-     * @param boolean $useCache , optional
-     * @param boolean $merge , optional merge with main config
+     * @param bool $useCache , optional
+     * @param bool $merge , optional merge with main config
      * @throws \Exception
      * @return ConfigInterface
      */
@@ -72,7 +72,9 @@ class AsArray implements StorageInterface
         if (isset(static::$runtimeCache[$key]) && $useCache) {
             return static::$runtimeCache[$key];
         }
-
+        /**
+         * @var array|false $data
+         */
         $data = false;
 
         $list = $this->config['file_array']['paths'];
@@ -101,6 +103,9 @@ class AsArray implements StorageInterface
                 $data = include $cfg;
             } else {
                 $cfgData = include $cfg;
+                /**
+                 * @var array|false $data
+                 */
                 if ($data === false) {
                     $data = [];
                 }

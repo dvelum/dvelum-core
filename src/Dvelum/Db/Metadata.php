@@ -43,6 +43,10 @@ class Metadata
      */
     protected $metadata;
 
+    /**
+     * Metadata constructor.
+     * @param AdapterInterface $db
+     */
     public function __construct(AdapterInterface $db)
     {
         $this->metadata = Factory::createSourceFromAdapter($db);
@@ -103,6 +107,10 @@ class Metadata
         return $this->metadata->getConstraints($tableName);
     }
 
+    /**
+     * @param string $tableName
+     * @return array
+     */
     public function getColumnsAsArray(string $tableName) : array
     {
         $data = [];
@@ -127,6 +135,10 @@ class Metadata
         return $data;
     }
 
+    /**
+     * @param array $columns
+     * @return string
+     */
     public function indexHashByColumns(array $columns) : string
     {
         return implode('_', $columns);

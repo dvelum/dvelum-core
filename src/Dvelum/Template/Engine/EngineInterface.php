@@ -37,8 +37,9 @@ interface EngineInterface
     /**
      * Set template engine configuration options
      * @param ConfigInterface $config
+     * @return void
      */
-    public function setConfig(ConfigInterface $config);
+    public function setConfig(ConfigInterface $config) : void;
 
     /**
      * Set caching adapter
@@ -58,6 +59,11 @@ interface EngineInterface
      * @return mixed
      */
     public function get(string $name);
+    /**
+     * Get property
+     * @param string $name
+     * @return mixed
+     */
     public function __get($name);
     /**
      * Set property
@@ -66,9 +72,24 @@ interface EngineInterface
      * @return void
      */
     public function set(string $name , $value) : void;
+    /**
+     * Set property
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
     public function __set($name , $value);
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function __isset($name);
+
+    /**
+     * @param string $name
+     * @return void
+     */
     public function __unset($name);
 
     /**

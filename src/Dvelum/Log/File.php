@@ -29,6 +29,9 @@ namespace Dvelum\Log;
 
 class File extends \Psr\Log\AbstractLogger implements LogInterface
 {
+    /**
+     * @var string
+     */
     protected $file;
 
     /**
@@ -52,10 +55,11 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
      * @param mixed $level
      * @param string $message
      * @param array $context
+     * @return bool
      */
     public function log($level, $message, array $context = [])
     {
         $message = '['.date('d.m.Y H:i:s') . '] ('.$level.') '. $message . ' '.json_encode($context)."\n";
-        file_put_contents($this->file, $message , FILE_APPEND);
+        return (bool) file_put_contents($this->file, $message , FILE_APPEND);
     }
 }

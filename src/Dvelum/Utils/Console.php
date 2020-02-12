@@ -48,6 +48,9 @@ class Console
     const COLOR_LIGHT_GRAY = 'light_gray';
     const COLOR_WHITE = 'white';
 
+    /**
+     * @var array
+     */
     static protected $fgColors = [
         'black' => '0;30',
         'dark_gray' => '1;30',
@@ -66,7 +69,9 @@ class Console
         'light_gray' => '0;37',
         'white' => '1;37'
     ];
-
+    /**
+     * @var array
+     */
     static protected $bgColors = [
         'black' => '40',
         'red' => '41',

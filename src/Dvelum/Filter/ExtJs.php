@@ -33,6 +33,9 @@ use Dvelum\Db\Select\Filter;
 
 class ExtJs
 {
+    /**
+     * @var array
+     */
     protected $operators = [
         'gt' => Filter::GT,
         'lt' => Filter::LT,

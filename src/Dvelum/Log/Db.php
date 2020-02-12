@@ -49,7 +49,9 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @var string
      */
     protected $name;
-
+    /**
+     * @var array
+     */
     protected $logFields = [
         'name'=>'name',
         'message'=>'message',
@@ -57,7 +59,9 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
         'level'=>'level',
         'context'=>'context'
     ];
-
+    /**
+     * @var string
+     */
     protected $lastError = '';
 
     /**
@@ -73,7 +77,14 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
         $this->db = $dbConnection;
     }
 
-    public function log($level, $message, array $context = [])
+    /**
+     * Set log message
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
+    public function log($level, $message, array $context = []) : bool
     {
         try{
             $this->db->insert(
@@ -95,8 +106,9 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
     /**
      * Set database adapter
      * @param \Dvelum\Db\Adapter $db
+     * @return void
      */
-    public function setDbConnection(\Dvelum\Db\Adapter $db)
+    public function setDbConnection(\Dvelum\Db\Adapter $db) : void
     {
         $this->db = $db;
     }
@@ -112,8 +124,9 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
     /**
      * Set DB table
      * @param string $table
+     * @return void
      */
-    public function setTable(string $table)
+    public function setTable(string $table) : void
     {
         $this->table = $table;
     }

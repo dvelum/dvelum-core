@@ -53,8 +53,9 @@ class File
     /**
      * Set directory separator for output data
      * @param mixed $sep string or false
+     * @return void
      */
-    static public function setDirectorySeparator($sep)
+    static public function setDirectorySeparator($sep) : void
     {
         self::$directorySeparator = $sep;
     }
@@ -90,14 +91,14 @@ class File
     /**
      * Get file list
      * @param string $path
-     * @param array $filter - optional  aray of file extensions to search for
+     * @param array|false $filter - optional  aray of file extensions to search for
      * @param bool $recursive - optional	use recursion (default true)
      * @param int $type - optional File::Dirs_Only | File::Files_Dirs | File::Files_Only (default File::Files_Dirs)
      * @param int $mode - optional RecursiveIteratorIterator::SELF_FIRST | RecursiveIteratorIterator::CHILD_FIRST (default RecursiveIteratorIterator::SELF_FIRST)
      * @throws \Exception
      * @return array
      */
-    static public function scanFiles($path , $filter = array() , $recursive = true , $type = File::FILES_DIRS , $mode = \RecursiveIteratorIterator::SELF_FIRST)
+    static public function scanFiles($path , $filter = false , $recursive = true , $type = File::FILES_DIRS , $mode = \RecursiveIteratorIterator::SELF_FIRST)
     {
         $path = self::fillEndSep($path);
         $files = array();
@@ -144,7 +145,7 @@ class File
             if(($isDir && $collectDirs) || (!$isDir && $collectFiles))
                 $add = true;
 
-            if(! empty($filter))
+            if(!empty($filter))
                 if(! $isDir && ! in_array(self::getExt($name) , $filter , true))
                     $add = false;
 
@@ -216,10 +217,10 @@ class File
      * Extract all files
      * @param string $source
      * @param string $destination
-     * @param array|string|boolean $fileEntries - optional - The entries to extract. It accepts either a single entry name or an array of names.
+     * @param array|string|false $fileEntries - optional - The entries to extract. It accepts either a single entry name or an array of names.
      * @return bool
      */
-    static public function unzipFiles($source , $destination , $fileEntries = false)
+    static public function unzipFiles(string $source , string $destination , $fileEntries = false)
     {
         $zip = new \ZipArchive();
 
@@ -253,10 +254,10 @@ class File
 
         $zipSize = $zip->numFiles - 1;
 
-        $itemsList = array();
+        $itemsList = [];
 
         while ($zipSize >= 0){
-            $itemsList[] = $zip->getNameIndex($zipSize);
+            $itemsList[] = $zip->getNameIndex((int)$zipSize);
             --$zipSize;
         }
         return  $itemsList;
@@ -422,15 +423,18 @@ class File
         $cantWrite = array();
         foreach ($files as $path)
         {
-            if(is_file($path))
-            {
-                if(!is_writable($path))
+            $path = (string) $path;
+            if(is_file($path)) {
+                if(!is_writable($path)){
                     $cantWrite[] = $path;
+                }
                 continue;
             }
 
-            if(!is_writable(self::getExistingDirByPath($path)))
+            $dir = self::getExistingDirByPath($path);
+            if(is_string($dir) && !is_writable($dir)){
                 $cantWrite[] = $path;
+            }
         }
 
         if(empty($cantWrite))

@@ -38,7 +38,7 @@ interface LogInterface{
      * @param mixed $level
      * @param string $message
      * @param array $context
-     * @return mixed
+     * @return bool
      */
 	public function log($level, string $message, array $context = []);
 }

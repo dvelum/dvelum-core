@@ -34,17 +34,25 @@ use Exception;
 
 class Service
 {
+    /**
+     * @var array
+     */
     static protected $services = [];
     /**
      * @var ConfigInterface $config
      */
     static protected $config;
     /**
-     * @var ConfigInterface $config
+     * @var ConfigInterface $env
      */
     static protected $env;
 
-    static public function register(ConfigInterface $config, ConfigInterface $env)
+    /**
+     * Register service
+     * @param ConfigInterface $config
+     * @param ConfigInterface $env
+     */
+    static public function register(ConfigInterface $config, ConfigInterface $env) : void
     {
         $data = $config->__toArray();
         $reIndexed = [];

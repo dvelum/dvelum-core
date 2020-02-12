@@ -43,6 +43,9 @@ class Tree
      * @var Item[]
      */
     protected $items = [];
+    /**
+     * @var array
+     */
     protected $children = [];
 
     /**
@@ -199,6 +202,9 @@ class Tree
         return $data;
     }
 
+    /**
+     * @param string|int $id
+     */
     protected function sortChildren($id): void
     {
         if (!isset($this->children[$id]) || empty($this->children[$id])) {
@@ -229,7 +235,7 @@ class Tree
 
     /**
      * Get child nodes’ structures
-     * @var mixed id
+     * @param int|string $id
      * @return array
      */
     public function getChildren($id): array

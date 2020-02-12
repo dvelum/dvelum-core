@@ -91,9 +91,17 @@ class Filter
     const BETWEEN = 'BETWEEN';
     const NOT_BETWEEN = 'NOT BETWEEN';
     const RAW = 'RAW';
-
+    /**
+     * @var string|null
+     */
     public $type = null;
+    /**
+     * @var mixed|string|null
+     */
     public $value = null;
+    /**
+     * @var string|null
+     */
     public $field = null;
     /**
      * @param string $field
@@ -112,14 +120,14 @@ class Filter
      * @param Db\Adapter $db
      * @param Db\Select $sql
      * @throws \Exception
+     * @return void
      */
-    public function applyTo(Db\Adapter $db , $sql)
+    public function applyTo(Db\Adapter $db , $sql) : void
     {
         if(!($sql instanceof Db\Select))
             throw new \Exception('Db\\Select::applyTo  $sql must be instance of Db_Select/Zend_Db_Select');
 
-
-        $quotedField = $db->quoteIdentifier($this->field);
+        $quotedField = $db->quoteIdentifier((string) $this->field);
         switch ($this->type)
         {
             case self::LIKE:

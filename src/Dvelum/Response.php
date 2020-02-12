@@ -36,9 +36,17 @@ class Response
     const FORMAT_HTML = 'html';
     const FORMAT_JSON = 'json';
 
+    /**
+     * @var string
+     */
     protected $format = self::FORMAT_HTML;
-
+    /**
+     * @var string
+     */
     protected $buffer ='';
+    /**
+     * @var bool
+     */
     protected $sent = false;
     /**
      * @return Response

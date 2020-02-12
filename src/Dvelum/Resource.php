@@ -46,9 +46,33 @@ class Resource
     protected $config;
 
     /**
-     * @var CacheInterface|bool
+     * @var CacheInterface|false
      */
     protected $cache = false;
+    /**
+     * @var array
+     */
+    protected $jsFiles = [];
+    /**
+     * @var array
+     */
+    protected $rawFiles = [];
+    /**
+     * @var array
+     */
+    protected $cssFiles = [];
+    /**
+     * @var string
+     */
+    protected $rawJs = '';
+    /**
+     * @var string
+     */
+    protected $rawCss = '';
+    /**
+     * @var string
+     */
+    protected $inlineJs = '';
 
     /**
      * @return self
@@ -67,8 +91,10 @@ class Resource
     /**
      * Set configuration options
      * @param ConfigInterface $config
+     * @return void
+     * @throws \Exception
      */
-    public function setConfig(ConfigInterface $config)
+    public function setConfig(ConfigInterface $config) : void
     {
         $this->config = $config;
         if($this->config->offsetExists('cache')){
@@ -76,15 +102,7 @@ class Resource
         }
     }
 
-    protected $jsFiles = [];
-    protected $rawFiles = [];
-    protected $cssFiles = [];
-    protected $rawJs = '';
-    protected $rawCss = '';
-    protected $inlineJs = '';
-
     protected function __construct(){}
-
 
     /**
      * Add javascript file to the contentent
@@ -93,8 +111,9 @@ class Resource
      * @param mixed $order  - include order
      * @param boolean $minified - file already minified
      * @param string|bool $tag
+     * @return void
      */
-    public function addJs($file, $order = false, $minified = false, $tag = false)
+    public function addJs(string $file, $order = false, $minified = false, $tag = false) : void
     {
         if ($file[0] === '/')
             $file = substr($file, 1);
@@ -119,8 +138,9 @@ class Resource
      * Add css file to the content
      * @param string $file
      * @param mixed $order
+     * @return void
      */
-    public function addCss(string $file , $order = false)
+    public function addCss(string $file , $order = false) : void
     {
         if($file[0] === '/')
             $file = substr($file, 1);
@@ -144,8 +164,9 @@ class Resource
      * Add Java Script code
      * (will be minified and cached)
      * @param string $script
+     * @return void
      */
-    public function addRawJs(string $script)
+    public function addRawJs(string $script) : void
     {
         $this->rawJs .= $script;
     }
@@ -153,8 +174,9 @@ class Resource
     /**
      * Add standalone JS file (no modifications)
      * @param string $file - file path relative to the document root directory
+     * @return void
      */
-    public function addJsRawFile(string $file)
+    public function addJsRawFile(string $file) : void
     {
         if($file[0] === '/')
             $file = substr($file, 1);
@@ -166,8 +188,9 @@ class Resource
     /**
      * Add inline Java Script code
      * @param string $script
+     * @return void
      */
-    public function addInlineJs(string $script)
+    public function addInlineJs(string $script) : void
     {
         $this->inlineJs.= $script;
     }
@@ -175,20 +198,21 @@ class Resource
     /**
      * Add inline css syles
      * @param string $css
+     * @return void
      */
-    public function addRawCss(string $css)
+    public function addRawCss(string $css) : void
     {
         $this->rawCss.= $css;
     }
 
     /**
      * Include JS resources by tag
-     * @param boolean $useMin
-     * @param boolean $compile
+     * @param bool $useMin
+     * @param bool$compile
      * @param mixed $tag
      * @return string
      */
-    public function includeJsByTag($useMin = false , $compile = false , $tag = false)
+    public function includeJsByTag($useMin = false , $compile = false , $tag = false) : string
     {
         $s = '';
         $fileList = $this->jsFiles;
@@ -331,11 +355,11 @@ class Resource
     public function getFileHash(array $files)
     {
         $listHash = \md5(\serialize($files));
-        /*
+        /**
          * Checking if hash is cached
          * (IO operations is too expensive)
          */
-        if($this->cache)
+        if(!empty($this->cache))
         {
             $dataHash = $this->cache->load($listHash);
             if($dataHash)
@@ -430,8 +454,9 @@ class Resource
 
     /**
      * Clean raw js
+     * @return void
      */
-    public function cleanInlineJs()
+    public function cleanInlineJs() : void
     {
         $this->rawJs = '';
     }

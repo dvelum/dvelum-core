@@ -45,16 +45,23 @@ class Factory
     const File_Array = 1;
 
     /**
-     * @var AdapterInterface|bool
+     * @var AdapterInterface|false
      */
     protected static $store = false;
     /**
-     * @var CacheInterface|bool
+     * @var CacheInterface|false
      */
     protected static $cache = false;
-
+    /**
+     * @var string
+     */
     protected static $storageAdapter = '\\Dvelum\\Config\\Storage\\File\\AsArray';
 
+    /**
+     * Set config storage adapter
+     * @param string $class
+     * @throws \Exception
+     */
     static public function setStorageAdapter(string $class) : void
     {
         if(!class_exists($class)){
@@ -62,11 +69,13 @@ class Factory
         }
         self::$storageAdapter = $class;
     }
+
     /**
      * Set cache adapter
      * @param CacheInterface $core
+     * @return void
      */
-    public static function setCacheCore($core)
+    public static function setCacheCore($core) : void
     {
         self::$cache = $core;
     }
@@ -82,9 +91,9 @@ class Factory
 
     /**
      * Factory method
-     * @param integer $type -type of the object being created, Config class constant
+     * @param int $type -type of the object being created, Config class constant
      * @param string $name - identifier
-     * @param boolean $useCache - optional , default true. Use cache if available
+     * @param bool $useCache - optional , default true. Use cache if available
      * @return ConfigInterface
      */
     static public function config(int $type , string $name , bool $useCache = true) : ConfigInterface
@@ -140,7 +149,7 @@ class Factory
      */
     static public function resetCache() : void
     {
-        if(is_null(self::$store))
+        if(empty(self::$store))
             self::connectLocalStore();
 
         if(empty(self::$store))
@@ -167,10 +176,10 @@ class Factory
 
     /**
      * Cache data again
-     * @property mixed $key - optional
+     * @param mixed $key - optional
      * @return void
      */
-    static public function cache($key = false)
+    static public function cache($key = false) : void
     {
         if(!self::$cache)
             return;
@@ -193,10 +202,11 @@ class Factory
 
     /**
      * Get configuration storage
+     * @param mixed $config
      * @param bool $force  - Reset runtime cache reload object, optional default false
      * @return Storage\StorageInterface
      */
-    static public function storage($force = false) : Config\Storage\StorageInterface
+    static public function storage($config = false, $force = false) : Config\Storage\StorageInterface
     {
         static $store = false;
 

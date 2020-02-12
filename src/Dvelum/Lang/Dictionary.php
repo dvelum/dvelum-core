@@ -45,9 +45,9 @@ class Dictionary
     protected $loader;
 
     /**
-     * @var ConfigInterface|bool
+     * @var ConfigInterface
      */
-    protected $data = false;
+    protected $data;
 
     /**
      * @param string $name
@@ -67,7 +67,7 @@ class Dictionary
      */
     public function get(string $key): string
     {
-        if (!$this->data) {
+        if (!isset($this->data)) {
             $this->loadData();
         };
 
@@ -78,15 +78,22 @@ class Dictionary
         return '[' . $key . ']';
     }
 
-
+    /**
+     * @param string $key
+     * @return string
+     */
     public function __get($key)
     {
         return $this->get($key);
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     public function __isset($key)
     {
-        if (!$this->data) {
+        if (!!isset($this->data)) {
             $this->loadData();
         }
 
@@ -99,11 +106,11 @@ class Dictionary
      */
     public function getJson(): string
     {
-        if (!$this->data) {
+        if (!isset($this->data)) {
             $this->loadData();
         }
 
-        return \json_encode($this->data->__toArray());
+        return (string)\json_encode($this->data->__toArray());
     }
 
     /**
@@ -112,7 +119,7 @@ class Dictionary
      */
     public function getJsObject(): string
     {
-        if (!$this->data) {
+        if (!isset($this->data)) {
             $this->loadData();
         }
 

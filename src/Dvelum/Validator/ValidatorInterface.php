@@ -37,7 +37,7 @@ interface ValidatorInterface{
     /**
      * Validation method
      * @param mixed $value
-     * @return boolean
+     * @return bool
      */
-    static public function validate($value);
+    static public function validate($value) : bool;
 }

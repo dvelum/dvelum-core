@@ -44,11 +44,19 @@ class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
         $this->logDb = $logDb;
     }
 
+    /**
+     * @param mixed $level
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
     public function log($level, $message, array $context = array())
     {
         if(!$this->logDb->log($level, $message, $context)){
             $this->logFile->log($level, $message, $context);
             $this->logFile->log(\Psr\Log\LogLevel::ERROR, $this->logDb->getLastError());
+            return false;
         }
+        return true;
     }
 }

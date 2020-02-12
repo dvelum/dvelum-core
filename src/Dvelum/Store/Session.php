@@ -36,10 +36,13 @@ namespace Dvelum\Store;
  */
 class Session extends Local
 {
-    protected $prefix = 'sc_';
     /**
-     * (non-PHPdoc)
-     * @see www/library/Store/Store_Local#_storageConnect()
+     * @var string
+     */
+    protected $prefix = 'sc_';
+
+    /**
+     * @inheritDoc
      */
     protected function storageConnect()
     {

@@ -35,38 +35,65 @@ class Debug
      * Script startup time
      * @var float
      */
-    protected static $scriptStartTime = false;
+    protected static $scriptStartTime;
     /**
      * Database profiler
      * @var array $dbProfilers
      */
     static protected $dbProfilers = [];
+    /**
+     * @var array
+     */
     static protected $timers = [];
+    /**
+     * @var array
+     */
     static protected $loadedClasses = [];
+    /**
+     * @var array
+     */
     static protected $loadedConfigs = [];
+    /**
+     * @var array
+     */
     static protected $cacheCores = [];
 
-    static public function setCacheCores(array $data)
+    /**
+     * @param array $data
+     */
+    static public function setCacheCores(array $data) : void
     {
         self::$cacheCores = $data;
     }
 
-    static public function setScriptStartTime($time)
+    /**
+     * @param int $time
+     */
+    static public function setScriptStartTime(int $time) : void
     {
         self::$scriptStartTime = $time;
     }
 
-    static public function addDbProfiler(\Zend\Db\Adapter\Profiler\ProfilerInterface $profiler)
+    /**
+     * @param \Zend\Db\Adapter\Profiler\ProfilerInterface $profiler
+     */
+    static public function addDbProfiler(\Zend\Db\Adapter\Profiler\ProfilerInterface $profiler) : void
     {
         self::$dbProfilers[] = $profiler;
     }
 
-    static public function setLoadedClasses(array $data)
+    /**
+     * @param array $data
+     */
+    static public function setLoadedClasses(array $data) : void
     {
         self::$loadedClasses = $data;
     }
 
-    static public function setLoadedConfigs(array $data)
+    /**
+     * @param array $data
+     */
+    static public function setLoadedConfigs(array $data) : void
     {
         self::$loadedConfigs = $data;
     }
@@ -76,7 +103,7 @@ class Debug
      * @param array $options
      * @return string  - html formated results
      */
-    static public function getStats(array $options)
+    static public function getStats(array $options) : string
     {
         $options = array_merge(
             array(
@@ -122,7 +149,7 @@ class Debug
         }
 
 
-        if (!empty(self::$cacheCores) && self::$cacheCores && $options['cache']) {
+        if (!empty(self::$cacheCores) && $options['cache']) {
             $body = '';
             $globalCount = array('load' => 0, 'save' => 0, 'remove' => 0, 'total' => 0);
             $globalTotal = 0;
@@ -182,8 +209,9 @@ class Debug
     /**
      * Start timer
      * @param string $name
+     * @return void
      */
-    static public function startTimer($name)
+    static public function startTimer(string $name) : void
     {
         self::$timers[$name] = array(
             'start' => microtime(true),
@@ -194,9 +222,9 @@ class Debug
     /**
      * Stop timer
      * @param string $name
-     * @return float time elapsed
+     * @return float - time elapsed
      */
-    static public function stopTimer($name)
+    static public function stopTimer($name) : float
     {
         if (!isset(self::$timers[$name])) {
             return 0;
@@ -225,7 +253,11 @@ class Debug
         return self::$timers[$timer]['stop'] - self::$timers[$timer]['start'];
     }
 
-    static protected function getQueryProfiles($options)
+    /**
+     * @param array $options
+     * @return string
+     */
+    static protected function getQueryProfiles(array $options) : string
     {
         $str = '';
 

@@ -45,7 +45,9 @@ class Filter
     const FILTER_PAGECODE = 'pagecode';
     const FILTER_RAW = 'raw';
     const FILTER_URL = 'url';
-
+    /**
+     * @var bool
+     */
     protected static $autoConvertFloatSeparator = true;
 
     /**
@@ -98,11 +100,11 @@ class Filter
             case 'str' :
             case 'string' :
             case 'text' :
-                $value = trim(filter_var($value, FILTER_SANITIZE_STRING));
+                $value = trim((string)filter_var($value, FILTER_SANITIZE_STRING));
                 break;
 
             case 'cleaned_string' :
-                $value = trim(filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+                $value = trim((string)filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
                 break;
 
             case 'email' :
@@ -126,7 +128,7 @@ class Filter
                 break;
             case 'pagecode' :
                 $value = preg_replace("/[^a-z0-9_-]/i", '', strtolower((string) $value));
-                $value = str_replace(' ', "-", $value);
+                $value = str_replace(' ', "-", (string) $value);
                 break;
 
             case 'alpha' :

@@ -31,9 +31,15 @@ namespace Dvelum\Db\Metadata;
 
 use Zend\Db\Metadata\Source\MysqlMetadata;
 use Zend\Db\Adapter\Adapter;
+use Zend\Db\ResultSet\AbstractResultSet;
 
 class Mysql extends MysqlMetadata
 {
+    /**
+     * @param string $table
+     * @param string $schema
+     * @return void
+     */
     protected function loadColumnData($table, $schema)
     {
         if (isset($this->data['columns'][$schema][$table])) {
@@ -79,8 +85,14 @@ class Mysql extends MysqlMetadata
             $sql .= ' AND ' . $p->quoteIdentifierChain(['T', 'TABLE_SCHEMA'])
                 . ' != \'INFORMATION_SCHEMA\'';
         }
-
+        /**
+         * @var AbstractResultSet $results
+         */
         $results = $this->adapter->query($sql, Adapter::QUERY_MODE_EXECUTE);
+
+        if(empty($results)){
+            return;
+        }
         $columns = [];
         foreach ($results->toArray() as $row) {
             $erratas = [];

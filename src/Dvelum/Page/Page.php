@@ -32,6 +32,9 @@ namespace Dvelum\Page;
 
 class Page
 {
+    /**
+     * @var array
+     */
     static protected $pages = [];
 
     /**

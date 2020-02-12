@@ -25,24 +25,6 @@
  * SOFTWARE.
  *
  */
-
-/*
- * DVelum project https://github.com/dvelum/dvelum , http://dvelum.net
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
 declare(strict_types=1);
 
 namespace Dvelum\Db;
@@ -58,27 +40,62 @@ class Select
     const JOIN_INNER = 'inner';
     const JOIN_LEFT = 'left';
     const JOIN_RIGHT = 'right';
-
+    /**
+     * @var bool
+     */
     public $localCache = true;
 
     /**
-     * @var Adapter|bool $dbAdapter
+     * @var Adapter|false $dbAdapter
      */
     protected $dbAdapter = false;
-
+    /**
+     * @var bool
+     */
     protected $distinct = false;
-
-    protected $from,
-        $where,
-        $join,
-        $group,
-        $having,
-        $limit,
-        $order,
-        $orWhere,
-        $orHaving,
-        $forUpdate;
-
+    /**
+     * @var array
+     */
+    protected $from;
+    /**
+     * @var array
+     */
+    protected $where;
+    /**
+     * @var array
+     */
+    protected $join;
+    /**
+     * @var array
+     */
+    protected $group;
+    /**
+     * @var array
+     */
+    protected $having;
+    /**
+     * @var array
+     */
+    protected $limit;
+    /**
+     * @var array
+     */
+    protected $order;
+    /**
+     * @var array
+     */
+    protected $orWhere;
+    /**
+     * @var array
+     */
+    protected $orHaving;
+    /**
+     * @var bool
+     */
+    protected $forUpdate;
+    /**
+     * @var array
+     */
     protected $assembleOrder = [
         '_getDistinct' => 'distinct',
         '_getFrom' => 'from',
@@ -93,13 +110,17 @@ class Select
         'getForUpdate' => 'forUpdate'
 
     ];
-
+    /**
+     * @var array
+     */
     protected $aliasCount = [];
 
     /**
      * @param Adapter $adapter
+     * @return void
      */
-    public function setDbAdapter(Adapter $adapter){
+    public function setDbAdapter(Adapter $adapter) : void
+    {
         $this->dbAdapter = $adapter;
     }
 
@@ -107,7 +128,7 @@ class Select
      * Add a DISTINCT clause
      * @return self
      */
-    public function distinct()
+    public function distinct() : self
     {
         $this->distinct = true;
         return $this;
@@ -294,7 +315,7 @@ class Select
     /**
      * @param string|array $table
      * @param string $cond
-     * @param array $cols
+     * @param array|string $cols
      * @param string $type
      * @return Select
      */
@@ -428,6 +449,9 @@ class Select
         return $this->assemble();
     }
 
+    /**
+     * @return string
+     */
     public function assemble() : string
     {
         $sql = 'SELECT ';
@@ -437,15 +461,21 @@ class Select
         return $sql . ';';
     }
 
-
-    protected function _getDistinct($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function _getDistinct(string $sql) : string
     {
         if ($this->distinct)
             $sql .= 'DISTINCT ';
 
         return $sql;
     }
-
+    /**
+     * @param string $sql
+     * @return string
+     */
     protected function _getFrom($sql) : string
     {
         $columns = $this->tableFieldsList($this->from['table'], $this->from['columns']);
@@ -461,7 +491,10 @@ class Select
 
         return $sql;
     }
-
+    /**
+     * @param string $sql
+     * @return string
+     */
     protected function _getJoins($sql)
     {
         foreach ($this->join as $item)
@@ -489,7 +522,10 @@ class Select
         $str .= $this->tableAlias($config['table']) . ' ON ' . $config['condition'];
         return $str;
     }
-
+    /**
+     * @param string $sql
+     * @return string
+     */
     protected function _getWhere($sql) : string
     {
         $where = $this->prepareWhere($this->where);
@@ -497,7 +533,11 @@ class Select
         return $sql . ' WHERE (' . implode(' AND ', $where) . ')';
     }
 
-    protected function prepareWhere($list) : array
+    /**
+     * @param array $list
+     * @return array
+     */
+    protected function prepareWhere(array $list) : array
     {
         $where = [];
 
@@ -517,54 +557,75 @@ class Select
                     }
                     $item['bind'] = implode(',', $list);
                 } else {
-                    $item['bind'] = $this->quote($item['bind']);
+                    $item['bind'] = $this->quote((string)$item['bind']);
                 }
                 $where[] = str_replace('?', $item['bind'], $item['condition']);
             }
         }
         return $where;
     }
-
-    protected function getOrWhere($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getOrWhere(string $sql) : string
     {
         $where = $this->prepareWhere($this->orWhere);
         return $sql . ' OR (' . implode(' ) OR ( ', $where) . ')';
     }
-
-    protected function getHaving($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getHaving(string $sql) : string
     {
         $having = $this->prepareWhere($this->having);
         return $sql . ' HAVING (' . implode(' AND ', $having) . ')';
     }
-
-    protected function getOrHaving($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getOrHaving(string $sql) : string
     {
         $having = $this->prepareWhere($this->orHaving);
         return $sql . ' OR (' . implode(' ) OR ( ', $having) . ')';
     }
-
-    protected function getGroup($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getGroup(string $sql) : string
     {
         foreach ($this->group as &$item)
             $item = $this->quoteIdentifier($item);
 
         return $sql . ' GROUP BY ' . implode(',', $this->group);
     }
-
-    protected function getOrder($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getOrder(string $sql) : string
     {
         return $sql . ' ORDER BY ' . implode(',', $this->order);
     }
-
-    protected function getLimit($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getLimit(string $sql) : string
     {
         if ($this->limit['offset'])
             return $sql . ' LIMIT ' . intval($this->limit['offset']) . ',' . $this->limit['count'];
         else
             return $sql . ' LIMIT ' . $this->limit['count'];
     }
-
-    protected function getForUpdate($sql) : string
+    /**
+     * @param string $sql
+     * @return string
+     */
+    protected function getForUpdate(string $sql) : string
     {
         if ($this->forUpdate) {
             return $sql . ' FOR UPDATE';
@@ -578,7 +639,7 @@ class Select
      * @param string $str
      * @return string
      */
-    public function quoteIdentifier($str) : string
+    public function quoteIdentifier(string $str) : string
     {
         return '`' . str_replace(array('`', '.'), array('', '`.`'), $str) . '`';
     }
@@ -632,7 +693,7 @@ class Select
             if (is_int($key))
                 $data = $this->quoteIdentifier($table[$key]);
             else
-                $data = $this->quoteIdentifier($table[$key]) . ' AS ' . $this->quoteIdentifier($key);
+                $data = $this->quoteIdentifier($table[$key]) . ' AS ' . $this->quoteIdentifier((string)$key);
         }
 
         if ($this->localCache)
@@ -703,7 +764,11 @@ class Select
         return $result;
     }
 
-    protected function convertColumnsString($str)
+    /**
+     * @param string $str
+     * @return array
+     */
+    protected function convertColumnsString(string $str) : array
     {
         $items = explode(',', $str);
         return array_map('trim', $items);

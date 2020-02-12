@@ -38,16 +38,22 @@ use \Exception as Exception;
  */
 class ArrayTree
 {
+    /**
+     * @var array
+     */
     protected $items = [];
+    /**
+     * @var array
+     */
     protected $children = [];
 
     /**
      * Set elements sorting order by ID
      * @param mixed $id — element identifier
      * @param integer $order — sorting order
-     * @return boolean
+     * @return bool
      */
-    public function setItemOrder($id, $order)
+    public function setItemOrder($id, $order) : bool
     {
         if (!$this->itemExists($id)) {
             return false;
@@ -62,7 +68,7 @@ class ArrayTree
      * @param mixed $parentId — nor required;  a parent identifier -
      * is the root node by default, which sorts all other nodes
      */
-    public function sortItems($parentId = false)
+    public function sortItems($parentId = false) : void
     {
         if ($parentId) {
             $this->sortChildren($parentId);
@@ -76,18 +82,18 @@ class ArrayTree
     /**
      * Check if the node exists by its identifier
      * @param mixed $id
-     * @return boolean
+     * @return bool
      */
-    public function itemExists($id)
+    public function itemExists($id) : bool
     {
         return isset($this->items[$id]);
     }
 
     /**
      * Get the number of elements in a tree
-     * @return integer
+     * @return int
      */
-    public function getItemsCount()
+    public function getItemsCount() : int
     {
         return sizeof($this->items);
     }
@@ -97,10 +103,10 @@ class ArrayTree
      * @param mixed $id — unique identifier
      * @param mixed $parent — parent node identifier
      * @param mixed $data — node data
-     * @param boolean|integer $order - sorting order, not required
-     * @return boolean —  successfully invoked
+     * @param bool|int $order - sorting order, not required
+     * @return bool —  successfully invoked
      */
-    public function addItem($id, $parent, $data, $order = false)
+    public function addItem($id, $parent, $data, $order = false) : bool
     {
         if ($this->itemExists($id) || (string)$id === '0') {
             return false;
@@ -129,9 +135,9 @@ class ArrayTree
      * Update the node data
      * @param mixed $id — node identifier
      * @param mixed $data — node data
-     * @return boolean —  successfully invoked
+     * @return bool —  successfully invoked
      */
-    public function updateItem($id, $data)
+    public function updateItem($id, $data) : bool
     {
         if (!$this->itemExists($id) || (string)$id === '0') {
             return false;
@@ -147,7 +153,7 @@ class ArrayTree
      * @return array - an array with keys ('id','parent','order','data')
      * @throws Exception
      */
-    public function getItem($id)
+    public function getItem($id) : array
     {
         if ($this->itemExists($id)) {
             return $this->items[$id];
@@ -183,7 +189,7 @@ class ArrayTree
 
     /**
      * Get data on all child elements (recursively)
-     * @param mixed id - parent node identifier
+     * @param mixed $id - parent node identifier
      * @return array - an array with keys ('id','parent','order','data')
      */
     public function getChildrenRecursive($id): array
@@ -232,8 +238,8 @@ class ArrayTree
 
     /**
      * Get child nodes’ structures
+     * @param mixed $id
      * @return array
-     * @var mixed id
      */
     public function getChildren($id): array
     {

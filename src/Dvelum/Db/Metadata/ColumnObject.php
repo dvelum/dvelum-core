@@ -57,8 +57,9 @@ class ColumnObject extends ZendColumnObject
     /**
      * Set Auto-increment flag
      * @param bool $autoIncrement
+     * @return void
      */
-    public function setAutoIncrement(bool $autoIncrement)
+    public function setAutoIncrement(bool $autoIncrement) : void
     {
         $this->autoIncrement = $autoIncrement;
     }

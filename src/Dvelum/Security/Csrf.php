@@ -70,15 +70,16 @@ class Csrf
 
     /**
      * Token storage
-     * @var AdapterInterface|false
+     * @var AdapterInterface
      */
-    static protected $storage = false;
+    static protected $storage;
 
     /**
      * Set token storage implementing the Store_interface
      * @param AdapterInterface $store
+     * @return void
      */
-    static public function setStorage(AdapterInterface $store)
+    static public function setStorage(AdapterInterface $store) : void
     {
         static::$storage = $store;
     }
@@ -87,8 +88,9 @@ class Csrf
      * Set config options (storage , lifetime , cleanupLimit)
      * @param array $options
      * @throws Exception
+     * @return void
      */
-    static public function setOptions(array $options)
+    static public function setOptions(array $options) : void
     {
         if (isset($options['storage'])) {
             if ($options['storage'] instanceof AdapterInterface) {
@@ -108,9 +110,13 @@ class Csrf
 
     }
 
+    /**
+     * Csrf constructor.
+     * @throws Exception
+     */
     public function __construct()
     {
-        if (!self::$storage) {
+        if (!isset(self::$storage)) {
             self::$storage = Factory::get(Factory::SESSION, 'security_csrf');
         }
     }
@@ -119,7 +125,7 @@ class Csrf
      * Create and store token
      * @return string
      */
-    public function createToken()
+    public function createToken() : string
     {
         /*
          * Cleanup storage
@@ -136,9 +142,9 @@ class Csrf
     /**
      * Check if token is valid
      * @param string $token
-     * @return boolean
+     * @return bool
      */
-    public function isValidToken($token)
+    public function isValidToken(string $token) : bool
     {
         if (!self::$storage->keyExists($token)) {
             return false;
@@ -170,8 +176,9 @@ class Csrf
     /**
      * Invalidate (remove) token
      * @param string $token
+     * @return void
      */
-    public function removeToken($token)
+    public function removeToken(string $token) : void
     {
         self::$storage->remove($token);
     }
@@ -179,9 +186,9 @@ class Csrf
     /**
      * Check POST request for a token
      * @param string $tokenVar - Variable name in the request
-     * @return boolean
+     * @return bool
      */
-    public function checkPost($tokenVar = self::POST_VAR)
+    public function checkPost($tokenVar = self::POST_VAR) : bool
     {
         $var = Request::factory()->post($tokenVar, 'string', false);
         if ($var !== false && $this->isValidToken($var)) {
@@ -194,9 +201,9 @@ class Csrf
     /**
      * Check HEADER for a token
      * @param string $tokenVar - Variable name in the header
-     * @return boolean
+     * @return bool
      */
-    public function checkHeader($tokenVar = self::HEADER_VAR)
+    public function checkHeader($tokenVar = self::HEADER_VAR) : bool
     {
         $var = Request::factory()->server($tokenVar, 'string', false);
         if ($var !== false && $this->isValidToken($var)) {

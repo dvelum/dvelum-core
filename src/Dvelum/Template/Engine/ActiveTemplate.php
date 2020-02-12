@@ -45,13 +45,12 @@ class ActiveTemplate implements EngineInterface
      * @var array
      */
     private $data = [];
-
     /**
-     * @property CacheInterface|null $cache
+     * @var CacheInterface|null $cache
      */
     protected $cache = null;
     /**
-     * @property bool $useCache
+     * @var bool $useCache
      */
     protected $useCache = false;
 
@@ -61,15 +60,16 @@ class ActiveTemplate implements EngineInterface
     protected $cacheLifetime = false;
 
     /**
-     * @property ConfigInterface $config
+     * @var ConfigInterface $config
      */
     protected $config;
 
     /**
      * Set template configuration
      * @param ConfigInterface $config
+     * @return void
      */
-    public function setConfig(ConfigInterface $config)
+    public function setConfig(ConfigInterface $config) : void
     {
         $this->config = $config;
     }

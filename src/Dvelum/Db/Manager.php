@@ -35,10 +35,16 @@ use Dvelum\Config\ConfigInterface;
 
 class Manager implements ManagerInterface
 {
+    /**
+     * @var array
+     */
     protected $dbConnections = [];
+    /**
+     * @var array
+     */
     protected $dbConfigs = [];
     /**
-     * @var callable $errorHandler
+     * @var callable $connectionErrorHandler
      */
     protected $connectionErrorHandler;
 
@@ -88,7 +94,7 @@ class Manager implements ManagerInterface
             }
 
             if(!empty($shard)) {
-               throw new Exception('Orm Db manager is not installed');
+               throw new \Exception('Orm Db manager is not installed');
             }
 
             $db = $this->initConnection($cfg->__toArray());
@@ -167,8 +173,9 @@ class Manager implements ManagerInterface
     /**
      * Set connection error handler
      * @param callable $handler
+     * @return void
      */
-    public function setConnectionErrorHandler(callable $handler)
+    public function setConnectionErrorHandler(callable $handler) : void
     {
         $this->connectionErrorHandler = $handler;
     }

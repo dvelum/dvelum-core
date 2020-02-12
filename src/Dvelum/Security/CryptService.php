@@ -61,14 +61,17 @@ class CryptService implements CryptServiceInterface
      */
     private $error ='';
 
+    /**
+     * @var array|null
+     */
+    private $privateKeyOptions = null;
+
     public function __construct(ConfigInterface $config)
     {
         $this->chipper = $config->get('chipper');
         $this->hash = $config->get('hash');
         $this->privateKey = $config->get('key');
     }
-
-    private $privateKeyOptions = null;
 
     /**
      * Verify that encryption works, all dependencies are installed
@@ -141,7 +144,7 @@ class CryptService implements CryptServiceInterface
      */
     public function createVector() : string
     {
-        return base64_encode(openssl_random_pseudo_bytes(openssl_cipher_iv_length($this->chipper)));
+        return base64_encode((string)openssl_random_pseudo_bytes((int)openssl_cipher_iv_length($this->chipper)));
     }
 
     /**
@@ -155,6 +158,10 @@ class CryptService implements CryptServiceInterface
     {
         $iv = base64_decode($base64Vector);
         $keyHash = openssl_digest($this->getPrivateKey(), $this->hash, true);
+
+        if(!is_string($keyHash)){
+            throw new \Exception('Encryption failed: openssl_digest ');
+        }
         $encrypted = openssl_encrypt($string, $this->chipper, $keyHash, OPENSSL_RAW_DATA, $iv);
 
         if($encrypted === false){
@@ -176,6 +183,11 @@ class CryptService implements CryptServiceInterface
         $iv = base64_decode($base64Vector);
         $src = base64_decode($string);
         $keyHash = openssl_digest($this->getPrivateKey(), $this->hash, true);
+
+        if(!is_string($keyHash)){
+            throw new \Exception('Encryption failed: openssl_digest ');
+        }
+
         $res = openssl_decrypt($src, $this->chipper, $keyHash, OPENSSL_RAW_DATA, $iv);
 
         if ($res === false) {
@@ -192,8 +204,8 @@ class CryptService implements CryptServiceInterface
     protected function getPrivateKey() : string
     {
         if(is_null($this->privateKeyData)){
-            if(file_exists($this->privateKey)){
-                $this->privateKeyData = file_get_contents($this->privateKey);
+            if(file_exists((string)$this->privateKey)){
+                $this->privateKeyData = (string) file_get_contents((string) $this->privateKey);
             }else{
                 throw new \Exception('Private key file is not exists '.$this->privateKey);
             }

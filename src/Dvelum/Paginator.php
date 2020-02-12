@@ -75,9 +75,12 @@ class Paginator
         return $s;
     }
 
-    public function findNearbyPages()
+    /**
+     * @return array
+     */
+    public function findNearbyPages() : array
     {
-        $digits = array();
+        $digits = [];
 
         if($this->numLinks >= $this->numPages)
         {
@@ -109,12 +112,16 @@ class Paginator
         return $digits;
     }
 
-    public function createNumBtns($digits)
+    /**
+     * @param array $digits
+     * @return string
+     */
+    public function createNumBtns(array $digits) : string
     {
         $s = '';
 
         if($this->curPage > 1)
-            $s .= '<a href="' . str_replace($this->tplId , ($this->curPage - 1) , $this->pageLinkTpl) . '"><div class="pager_item">&laquo;</div></a>';
+            $s .= '<a href="' . str_replace($this->tplId , (string) ($this->curPage - 1) , $this->pageLinkTpl) . '"><div class="pager_item">&laquo;</div></a>';
 
 
         for($i = 0, $sz = sizeof($digits); $i < $sz; $i++)
@@ -126,7 +133,7 @@ class Paginator
         }
 
         if($this->curPage < $this->numPages)
-            $s .= '<a href="' . str_replace($this->tplId , ($this->curPage + 1) , $this->pageLinkTpl) . '"><div class="pager_item">&raquo;</div></a>';
+            $s .= '<a href="' . str_replace($this->tplId , (string) ($this->curPage + 1) , $this->pageLinkTpl) . '"><div class="pager_item">&raquo;</div></a>';
 
         return $s;
     }

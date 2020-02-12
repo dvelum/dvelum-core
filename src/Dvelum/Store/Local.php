@@ -36,7 +36,13 @@ namespace Dvelum\Store;
  */
 class Local implements AdapterInterface
 {
+    /**
+     * @var array $storage
+     */
     protected $storage;
+    /**
+     * @var string $name
+     */
     protected $name;
 
     /**
@@ -69,7 +75,7 @@ class Local implements AdapterInterface
 
     /**
      * Get items count
-     * @return integer
+     * @return int
      */
     public function getCount() : int
     {
@@ -77,8 +83,7 @@ class Local implements AdapterInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see www/library/Store/AdapterInterface#get($key)
+     * @inheritDoc
      */
     public function get($key)
     {
@@ -89,8 +94,7 @@ class Local implements AdapterInterface
 
     /**
      * Note that null value causes keyExists return false (for better perfomance)
-     * (non-PHPdoc)
-     * @see www/library/Store/Store_Interface#set($key, $val)
+     * @inheritDoc
      */
     public function set($key , $value)
     {
@@ -98,8 +102,7 @@ class Local implements AdapterInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see www/library/Store/Store_Interface#setValues($array)
+     * @inheritDoc
      */
     public function setValues(array $array)
     {
@@ -109,8 +112,7 @@ class Local implements AdapterInterface
 
     /**
      * Note that null value causes the keyExists() method return false (for better perfomance)
-     * (non-PHPdoc)
-     * @see www/library/Store/Store_Interface#keyExists($key)
+     * @inheritDoc
      */
     public function keyExists($key) : bool
     {
@@ -118,8 +120,7 @@ class Local implements AdapterInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see www/library/Store/Store_Interface#remove($key)
+     * @inheritDoc
      */
     public function remove($key) : void
     {
@@ -127,8 +128,7 @@ class Local implements AdapterInterface
     }
 
     /**
-     * (non-PHPdoc)
-     * @see AdapterInterface::clear()
+     * @inheritDoc
      */
     public function clear() : void
     {
@@ -137,8 +137,9 @@ class Local implements AdapterInterface
     /**
      * Replace store data
      * @param array $data
+     * @return void
      */
-    public function setData(array $data)
+    public function setData(array $data) : void
     {
         $this->storage = $data;
     }

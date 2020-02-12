@@ -9,7 +9,6 @@ parameters:
 	autoload_directories:
 	    -  %currentWorkingDirectory%/application
 	    -  %currentWorkingDirectory%/src
-	    -  %currentWorkingDirectory%/tests/unit/dvelum/app
 	    -  %currentWorkingDirectory%/tests/unit/dvelum/library
 	    -  %currentWorkingDirectory%/tests/unit/dvelum2
 	autoload_files: []

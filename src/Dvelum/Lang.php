@@ -29,15 +29,26 @@ declare(strict_types=1);
 
 namespace Dvelum;
 
+use Dvelum\Config\Storage\File\AsArray;
 use Dvelum\Config\Storage\StorageInterface;
 
 class Lang
 {
+    /**
+     * @var string
+     */
     protected $defaultDictionary = '';
-
-    protected $storage = false;
-
+    /**
+     * @var AsArray
+     */
+    protected $storage;
+    /**
+     * @var array
+     */
     protected $dictionaries = [];
+    /**
+     * @var array
+     */
     protected $loaders = [];
 
     /**
@@ -148,7 +159,7 @@ class Lang
      */
     public function getStorage(): StorageInterface
     {
-        if (!$this->storage) {
+        if (!isset($this->storage)) {
             $this->storage = new Config\Storage\File\AsArray();
         }
         return $this->storage;

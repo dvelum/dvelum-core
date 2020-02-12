@@ -145,18 +145,39 @@ class Adapter implements ConfigInterface
     /*
      * Start of ArrayAccess implementation
      */
-    public function offsetSet($offset, $value)
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value) : void
     {
         $this->data[$offset] = $value;
     }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset)
     {
         return isset($this->data[$offset]);
     }
-    public function offsetUnset($offset)
+
+    /**
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }
+
+    /**
+     * @param mixed $offset
+     * @return mixed|null
+     */
     public function offsetGet($offset)
     {
         return isset($this->data[$offset]) ? $this->data[$offset] : null;
@@ -168,22 +189,41 @@ class Adapter implements ConfigInterface
     /*
      * Start of Iterator implementation
      */
-    public function rewind()
+    /**
+     * @return void
+     */
+    public function rewind() : void
     {
         reset($this->data);
     }
+
+    /**
+     * @return mixed
+     */
     public function current()
     {
         return $this->data[key($this->data)];
     }
+
+    /**
+     * @return bool|float|int|string|null
+     */
     public function key()
     {
         return key($this->data);
     }
-    public function next()
+
+    /**
+     * @return void
+     */
+    public function next() : void
     {
         next($this->data);
     }
+
+    /**
+     * @return bool
+     */
     public function valid()
     {
         return isset($this->data[key($this->data)]);
@@ -216,7 +256,7 @@ class Adapter implements ConfigInterface
      */
     public function getName() : string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     /**

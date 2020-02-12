@@ -42,17 +42,31 @@ class Resize
      * Crop image
      * @param string  $src - source image path
      * @param string $dest - destination image path
-     * @param integer $x - x coord
-     * @param integer $y - y coord
-     * @param integer $w - width
-     * @param integer $h - height
-     * @return boolean
+     * @param int $x - x coord
+     * @param int $y - y coord
+     * @param int $w - width
+     * @param int $h - height
+     * @return bool
      */
     static public function cropImage($src , $dest , $x , $y , $w , $h)
     {
         $imgInfo = getimagesize($src);
+
+        if(empty($imgInfo)){
+            return false;
+        }
+
         $img = self::createImg($src , $imgInfo[2]);
         $destImg = self::_createDuplicateLayer($imgInfo[2] , $w , $h);
+
+        /**
+         * @var resource $img
+         */
+        if(empty($img) || empty($destImg)){
+            return false;
+        }
+
+
         imagecopyresampled($destImg , $img , 0 , 0 , $x , $y , $w , $h , $w , $h);
         imagedestroy($img);
 
@@ -62,8 +76,8 @@ class Resize
     /**
      * Create image from file
      * @param string $path - file path
-     * @param integer $type - image type constant, source file type
-     * @return resource | boolean
+     * @param int $type - image type constant, source file type
+     * @return resource | bool
      */
     static public function createImg($path , $type)
     {
@@ -77,13 +91,15 @@ class Resize
                 break;
             case IMAGETYPE_PNG :
                 $im = imagecreatefrompng($path);
+                if(!$im){
+                    return false;
+                }
                 imageAlphaBlending($im, true);
                 imageSaveAlpha($im, true);
                 break;
             default :
                 trigger_error('Unsupported file type!' , E_USER_WARNING);
                 return false;
-                break;
         }
         return $im;
     }
@@ -91,14 +107,14 @@ class Resize
     /**
      * Resize image
      * @param string $imgPath
-     * @param integer $width
-     * @param integer $height
+     * @param int $width
+     * @param int $height
      * @param string $newImgPath
-     * @param boolean $fit, optional default false
-     * @param boolean $crop, optional default false
-     * @return boolean
+     * @param bool $fit, optional default false
+     * @param bool $crop, optional default false
+     * @return bool
      */
-    static public function resize($imgPath , $width , $height , $newImgPath , $fit = false , $crop = true)
+    static public function resize($imgPath , $width , $height , $newImgPath , $fit = false , $crop = true) : bool
     {
         /*
          * Check if GD extension is loaded
@@ -117,7 +133,18 @@ class Resize
          * Get Image size info
          */
         $imgInfo = getimagesize($imgPath);
+        if(empty($imgInfo)){
+            return false;
+        }
+
         $im = self::createImg($imgPath , $imgInfo[2]);
+
+        /**
+         * @var resource $im
+         */
+        if(empty($im)){
+            return false;
+        }
 
         /*
          * If image sizes less then need just save image into the new location
@@ -125,9 +152,7 @@ class Resize
         if($imgInfo[0] < $width && $imgInfo[1] < $height)
         {
             $result = self::saveImage($im , $newImgPath , $imgInfo[2]);
-            if($im){
-                @imagedestroy($im);
-            }
+            imagedestroy($im);
             return $result;
         }
 
@@ -168,15 +193,25 @@ class Resize
             $nHeight = round($nHeight);
         }
 
-        $newImg = self::_createDuplicateLayer($imgInfo[2] , $nWidth , $nHeight);
+        $newImg = self::_createDuplicateLayer($imgInfo[2] , (int) $nWidth , (int) $nHeight);
+        if(empty($newImg)){
+            return false;
+        }
 
-        imagecopyresampled($newImg , $im , 0 , 0 , 0 , 0 , $nWidth , $nHeight , $imgInfo[0] , $imgInfo[1]);
+        imagecopyresampled($newImg , $im , 0 , 0 , 0 , 0 , (int) $nWidth ,(int) $nHeight , $imgInfo[0] , $imgInfo[1]);
         imagedestroy($im);
 
         return self::saveImage($newImg , $newImgPath , $imgInfo[2]);
     }
 
-    static public function resizeToFrame($imgPath , $width , $height , $newImgPath)
+    /**
+     * @param string $imgPath
+     * @param int $width
+     * @param int $height
+     * @param string $newImgPath
+     * @return bool
+     */
+    static public function resizeToFrame(string $imgPath , int $width , int $height , string $newImgPath) : bool
     {
         /*
         * Check if GD extension is loaded
@@ -191,7 +226,19 @@ class Resize
          * Get Image size info
          */
         $imgInfo = getimagesize($imgPath);
+
+        if(empty($imgInfo)){
+            return false;
+        }
+
         $im = self::createImg($imgPath , $imgInfo[2]);
+
+        /**
+         * @var resource $im
+         */
+        if(empty($im)){
+            return false;
+        }
 
         /*
         * If image sizes less then need just save image into the new location
@@ -218,16 +265,17 @@ class Resize
             }
         }
 
-
         $nWidth = round($nWidth);
         $nHeight = round($nHeight);
 
-
         $newImg = self::_createDuplicateLayer($imgInfo[2] , $width , $height);
+
+        if(empty($newImg) || empty($im)){
+            return false;
+        }
 
         $whiteBackground = imagecolorallocatealpha($newImg , 255 , 255 , 255 , 0);
         imagefilledrectangle($newImg , 0 , 0 , $width , $height , $whiteBackground);
-
 
         $posX = ($width - $nWidth) / 2;
         $posY = ($height - $nHeight) / 2;
@@ -244,11 +292,14 @@ class Resize
      * @param integer $type image type
      * @param integer $width
      * @param integer $height
-     * @return resource $image
+     * @return resource|false
      */
     static protected function _createDuplicateLayer($type , $width , $height)
     {
         $img = imagecreatetruecolor($width , $height);
+        if(empty($img)){
+            return false;
+        }
         if(in_array($type, array(IMG_GIF, IMG_PNG, IMAGETYPE_GIF, IMAGETYPE_PNG), true))
         {
             imagealphablending($img , false);
@@ -319,17 +370,20 @@ class Resize
     /**
      * Crop and resize image
      * @param string $imgPath
-     * @param integer $width
-     * @param integer $height
+     * @param int $width
+     * @param int $height
      * @param string $newImgPath
-     * @return boolean
+     * @return bool
      */
-    static public function cropResize($imgPath , $width , $height , $newImgPath)
+    static public function cropResize($imgPath , $width , $height , $newImgPath) : bool
     {
         /*
          * Get Image size info
          */
         $imgInfo = getimagesize($imgPath);
+        if(empty($imgInfo)){
+            return false;
+        }
         $sourceWidth = $imgInfo[0];
         $sourceHeight = $imgInfo[1];
 
@@ -380,15 +434,28 @@ class Resize
         }
 
         $im = self::createImg($imgPath , $imgInfo[2]);
-        $dest = self::_createDuplicateLayer($imgInfo[2] , $width , $height);
+        $dest = self::_createDuplicateLayer($imgInfo[2] , (int) $width , (int) $height);
+        /**
+         * @var resource $im
+         */
+        if(empty($im) || empty($dest)){
+            return false;
+        }
 
-        imagecopyresampled($dest , $im , 0 , 0 , $x , $y , $width , $height , $newSizes[0] , $newSizes[1]);
+        imagecopyresampled($dest , $im , 0 , 0 , (int) $x , (int) $y , (int) $width , (int) $height , (int) $newSizes[0] , (int) $newSizes[1]);
         imagedestroy($im);
         self::saveImage($dest , $newImgPath , $imgInfo[2]);
         return true;
     }
 
-    static protected function _calcHorizontalToHorizontal($sourceWidth , $sourceHeight , $width , $height)
+    /**
+     * @param int $sourceWidth
+     * @param int $sourceHeight
+     * @param int $width
+     * @param int $height
+     * @return array
+     */
+    static protected function _calcHorizontalToHorizontal($sourceWidth , $sourceHeight , $width , $height) : array
     {
         $sourceProportion = $sourceWidth / $sourceHeight;
         $proportion = $width / $height;
@@ -399,7 +466,13 @@ class Resize
             return self::_calcVerticalToHorizontal($sourceWidth , $width , $height);
     }
 
-    static protected function _calcHorizontalToVertical($sourceHeight , $width , $height)
+    /**
+     * @param int $sourceHeight
+     * @param int $width
+     * @param int $height
+     * @return array
+     */
+    static protected function _calcHorizontalToVertical(int $sourceHeight , int $width , int $height) : array
     {
         $proportion = $width / $height;
 
@@ -412,7 +485,13 @@ class Resize
         ];
     }
 
-    static protected function _calcVerticalToHorizontal($sourceWidth , $width , $height)
+    /**
+     * @param int $sourceWidth
+     * @param int $width
+     * @param int $height
+     * @return array
+     */
+    static protected function _calcVerticalToHorizontal($sourceWidth , $width , $height) : array
     {
         $proportion = $width / $height;
         $newWidth = $sourceWidth;
@@ -424,7 +503,12 @@ class Resize
         ];
     }
 
-    static protected function _calcSquareToSquare($sourceWidth , $sourceHeight)
+    /**
+     * @param int $sourceWidth
+     * @param int $sourceHeight
+     * @return array
+     */
+    static protected function _calcSquareToSquare(int $sourceWidth , int $sourceHeight) : array
     {
         return [
             $sourceWidth,
