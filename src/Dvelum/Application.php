@@ -31,7 +31,6 @@ declare(strict_types=1);
 namespace Dvelum\App;
 
 use Dvelum\{Debug,
-    Externals,
     Request,
     Response,
     Resource,
@@ -239,13 +238,6 @@ class Application
     public function run()
     {
         $this->init();
-        $page = Request::factory()->getPart(0);
-
-        if ($page === $this->config->get('adminPath')) {
-            $this->routeBackOffice();
-        }else{
-            $this->routeFrontend();
-        }
     }
 
     /**
@@ -280,23 +272,6 @@ class Application
         }
     }
 
-    /**
-     * Run backend application
-     */
-    protected function routeBackOffice()
-    {
-        $request = Request::factory();
-        $response = Response::factory();
-        /*
-         * Start routing
-         */
-        $router = new Router\Backend();
-        $router->route($request, $response);
-
-        if (!$response->isSent()) {
-            $response->send();
-        }
-    }
 
     /**
      * Run frontend application

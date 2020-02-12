@@ -29,8 +29,16 @@ declare(strict_types=1);
 
 namespace Dvelum\App\Application;
 
-use Dvelum\App\Application;
+use Dvelum\Application;
 
-class WebService extends Application{
-
+class WebService extends Application
+{
+    /**
+     * Start application
+     */
+    public function run()
+    {
+        parent::run();
+        $this->routeFrontend();
+    }
 }
