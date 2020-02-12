@@ -51,32 +51,4 @@ class ResourceTest extends TestCase
         $this->assertTrue(file_exists($filePath));
         $this->assertEquals('var a=7;', file_get_contents($filePath));
     }
-
-    public function testGetFileHash()
-    {
-        $resource = Resource::factory();
-        $config = $resource->getConfig();
-        $config->set('cache',false);
-        $resource->setConfig($config);
-
-        $hash = $resource->getFileHash([
-            'js/app/system/common.js'
-        ]);
-
-        $hash2 = $resource->getFileHash([
-            'js/app/system/common.js',
-            'js/app/system/Application.js',
-        ]);
-
-        $this->assertEquals(strlen($hash), strlen($hash2));
-        $this->assertTrue($hash!==$hash2);
-    }
-
-    public function testAddCss()
-    {
-        $resource = Resource::factory();
-        $resource->addCss('/css/system/style.css');
-        $code = $resource->includeCss(false);
-        $this->assertTrue(strpos($code,'<link rel="stylesheet" type="text/css" href="/css/system/style.css')===0);
-    }
 }
