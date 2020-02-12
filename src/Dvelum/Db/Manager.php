@@ -32,8 +32,6 @@ namespace  Dvelum\Db;
 
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
-use Dvelum\Orm\Distributed;
-use PHPUnit\Util\Exception;
 
 class Manager implements ManagerInterface
 {
@@ -147,8 +145,8 @@ class Manager implements ManagerInterface
             $workMode = $this->appConfig->get('development');
         }
 
-        if($workMode == \Dvelum\App\Application::MODE_INSTALL)
-            $workMode = \Dvelum\App\Application::MODE_DEVELOPMENT;
+        if($workMode == \Dvelum\Application::MODE_INSTALL)
+            $workMode = \Dvelum\Application::MODE_DEVELOPMENT;
 
         if(!isset($this->dbConfigs[$workMode][$name]))
         {

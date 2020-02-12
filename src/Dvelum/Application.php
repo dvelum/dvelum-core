@@ -28,20 +28,11 @@
 
 declare(strict_types=1);
 
-namespace Dvelum\App;
+namespace Dvelum;
 
-use Dvelum\{Debug,
-    Request,
-    Response,
-    Resource,
-    View,
-    Autoload,
-    Config,
+use Dvelum\{
     Config\ConfigInterface,
     Db,
-    Lang,
-    Utils,
-    Service,
     Cache\CacheInterface};
 
 
