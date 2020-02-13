@@ -47,5 +47,8 @@ abstract class AbstractAdapter implements LoaderInterface
         $this->config = $config;
     }
 
+    /**
+     * @return mixed
+     */
     abstract public function loadService();
 }

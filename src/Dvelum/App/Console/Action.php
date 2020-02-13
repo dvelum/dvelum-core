@@ -38,7 +38,13 @@ abstract class Action implements ActionInterface
      * @var ConfigInterface
      */
     protected $appConfig;
+    /**
+     * @var array
+     */
     protected $config;
+    /**
+     * @var array
+     */
     protected $stat = [];
     /**
      * Action params

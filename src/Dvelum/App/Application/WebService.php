@@ -35,8 +35,9 @@ class WebService extends Application
 {
     /**
      * Start application
+     * @return void
      */
-    public function run()
+    public function run() : void
     {
         parent::run();
         $this->routeFrontend();

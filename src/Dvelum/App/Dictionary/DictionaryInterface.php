@@ -33,6 +33,11 @@ use Dvelum\Config\ConfigInterface;
 
 interface DictionaryInterface
 {
+    /**
+     * DictionaryInterface constructor.
+     * @param string $name
+     * @param ConfigInterface $config
+     */
     public function __construct(string $name, ConfigInterface $config);
 
     /**
@@ -87,8 +92,8 @@ interface DictionaryInterface
 
     /**
      * Get key for value
-     * @param $value
-     * @param boolean $i case insensitive
+     * @param string $value
+     * @param bool $i case insensitive
      * @return mixed, false on error
      */
     public function getKeyByValue(string $value, $i = false);

@@ -30,27 +30,51 @@ namespace Dvelum\App\Form;
 
 class Error
 {
+    /**
+     * @var null|string
+     */
     protected $field = null;
+    /**
+     * @var null|string
+     */
     protected $message = null;
+    /**
+     * @var null|string
+     */
     protected $code = null;
 
-    public function __construct($message, $field = null, $code = null)
+    /**
+     * Error constructor.
+     * @param string $message
+     * @param string|null $field
+     * @param string|null $code
+     */
+    public function __construct(string $message, ?string $field = null, ?string $code = null)
     {
         $this->message = $message;
         $this->field = $field;
         $this->code = $code;
     }
 
+    /**
+     * @return string|null
+     */
     public function getField() : ?string
     {
         return $this->field;
     }
 
+    /**
+     * @return string
+     */
     public function getMessage() : string
     {
-        return $this->message;
+        return (string) $this->message;
     }
 
+    /**
+     * @return string|null
+     */
     public function getCode()
     {
         return $this->code;

@@ -63,10 +63,10 @@ class File extends AbstractAdapter
             'type' => ''
         );
 
-        $name = str_replace(' ' , '_' , $data['name']);
+        $name = str_replace(' ' , '_' , (string) $data['name']);
         $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
 
-        $ext = \Dvelum\File::getExt($name);
+        $ext = \Dvelum\File::getExt((string) $name);
 
         if(!in_array($ext , $this->config['extensions'])){
             $this->error='File extension is not allowed';
@@ -74,7 +74,7 @@ class File extends AbstractAdapter
         }
 
 
-        $namePart = str_replace($ext , '' , $name);
+        $namePart = str_replace($ext , '' , (string) $name);
 
         if(isset($this->config['rewrite']) && $this->config['rewrite']){
             if(file_exists($path . $namePart . $ext))

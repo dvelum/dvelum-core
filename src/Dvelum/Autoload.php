@@ -36,12 +36,29 @@ namespace Dvelum;
  */
 class Autoload
 {
+    /**
+     * @var bool
+     */
     protected $debug = false;
+    /**
+     * @var array
+     */
     protected $debugData = [];
+    /**
+     * @var array
+     */
     protected $classMap = [];
+    /**
+     * @var array
+     */
     protected $paths = [];
+    /**
+     * @var array
+     */
     protected $psr4Paths = [];
-
+    /**
+     * @var array
+     */
     protected $loaders = ['psr0', 'psr4'];
 
     /**

@@ -35,17 +35,30 @@ use Dvelum\App\Form;
 
 abstract class Adapter
 {
+    /**
+     * @var Request
+     */
     protected $request;
-
+    /**
+     * @var array
+     */
     protected $errors = [];
 
     /**
      * @var ConfigInterface $config
      */
     protected $config;
-
+    /**
+     * @var Lang\Dictionary
+     */
     protected $lang;
 
+    /**
+     * Adapter constructor.
+     * @param Request $request
+     * @param Lang\Dictionary $lang
+     * @param ConfigInterface $config
+     */
     public function __construct(Request $request , Lang\Dictionary $lang,  ConfigInterface $config)
     {
         $this->lang = $lang;
@@ -53,8 +66,14 @@ abstract class Adapter
         $this->config = $config;
     }
 
+    /**
+     * @return bool
+     */
     abstract public function validateRequest() : bool;
 
+    /**
+     * @return mixed
+     */
     abstract public function getData();
 
     /**

@@ -36,7 +36,10 @@ use Dvelum\Config as Cfg;
 
 class Config extends Router
 {
-    protected $appConfig = false;
+    /**
+     * @var Cfg\ConfigInterface
+     */
+    protected $appConfig;
 
     public function __construct()
     {

@@ -33,6 +33,9 @@ use Dvelum\Config;
 
 class MailTransport extends AbstractAdapter
 {
+    /**
+     * @return \Zend\Mail\Transport\TransportInterface
+     */
     public function loadService()
     {
         $cfg = Config::storage()->get('mail_trasport.php')->__toArray();

@@ -49,6 +49,10 @@ class Factory
      */
     public static function createSourceFromAdapter(AdapterInterface $adapter)
     {
+        /**
+         * @var  \Zend\Db\Adapter\Adapter $adapter
+         */
+
         $platformName = $adapter->getPlatform()->getName();
 
         switch ($platformName) {

@@ -29,7 +29,7 @@ declare(strict_types=1);
 
 namespace Dvelum\App\Frontend;
 
-use Dvelum\{App, Config, Config\ConfigInterface, Lang, Page\Page, Request, Response, Service, Orm\Model, Resource};
+use Dvelum\{App, Config, Config\ConfigInterface, Lang, Page\Page, Request, Response, Resource};
 
 class Controller extends App\Controller
 {
@@ -38,7 +38,7 @@ class Controller extends App\Controller
      */
     protected $frontendConfig;
     /**
-     * @var Lang
+     * @var Lang\Dictionary
      */
     protected $lang;
     /**

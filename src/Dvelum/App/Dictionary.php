@@ -34,7 +34,12 @@ use Dvelum\Service;
 
 class Dictionary
 {
-    static public function factory($name): DictionaryInterface
+    /**
+     * @param string $name
+     * @return DictionaryInterface
+     * @throws \Exception
+     */
+    static public function factory(string $name): DictionaryInterface
     {
         return Service::get('dictionary')->get($name);
     }

@@ -43,7 +43,7 @@ class File implements DictionaryInterface
     /**
      * @var Config\ConfigInterface
      */
-    protected $data = [];
+    protected $data;
 
     public function __construct(string $name , Config\ConfigInterface $config)
     {
@@ -140,13 +140,13 @@ class File implements DictionaryInterface
         foreach($this->data as $k => $v)
             $result[] = ['id' => strval($k) , 'title' => $v];
 
-        return json_encode($result);
+        return (string) json_encode($result);
     }
 
     /**
      * Get key for value
-     * @param $value
-     * @param boolean $i case insensitive
+     * @param string $value
+     * @param bool $i case insensitive
      * @return mixed, false on error
      */
     public function getKeyByValue(string $value, $i = false)

@@ -41,12 +41,19 @@ class Minify
      */
     protected $config;
 
-    static public function factory()
+    /**
+     * @return Minify
+     */
+    static public function factory() : Minify
     {
         $config = Config::storage()->get('minify.php');
         return new static($config);
     }
 
+    /**
+     * Minify constructor.
+     * @param ConfigInterface $config
+     */
     protected function __construct(ConfigInterface $config)
     {
         $this->config = $config;

@@ -33,14 +33,18 @@ use Dvelum\Cache\CacheInterface;
 
 class Manager
 {
+    /**
+     * @var array
+     */
     static protected $connections = [];
 
     /**
      * Register cache adapter
      * @param string $name
      * @param CacheInterface $cache
+     * @return void
      */
-    public function register($name , CacheInterface $cache)
+    public function register($name , CacheInterface $cache) : void
     {
         self::$connections[$name] = $cache;
     }
@@ -61,8 +65,9 @@ class Manager
     /**
      * Remove cache adapter
      * @param string $name
+     * @return void
      */
-    public function remove(string $name)
+    public function remove(string $name) : void
     {
         if(!isset(self::$connections[$name]))
             return;
@@ -74,7 +79,7 @@ class Manager
      * Get list of registered adapters
      * @return array
      */
-    public function getRegistered()
+    public function getRegistered() : array
     {
         return self::$connections;
     }

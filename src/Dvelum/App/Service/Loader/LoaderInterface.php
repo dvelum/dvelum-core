@@ -34,6 +34,13 @@ use Dvelum\Config\ConfigInterface;
 
 interface LoaderInterface
 {
+    /**
+     * @param ConfigInterface $config
+     */
     public function setConfig(ConfigInterface $config) : void;
+
+    /**
+     * @return mixed
+     */
     public function loadService();
 }

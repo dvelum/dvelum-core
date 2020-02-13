@@ -193,7 +193,7 @@ class Factory
         }
         else
         {
-            if(self::$store->keyExists($key))
+            if(self::$store && self::$store->keyExists($key))
             {
                 self::$cache->save(self::$store->get($key), (string) $key);
             }

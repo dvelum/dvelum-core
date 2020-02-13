@@ -35,6 +35,10 @@ use Dvelum;
 
 class Lang extends AbstractAdapter
 {
+    /**
+     * @return Dvelum\Lang|mixed
+     * @throws \Exception
+     */
     public function loadService()
     {
         $language = $this->config->get('appConfig')->get('language');

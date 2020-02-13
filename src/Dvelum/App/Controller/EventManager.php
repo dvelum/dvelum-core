@@ -30,7 +30,13 @@ namespace Dvelum\App\Controller;
 
 class EventManager
 {
+    /**
+     * @var array
+     */
     protected $listeners = [];
+    /**
+     * @var string
+     */
     protected $error = '';
 
     const BEFORE_LIST = 'before_list';
@@ -45,9 +51,10 @@ class EventManager
 
     /**
      * @param string $event
-     * @param callable|array [obj,method] $handler
+     * @param callable|array $handler [obj,method]
+     * @return void
      */
-    public function on(string $event, $handler)
+    public function on(string $event, $handler) : void
     {
         if(!isset($this->listeners[$event])){
             $this->listeners[$event] = [];
@@ -59,6 +66,11 @@ class EventManager
         $this->listeners[$event][] = $listener;
     }
 
+    /**
+     * @param mixed $event
+     * @param \stdClass $data
+     * @return bool
+     */
     public function fireEvent($event, \stdClass $data) : bool
     {
         $this->error = '';

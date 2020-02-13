@@ -32,6 +32,9 @@ use Dvelum\App;
 
 class Controller extends App\Frontend\Controller
 {
+    /**
+     * @return void
+     */
     public function indexAction()
     {
         $this->page->addText('<h2>Index</h2>');

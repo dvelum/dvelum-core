@@ -29,6 +29,7 @@ declare(strict_types=1);
 
 namespace Dvelum\App;
 
+use Dvelum\Autoload;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\Config;
 use Dvelum\Externals\Manager;
@@ -40,6 +41,9 @@ use Dvelum\Utils;
  */
 class Classmap
 {
+    /**
+     * @var array
+     */
     protected $map = [];
     /**
      * @var ConfigInterface $appConfig
@@ -50,26 +54,37 @@ class Classmap
      */
     protected $autoloaderCfg = [];
 
+    /**
+     * Classmap constructor.
+     * @param ConfigInterface $appConfig
+     */
     public function __construct(ConfigInterface $appConfig)
     {
         $this->appConfig = $appConfig;
         $this->autoloaderCfg = Config::storage()->get('autoloader.php')->__toArray();
     }
 
-    public function load()
+    /**
+     * Load classmap from file
+     * @return void
+     */
+    public function load() : void
     {
-        $map = Config::storage()->get($this->autoloaderCfg->get('map'));
+        $map = Config::storage()->get($this->autoloaderCfg['map']);
         if(!empty($map)){
             $this->map = $map->__toArray();
         }
     }
 
-    public function update()
+    /**
+     * @throws \Exception
+     * @param Autoload $autoloader
+     * @return void
+     */
+    public function update(Autoload $autoloader) : void
     {
         $this->map = [];
 
-        $manager = Manager::factory();
-        $autoloader = $manager->getAutoloader();
         $paths = $autoloader->getRegisteredPaths();
 
         foreach($paths as $v)
@@ -93,11 +108,12 @@ class Classmap
 
     /**
      * Find PHP Classes
-     * @param $path
-     * @param $exceptPath
+     * @param string $path
+     * @param string $exceptPath
      * @throws \Exception
+     * c
      */
-    protected function findClasses(string $path , string $exceptPath)
+    protected function findClasses(string $path , string $exceptPath) : void
     {
         $path = File::fillEndSep($path);
         $items = File::scanFiles($path , ['.php'], false);
@@ -154,8 +170,9 @@ class Classmap
      * @param string $exceptPath
      * @param string $baseSpace
      * @throws \Exception
+     * @return void
      */
-    protected function findPsr4Classes(string $path , string $exceptPath, string $baseSpace)
+    protected function findPsr4Classes(string $path , string $exceptPath, string $baseSpace) : void
     {
         $path = File::fillEndSep($path);
 

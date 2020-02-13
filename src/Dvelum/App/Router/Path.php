@@ -37,6 +37,9 @@ use Dvelum\Response;
 
 class Path extends Router
 {
+    /**
+     * @var bool|Config\ConfigInterface
+     */
     protected $appConfig = false;
 
     public function __construct()

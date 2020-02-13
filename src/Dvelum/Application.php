@@ -30,10 +30,7 @@ declare(strict_types=1);
 
 namespace Dvelum;
 
-use Dvelum\{
-    Config\ConfigInterface,
-    Db,
-    Cache\CacheInterface};
+use Dvelum\{App\Cache, Config\ConfigInterface, Db, Cache\CacheInterface};
 
 
 /**
@@ -81,8 +78,9 @@ class Application
     /**
      * Inject Auto-loader
      * @param Autoload $autoloader
+     * @return void
      */
-    public function setAutoloader(Autoload $autoloader)
+    public function setAutoloader(Autoload $autoloader) : void
     {
         $this->autoloader = $autoloader;
     }
@@ -90,8 +88,10 @@ class Application
     /**
      * Initialize the application, configure the settings, inject dependencies
      * Adjust the settings necessary for running the system
+     * @return void
+     * @throws \Exception
      */
-    protected function init()
+    protected function init() : void
     {
         if ($this->initialized) {
             return;
@@ -225,31 +225,36 @@ class Application
 
     /**
      * Start application
+     * @return void
      */
-    public function run()
+    public function run() : void
     {
         $this->init();
     }
 
     /**
      * Start application in test mode
+     * @return void
      */
-    public function runTestMode()
+    public function runTestMode() : void
     {
         $this->init();
     }
 
     /**
      * Start application in install mode
+     * @return void
      */
-    public function runInstallMode(){
+    public function runInstallMode() : void
+    {
         $this->init();
     }
 
     /**
      * Start console application
+     * @return void
      */
-    public function runConsole()
+    public function runConsole() : void
     {
         $this->init();
         $request = Request::factory();
@@ -266,8 +271,9 @@ class Application
 
     /**
      * Run frontend application
+     * @return void
      */
-    protected function routeFrontend()
+    protected function routeFrontend() : void
     {
         $request = Request::factory();
         $response = Response::factory();

@@ -96,7 +96,10 @@ class Memcached extends AbstractAdapter implements CacheInterface
         return $settings;
     }
 
-    protected function connect(array $settings)
+    /**
+     * @param array $settings
+     */
+    protected function connect(array $settings) : void
     {
         if ($settings['persistent_key']) {
             $this->memcached = new \Memcached($settings['persistent_key']);

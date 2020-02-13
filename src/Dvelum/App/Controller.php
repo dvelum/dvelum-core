@@ -74,8 +74,9 @@ class Controller
     /**
      * Set link to router
      * @param Router\RouterInterface $router
+     * @return void
      */
-    public function setRouter(Router\RouterInterface $router)
+    public function setRouter(Router\RouterInterface $router) : void
     {
         $this->router = $router;
     }

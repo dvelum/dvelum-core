@@ -38,11 +38,21 @@ use Dvelum\Config\ConfigInterface;
  */
 class Config
 {
+    /**
+     * @param ConfigInterface|null $config
+     * @return Cfg\Storage\StorageInterface
+     */
     static public function storage(ConfigInterface $config = null) : Cfg\Storage\StorageInterface
     {
         return Cfg\Factory::storage($config);
     }
 
+    /**
+     * @param mixed $type
+     * @param mixed $name
+     * @param bool $useCache
+     * @return ConfigInterface
+     */
     static public function factory($type, $name, $useCache = true) : ConfigInterface
     {
         return Cfg\Factory::config($type, $name, $useCache);

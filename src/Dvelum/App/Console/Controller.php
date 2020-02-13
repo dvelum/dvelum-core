@@ -42,7 +42,7 @@ class Controller extends App\Controller implements Router\RouterInterface
 {
     /**
      * Logs adapter
-     * @var LogInterface
+     * @var LogInterface|false
      */
     protected $log = false;
     /**
@@ -62,6 +62,12 @@ class Controller extends App\Controller implements Router\RouterInterface
      */
     protected $actions;
 
+    /**
+     * Controller constructor.
+     * @param Request $request
+     * @param Response $response
+     * @throws \Exception
+     */
     public function __construct(Request $request, Response $response)
     {
         if (!defined('DVELUM_CONSOLE')) {

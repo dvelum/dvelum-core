@@ -34,17 +34,28 @@ use Dvelum\App\Dictionary;
 
 class Service
 {
+    /**
+     * @var array
+     */
     protected $objects = [];
     /**
      * @var ConfigInterface
      */
     protected $config = null;
 
-    public function setConfig(ConfigInterface $config)
+    /**
+     * @param ConfigInterface $config
+     * @return void
+     */
+    public function setConfig(ConfigInterface $config) : void
     {
         $this->config = $config;
     }
 
+    /**
+     * @param string $name
+     * @return DictionaryInterface
+     */
     public function get(string $name) : DictionaryInterface
     {
         if(!isset($this->objects[$name])){

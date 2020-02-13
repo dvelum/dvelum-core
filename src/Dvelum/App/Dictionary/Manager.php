@@ -52,14 +52,16 @@ class Manager
      */
     protected $path = '';
     /**
-     * @var CacheInterface|bool
+     * @var CacheInterface|false
      */
     protected $cache = false;
     /**
      * @var string
      */
     protected $language = '';
-
+    /**
+     * @var false|mixed|null
+     */
     static protected $list = null;
 
     /**
@@ -75,7 +77,7 @@ class Manager
 
     /**
      * @param ConfigInterface $appConfig
-     * @param mixed  \Cache_Interface | false $cache
+     * @param CacheInterface|false $cache
      * @throws \Exception
      */
     protected function __construct(ConfigInterface $appConfig, $cache = false)
@@ -93,9 +95,10 @@ class Manager
 
     /**
      * Get list of dictionaries
-     * return array
+     * @return array
+     * @throws \Exception
      */
-    public function getList()
+    public function getList() : array
     {
         if (!is_null(self::$list)) {
             return array_keys(self::$list);
@@ -354,18 +357,17 @@ class Manager
 
         $baseDict = $storage->get($this->baseDir . $baseLocale . '/' . $name . '.php', false, false);
 
-        $locManager = new \Dvelum\App\Backend\Localization\Manager($this->appConfig);
+        $locManager = new \Dvelum\App\Localization\Manager($this->appConfig);
 
         foreach ($locManager->getLangs(true) as $locale) {
             if ($locale == $baseLocale) {
                 continue;
             }
 
-
             $localPath = $this->baseDir . $locale . '/' . $name . '.php';
 
             if (!$storage->exists($localPath)) {
-                if (!$this->create($name, $locale) || !$dict = $storage->get($localPath, false, false)) {
+                if (!$this->create($name, $locale)) {
                     return false;
                 }
             }

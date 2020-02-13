@@ -35,6 +35,10 @@ use Dvelum\App\Dictionary\Service;
 
 class Dictionary extends AbstractAdapter
 {
+    /**
+     * @return Service|mixed
+     * @throws \Exception
+     */
     public function loadService()
     {
         $appConfig = $this->config->get('appConfig');

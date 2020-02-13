@@ -30,48 +30,85 @@ namespace Dvelum\App\Controller;
 
 class Event
 {
+    /**
+     * @var string
+     */
     public $type;
-
+    /**
+     * @var bool
+     */
     protected $stop = false;
-
+    /**
+     * @var mixed
+     */
     protected $data;
-
+    /**
+     * @var bool
+     */
     protected $error = false;
+    /**
+     * @var string
+     */
     protected $errorMessage = '';
 
-
-    public function  stopPropagation()
+    /**
+     * Stop event propagation
+     * @return void
+     */
+    public function stopPropagation() : void
     {
         $this->stop = true;
     }
 
-    public function isPropagationStopped()
+    /**
+     * Is event propagation stopped
+     * @return bool
+     */
+    public function isPropagationStopped() : bool
     {
         return $this->stop;
     }
 
-    public function setError($message)
+    /**
+     * Set error message
+     * @param string $message
+     */
+    public function setError(string $message) : void
     {
         $this->stopPropagation();
         $this->error = true;
         $this->errorMessage = $message;
     }
 
-    public function hasError()
+    /**
+     * @return bool
+     */
+    public function hasError() : bool
     {
         return $this->error;
     }
 
-    public function getError()
+    /**
+     * @return string
+     */
+    public function getError() : string
     {
         return $this->errorMessage;
     }
 
-    public function setData(\stdClass $data)
+    /**
+     * Set event data
+     * @param \stdClass $data
+     */
+    public function setData(\stdClass $data) : void
     {
         $this->data = $data;
     }
 
+    /**
+     * Get event data
+     * @return \stdClass
+     */
     public function getData() : \stdClass
     {
         return $this->data;

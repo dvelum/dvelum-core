@@ -32,7 +32,13 @@ namespace Dvelum\App\Upload\Adapter;
 
 abstract class AbstractAdapter
 {
+    /**
+     * @var string
+     */
     protected $error = '';
+    /**
+     * @var array
+     */
     protected $config;
 
     /**

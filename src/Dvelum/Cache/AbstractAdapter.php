@@ -31,8 +31,13 @@ namespace Dvelum\Cache;
 
 abstract class AbstractAdapter
 {
+    /**
+     * @var string
+     */
     protected $keyPrefix = '';
-
+    /**
+     * @var array
+     */
     protected $stat = [
         'load' => 0 ,
         'save' => 0 ,
@@ -56,7 +61,12 @@ abstract class AbstractAdapter
     }
 
     abstract protected function initConfiguration(array $options) : array;
-    abstract protected function connect(array $settings);
+
+    /**
+     * @param array $settings
+     * @return void
+     */
+    abstract protected function connect(array $settings) : void;
 
     /**
      * Prepare key, normalize, add prefix

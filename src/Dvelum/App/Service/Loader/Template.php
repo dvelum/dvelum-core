@@ -36,6 +36,11 @@ use Dvelum\Template\Service;
 
 class Template extends AbstractAdapter
 {
+    /**
+     * @return Service
+     * @throws \Exception
+     * @return Service
+     */
     public function loadService()
     {
         $config = Config::storage()->get('template.php');
