@@ -36,6 +36,7 @@ use Dvelum\Orm\Model;
 use Dvelum\App\Router;
 use Dvelum\Request;
 use Dvelum\Response;
+use Dvelum\Service;
 use Psr\Log\LogLevel;
 
 class Controller extends App\Controller implements Router\RouterInterface
@@ -45,11 +46,6 @@ class Controller extends App\Controller implements Router\RouterInterface
      * @var LogInterface|false
      */
     protected $log = false;
-    /**
-     * Cron User
-     * @var App\Session\User
-     */
-    protected $user;
 
     /**
      * Launcher configuration
@@ -83,32 +79,8 @@ class Controller extends App\Controller implements Router\RouterInterface
         foreach ($data as $action => $config){
             $this->actions[strtolower($action)] = $config;
         }
-        $log = $this->consoleConfig->get('log');
 
-        if ($log['enabled']) {
-            switch ($log['type']) {
-                case 'file' :
-                    $this->log = new \Dvelum\Log\File($log['logFile']);
-                    break;
-            }
-        }
-        $this->authorize();
-    }
-
-    /**
-     * Authorize as system user
-     */
-    protected function authorize()
-    {
-        $userId = $this->consoleConfig->get('user_id');
-        if ($userId && Model::factory('User')->query()->filters(['id' => $userId])->getCount()) {
-            $curUser = App\Session\User::factory();
-            $curUser->setId($userId);
-            $curUser->setAuthorized();
-            $this->user = $curUser;
-        } else {
-            $this->logMessage('Cron  cant\'t authorize');
-        }
+        $this->log = Service::get('log');
     }
 
     /**

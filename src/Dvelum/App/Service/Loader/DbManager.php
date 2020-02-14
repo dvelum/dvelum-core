@@ -25,18 +25,21 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
-namespace Dvelum\App\Frontend\Index;
-use Dvelum\App;
+namespace Dvelum\App\Service\Loader;
 
-class Controller extends App\Frontend\Controller
+use Dvelum;
+
+class DbManager extends AbstractAdapter
 {
     /**
-     * @return void
+     * @return Dvelum\Db\Manager
+     * @throws \Exception
      */
-    public function indexAction()
+    public function loadService()
     {
-        $this->response->put('<h2>Index</h2>');
+        return $this->config->get('dbManager');
     }
 }

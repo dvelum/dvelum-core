@@ -27,6 +27,8 @@
  */
 namespace Dvelum\Log;
 
+use Psr\Log\LogLevel;
+
 class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
 {
     /**
@@ -50,7 +52,7 @@ class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()) : bool
     {
         if(!$this->logDb->log($level, $message, $context)){
             $this->logFile->log($level, $message, $context);
@@ -58,5 +60,14 @@ class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
             return false;
         }
         return true;
+    }
+    /**
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
+    public function logError(string $message, array $context = []): bool
+    {
+        return $this->log(LogLevel::ERROR, $message, $context);
     }
 }
