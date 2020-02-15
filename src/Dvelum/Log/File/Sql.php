@@ -38,7 +38,7 @@ class Sql extends \Dvelum\Log\File implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []) : bool
     {
         return (bool) file_put_contents($this->file, $message ."\n", FILE_APPEND);
     }

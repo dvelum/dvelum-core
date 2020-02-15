@@ -104,7 +104,7 @@ class Insert
         $keys = array_keys($data);
 
         foreach ($keys as &$val) {
-            $val = $this->db->quoteIdentifier($val);
+            $val = $this->db->quoteIdentifier((string)$val);
         }
         unset($val);
 

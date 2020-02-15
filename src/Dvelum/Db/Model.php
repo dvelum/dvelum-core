@@ -41,7 +41,8 @@ abstract class Model
      */
     protected $table;
     /**
-     * @var
+     * DB connection config name
+     * @var string
      */
     protected $connection;
     /**
@@ -122,6 +123,9 @@ abstract class Model
      */
     public function getCacheAdapter() : ?CacheInterface
     {
+        if(empty($this->cache)){
+            return null;
+        }
         return $this->cache;
     }
 

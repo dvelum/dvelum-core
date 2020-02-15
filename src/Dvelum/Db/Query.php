@@ -34,9 +34,6 @@ use Dvelum\Db\Select\Filter;
 
 class Query
 {
-    const SEARCH_TYPE_STARTS_WITH = 'starts';
-    const SEARCH_TYPE_CONTAINS = 'contains';
-    const SEARCH_TYPE_ENDS_WITH = 'ends';
     /**
      * @var Model $model
      */
@@ -46,13 +43,29 @@ class Query
      */
     protected $db;
 
-    protected $search = null;
-    protected $searchType = self::SEARCH_TYPE_CONTAINS;
+    /**
+     * @var array|null
+     */
     protected $filters = null;
+    /**
+     * @var array|null
+     */
     protected $params = null;
+    /**
+     * @var array|string
+     */
     protected $fields = ['*'];
+    /**
+     * @var array|null
+     */
     protected $joins = null;
+    /**
+     * @var string|null
+     */
     protected $table = null;
+    /**
+     * @var string|null
+     */
     protected $tableAlias = null;
 
     public function __construct(Model $model)
@@ -207,8 +220,9 @@ class Query
      * Apply Join conditions
      * @param Db\Select $sql
      * @param array $joins
+     * @return void
      */
-    public function applyJoins($sql, array $joins)
+    public function applyJoins(Db\Select $sql, array $joins) : void
     {
         foreach ($joins as $config) {
             switch ($config['joinType']) {
