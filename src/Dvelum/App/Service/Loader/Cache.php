@@ -40,6 +40,10 @@ class Cache extends AbstractAdapter
      */
     public function loadService()
     {
-        return $this->config->get('dbManager');
+        if($this->config->offsetExists('cache')){
+            return $this->config->get('cache');
+        }else{
+            return null;
+        }
     }
 }
