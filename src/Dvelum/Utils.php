@@ -286,9 +286,10 @@ class Utils
      * Faster then uasort
      * @param array $data
      * @param string $field
+     * @param bool $reverse
      * @return array
      */
-    static public function sortByField(array $data, string $field): array
+    static public function sortByField(array $data, string $field, bool $reverse = false): array
     {
         $index = [];
 
@@ -296,7 +297,11 @@ class Utils
             $index[$id] = $item[$field];
         }
 
-        asort($index);
+        if($reverse){
+            arsort($index);
+        }else{
+            asort($index);
+        }
 
         $result = [];
 

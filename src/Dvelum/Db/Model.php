@@ -201,4 +201,12 @@ abstract class Model
     {
         return new Insert($this->getDbConnection());
     }
+
+    /**
+     * @return LogInterface|null
+     */
+    public function getLogsAdapter(): ?LogInterface
+    {
+        return $this->log;
+    }
 }

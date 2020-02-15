@@ -489,4 +489,16 @@ class Request
         $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
     }
+
+    /**
+     * Get request cookie
+     * @return array
+     */
+    public function cookie():array
+    {
+        if(!empty($_COOKIE)){
+            return $_COOKIE;
+        }
+        return [];
+    }
 }
