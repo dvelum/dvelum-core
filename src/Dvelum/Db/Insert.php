@@ -131,4 +131,15 @@ class Insert
         $sql .= implode(', ', $updates) . ';';
         $this->db->query($sql);
     }
+
+    /**
+     * Insert record
+     * @param string $table
+     * @param array $data
+     * @return void
+     */
+    public function insert(string $table, array $data) : void
+    {
+        $this->db->insert($table, $data);
+    }
 }
