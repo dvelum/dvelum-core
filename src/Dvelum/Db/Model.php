@@ -209,4 +209,35 @@ abstract class Model
     {
         return $this->log;
     }
+
+    /**
+     * Get cached record
+     * @param int $recordId
+     * @param int $lifetime
+     * @param string $keyField
+     * @return array
+     */
+    public function getCachedItem(int $recordId, int $lifetime, string $keyField = 'id') : array
+    {
+        $cache = $this->getCacheAdapter();
+        $key =  $this->table.'_item_'.$recordId;
+
+        $data = null;
+
+
+        if(!empty($cache)){
+            $data = $cache->load($key);
+        }
+
+        if(!empty($data)){
+            return $data;
+        }
+
+        $data = $this->getItem($recordId, $keyField);
+
+        if($cache) {
+            $cache->save($data, $key, $lifetime);
+        }
+        return $data;
+    }
 }
