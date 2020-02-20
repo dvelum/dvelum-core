@@ -212,7 +212,7 @@ class Response
      */
     public function setResponseCode(int $code): void
     {
-        if(method_exists('http_response_code')){
+        if(function_exists('http_response_code')){
             http_response_code($code);
         }else{
             header('X-PHP-Response-Code: '.$code, true, $code);

@@ -32,7 +32,6 @@ namespace Dvelum\App\Console;
 use Dvelum\App;
 use Dvelum\Config;
 use Dvelum\Log\LogInterface;
-use Dvelum\Orm\Model;
 use Dvelum\App\Router;
 use Dvelum\Request;
 use Dvelum\Response;
@@ -49,7 +48,7 @@ class Controller extends App\Controller implements Router\RouterInterface
 
     /**
      * Launcher configuration
-     * @var array
+     * @var Config\ConfigInterface
      */
     protected $consoleConfig;
     /**
@@ -86,8 +85,9 @@ class Controller extends App\Controller implements Router\RouterInterface
     /**
      * Log message
      * @param string $text
+     * @return void
      */
-    protected function logMessage($text)
+    protected function logMessage($text) : void
     {
         if ($this->log) {
             $this->log->log(LogLevel::ERROR, get_called_class() . ' :: '. $text);
@@ -106,9 +106,12 @@ class Controller extends App\Controller implements Router\RouterInterface
         $this->indexAction();
     }
 
-    public function indexAction()
+    /**
+     * @return void
+     */
+    public function indexAction() : void
     {
-        $action = strtolower($this->request->getPart(0));
+        $action = strtolower((string)$this->request->getPart(0));
 
         if (empty($action) || !isset($this->actions[$action])) {
             $this->response->put('Undefined Action');
