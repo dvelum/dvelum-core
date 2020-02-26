@@ -142,7 +142,7 @@ class SelectTest extends TestCase
 
         $sql = $this->getSelect();
 		$sql->from('table')->where('`id` =?',0.6)->order('name DESC');
-		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =0.600000) ORDER BY `name` DESC;';
+		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =0.6) ORDER BY `name` DESC;';
 		$this->assertEquals($sql->assemble() , $str);
 
         $sql = $this->getSelect();
