@@ -178,25 +178,4 @@ return array(
      * Fallback Authentification provider. If empty or not set - fallback disabled.
      */
     'fallback_auth_provider' => '',
-    /*
-     * External modules configuration
-     */
-    'externals' =>[
-        'path' => './modules',
-        'resources_path' => $wwwPath . 'resources/',
-        'resources_root' => $wwwRoot . 'resources/',
-        'repo' => [
-            'dvelum-packagist'=> [
-                'title' => 'DVelum official',
-                'adapter' => '\\Dvelum\\Externals\\Client\\Packagist',
-                'adapterConfig' => [
-                    'vendor' => 'dvelum',
-                    'type'=>'dvelum-module',
-                    //Path to composer command
-                    'composer_path' => 'composer',
-                    'download_path' => './modules'
-                ],
-            ]
-        ]
-    ],
 );
