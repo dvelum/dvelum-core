@@ -43,7 +43,8 @@ class Console extends Router
      */
     public function route(Request $request , Response $response) : void
     {
-        $controllerClass = '\\Dvelum\\App\\Console\\Controller';
+        $consoleConfig = \Dvelum\Config::storage()->get('console.php');
+        $controllerClass = $consoleConfig->get('controller');
         $this->runController($controllerClass , $request->getPart(0), $request, $response);
     }
 

@@ -46,4 +46,10 @@ interface ManagerInterface
      * @return ConfigInterface
      */
     public function getDbConfig(string $name) : ConfigInterface;
+
+    /**
+     * Set handler for connection error
+     * @param callable $handler
+     */
+    public function setConnectionErrorHandler(callable $handler): void;
 }
