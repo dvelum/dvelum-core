@@ -80,7 +80,26 @@ class Manager
         $this->extensionsConfig = $this->appConfig->get('extensions');
     }
 
-    
+    /**
+     * @param string $moduleId
+     * @return bool
+     */
+    public function extensionRegistered(string $moduleId) : bool
+    {
+        return $this->config->offsetExists($moduleId);
+    }
+
+    /**
+     * Add extension to registry
+     * @param string $extensionId
+     * @param array $config
+     * @return bool
+     */
+    public function add(string $extensionId, array $config) : bool
+    {
+        $this->config->set($extensionId, $config);
+        return Config::storage()->save($this->config);
+    }
     /**
      * Load external modules configuration
      * @return void

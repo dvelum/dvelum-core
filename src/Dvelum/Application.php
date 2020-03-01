@@ -153,7 +153,8 @@ class Application
             Config\Factory::create([
                 'appConfig' => $this->config,
                 'dbManager' => $dbManager,
-                'cache' => $cache
+                'cache' => $cache,
+                'autoloader' => $this->autoloader
             ])
         );
 
