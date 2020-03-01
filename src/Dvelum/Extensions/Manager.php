@@ -158,8 +158,8 @@ class Manager
             foreach ($autoLoadPaths as $path) {
                 $newChain[] = $path;
             }
-
-            foreach ($autoloaderCfg['paths'] as $path) {
+            $currentAutoloadPaths = $this->autoloader->getRegisteredPaths();
+            foreach ($currentAutoloadPaths as $path) {
                 if (!in_array($path, $newChain, true)) {
                     $newChain[] = $path;
                 }

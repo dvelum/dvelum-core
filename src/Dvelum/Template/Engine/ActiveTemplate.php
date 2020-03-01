@@ -102,7 +102,7 @@ class ActiveTemplate implements EngineInterface
             $html = $this->cache->load($hash);
 
             if($html !== false)
-                return $html;
+                return (string)$html;
         }
 
         \ob_start();

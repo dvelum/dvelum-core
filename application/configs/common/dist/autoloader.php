@@ -3,15 +3,13 @@
 return [
     // PSR-0 autoload paths
     'paths' => [
-        './application/controllers',
         './application/classes',
         './src',
     ],
     // paths priority (cannot be overridden by external modules)
     'priority'=>[
-        './application/controllers',
-        './application/models',
-        './application/library',
+        './application/classes',
+        './src',
     ],
     // Use class maps
     'useMap' => true,

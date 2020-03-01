@@ -121,12 +121,6 @@ class Application
          */
         $dbManager = $this->initDb();
 
-        /*
-         * Init templates storage
-         */
-        $templateStorage = View::storage();
-        $templateStorage->setConfig(Config\Factory::storage()->get('template_storage.php')->__toArray());
-
         $request = Request::factory();
         $request->setConfig(Config\Factory::create([
             'delimiter' => $config['urlDelimiter'],
@@ -159,6 +153,13 @@ class Application
         );
 
         $this->initExtensions();
+
+        /*
+         * Init templates storage
+         */
+        $templateStorage = View::storage();
+        $templateStorage->setConfig(Config\Factory::storage()->get('template_storage.php')->__toArray());
+
 
         $this->initialized = true;
     }
