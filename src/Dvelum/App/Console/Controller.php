@@ -78,21 +78,8 @@ class Controller extends App\Controller implements Router\RouterInterface
         foreach ($data as $action => $config){
             $this->actions[strtolower($action)] = $config;
         }
-
-        $this->log = Service::get('log');
     }
 
-    /**
-     * Log message
-     * @param string $text
-     * @return void
-     */
-    protected function logMessage($text) : void
-    {
-        if ($this->log) {
-            $this->log->log(LogLevel::ERROR, get_called_class() . ' :: '. $text);
-        }
-    }
 
     /**
      * Run action

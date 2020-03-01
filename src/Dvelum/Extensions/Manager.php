@@ -107,13 +107,13 @@ class Manager
                 continue;
             }
 
-            $path = $extensionsDir  . File::fillEndSep($config['dir']) . '/';
+            $path = $extensionsDir  . File::fillEndSep($config['dir']);
 
             if(!empty($config['paths']['src'])){
                 $autoLoadPaths[] =  $path . $config['paths']['src'];
             }
 
-            if (!empty($modCfg['configs'])) {
+            if (!empty($config['paths']['configs'])) {
                 $configPaths[] =  $path . $config['paths']['configs'] . '/';
             }
 
