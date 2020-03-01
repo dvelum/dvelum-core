@@ -311,8 +311,9 @@ class Application
      * Init additional external modules
      * defined in external_modules option
      * of main configuration file
+     * @return void
      */
-    protected function initExtensions()
+    protected function initExtensions() : void
     {
         $extensions = Config\Factory::storage()->get('extensions.php');
         if(empty($extensions)){
