@@ -33,10 +33,10 @@ class Add extends Console\Action
     public function action(): bool
     {
         $request = Request::factory();
-        $vendor = Filter::filterString($request->getPart(1));
-        $extension = Filter::filterString($request->getPart(2));
+        $vendor = Filter::filterString((string)$request->getPart(1));
+        $extension = Filter::filterString((string)$request->getPart(2));
 
-        if(empty($vendor) || empty($module)){
+        if(empty($vendor) || empty($extension)){
             return false;
         }
 
@@ -72,6 +72,6 @@ class Add extends Console\Action
             'dir' => $moduleId
         ], $moduleInfo);
 
-        return $manager->register($moduleId, $config);
+        return $manager->add($moduleId, $config);
     }
 }

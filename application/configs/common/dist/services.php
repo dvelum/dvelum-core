@@ -17,5 +17,8 @@ return [
     ],
     'Cache' => [
         'loader'=>'\\Dvelum\\App\\Service\\Loader\\Cache'
+    ],
+    'Autoloader' => [
+        'loader' => '\\Dvelum\\App\\Service\\Loader\\Autoloader'
     ]
 ];
