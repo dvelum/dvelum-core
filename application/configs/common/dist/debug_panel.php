@@ -1,6 +1,8 @@
 <?php
 return [
     'options' => [
+        // show timers
+        'timers' => true,
         // cache requests
         'cache' => true,
         // sql queries list

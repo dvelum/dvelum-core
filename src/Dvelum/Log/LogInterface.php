@@ -40,5 +40,11 @@ interface LogInterface{
      * @param array $context
      * @return bool
      */
-	public function log($level, string $message, array $context = []);
+	public function log($level, string $message, array $context = []) : bool;
+    /**
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
+	public function logError(string $message, array $context = []) : bool;
 }

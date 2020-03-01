@@ -206,4 +206,16 @@ class Response
     {
         return $this->sent;
     }
+
+    /**
+     * @param int $code
+     */
+    public function setResponseCode(int $code): void
+    {
+        if(function_exists('http_response_code')){
+            http_response_code($code);
+        }else{
+            header('X-PHP-Response-Code: '.$code, true, $code);
+        }
+    }
 }

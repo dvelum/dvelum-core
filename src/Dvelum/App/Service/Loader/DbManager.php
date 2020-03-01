@@ -25,31 +25,21 @@
  * SOFTWARE.
  *
  */
-namespace  Dvelum\Db;
 
-use Dvelum\Config\ConfigInterface;
+declare(strict_types=1);
 
-interface ManagerInterface
+namespace Dvelum\App\Service\Loader;
+
+use Dvelum;
+
+class DbManager extends AbstractAdapter
 {
     /**
-     * Get Database connection
-     * @param string $name
-     * @param null|string $workMode
-     * @param null|string $shard
-     * @return Adapter
-     */
-    public function getDbConnection(string $name, ?string $workMode = null, ?string $shard = null) : Adapter;
-    /**
-     * Get DB connection config
-     * @param string $name
+     * @return Dvelum\Db\Manager
      * @throws \Exception
-     * @return ConfigInterface
      */
-    public function getDbConfig(string $name) : ConfigInterface;
-
-    /**
-     * Set handler for connection error
-     * @param callable $handler
-     */
-    public function setConnectionErrorHandler(callable $handler): void;
+    public function loadService()
+    {
+        return $this->config->get('dbManager');
+    }
 }

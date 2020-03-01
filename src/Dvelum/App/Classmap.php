@@ -78,16 +78,14 @@ class Classmap
 
     /**
      * @throws \Exception
-     * @param Autoload $autoloader
      * @return void
      */
-    public function update(Autoload $autoloader) : void
+    public function update() : void
     {
+        $path = $this->autoloaderCfg['path'];
+
         $this->map = [];
-
-        $paths = $autoloader->getRegisteredPaths();
-
-        foreach($paths as $v)
+        foreach($path as $v)
         {
             $v = File::fillEndSep($v);
             if(is_dir($v)){

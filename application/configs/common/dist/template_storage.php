@@ -5,6 +5,5 @@
 return array(
     'paths' => array(
         './application/templates/',
-        './dvelum/templates/',
     )
 );

@@ -3,10 +3,7 @@
 [![Build Status](https://travis-ci.org/dvelum/dvelum-core.svg?branch=master)](https://travis-ci.org/dvelum/dvelum-core)
 
 
-[Внимание, стабильная ветка 2.x](https://github.com/dvelum/dvelum/tree/2.x)
-===
-
-DVelum 3.x Core (Experimental repo)
+DVelum 3.x Core
 ======
 
 
@@ -14,7 +11,7 @@ Local installation
 -----
 
 ```
-composer create-project dvelum/dvelum
+composer create-project dvelum/dvelum-core
 ```
 Apache VirtualHost configuration example
 ```
@@ -32,10 +29,5 @@ Add local domain to /etc/hosts
 ```
 127.0.0.1 dvelum.local
 ```
-
-Open Web Browser at http://dvelum.local/
-
-Issues https://github.com/dvelum/dvelum/issues
-
 
 

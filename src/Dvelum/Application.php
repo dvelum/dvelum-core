@@ -57,7 +57,7 @@ class Application
     protected $cache;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $initialized = false;
 
@@ -195,22 +195,13 @@ class Application
      * @return Db\ManagerInterface
      * @throws \Exception
      */
-    protected function initDb()
+    protected function initDb() : Db\ManagerInterface
     {
         $dev = $this->config->get('development');
-        $dbErrorHandler = function ( Db\Adapter\Event $e) use( $dev){
+        $dbErrorHandler = function ( Db\Adapter\Event $e){
             $response = Response::factory();
-            $request = Request::factory();
-            if($request->isAjax()){
-                $response->error(Lang::lang()->get('CANT_CONNECT'));
-                exit();
-            }else{
-                $tpl = View::factory();
-                $tpl->set('error_msg', ' ' . $e->getData()['message']);
-                $tpl->set('development', $dev);
-                echo $tpl->render('public/error.php');
-                exit();
-            }
+            $response->error(Lang::lang()->get('CANT_CONNECT'));
+            exit();
         };
 
         $useProfiler = false;

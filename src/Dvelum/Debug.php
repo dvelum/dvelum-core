@@ -107,6 +107,7 @@ class Debug
     {
         $options = array_merge(
             array(
+                'timers' => true,
                 'cache' => true,
                 'sql' => false,
                 'autoloader' => false,
@@ -130,6 +131,13 @@ class Debug
 
         if (!empty(self::$dbProfilers)) {
             $str .= self::getQueryProfiles($options);
+        }
+
+        if($options['timers'] && !empty(self::$timers)) {
+            $str .= "<b>Timers:</b>\n<br>";
+            foreach (self::$timers as $name => $data){
+                $str .= $name.': '.$data['time'].'s<br>'."\n";
+            }
         }
 
 
@@ -215,7 +223,8 @@ class Debug
     {
         self::$timers[$name] = array(
             'start' => microtime(true),
-            'stop' => 0
+            'stop' => 0,
+            'time' => 0
         );
     }
 
@@ -231,7 +240,8 @@ class Debug
         }
 
         self::$timers[$name]['stop'] = microtime(true);
-        return self::$timers[$name]['stop'] - self::$timers[$name]['start'];
+        self::$timers[$name]['time'] = self::$timers[$name]['stop'] - self::$timers[$name]['start'];
+        return self::$timers[$name]['time'];
     }
 
     /**

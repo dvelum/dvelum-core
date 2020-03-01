@@ -27,6 +27,8 @@
  */
 namespace Dvelum\Log;
 
+use Psr\Log\LogLevel;
+
 /**
  * Database log
  * Class Db
@@ -102,6 +104,17 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
             return false;
         }
     }
+
+    /**
+     * @param string $message
+     * @param array $context
+     * @return bool
+     */
+    public function logError(string $message, array $context = []): bool
+    {
+        return $this->log(LogLevel::ERROR, $message, $context);
+    }
+
 
     /**
      * Set database adapter

@@ -25,31 +25,25 @@
  * SOFTWARE.
  *
  */
-namespace  Dvelum\Db;
 
-use Dvelum\Config\ConfigInterface;
+declare(strict_types=1);
 
-interface ManagerInterface
+namespace Dvelum\App\Service\Loader;
+
+use Dvelum;
+
+class Cache extends AbstractAdapter
 {
     /**
-     * Get Database connection
-     * @param string $name
-     * @param null|string $workMode
-     * @param null|string $shard
-     * @return Adapter
-     */
-    public function getDbConnection(string $name, ?string $workMode = null, ?string $shard = null) : Adapter;
-    /**
-     * Get DB connection config
-     * @param string $name
+     * @return Dvelum\Cache\CacheInterface|null
      * @throws \Exception
-     * @return ConfigInterface
      */
-    public function getDbConfig(string $name) : ConfigInterface;
-
-    /**
-     * Set handler for connection error
-     * @param callable $handler
-     */
-    public function setConnectionErrorHandler(callable $handler): void;
+    public function loadService()
+    {
+        if($this->config->offsetExists('cache')){
+            return $this->config->get('cache');
+        }else{
+            return null;
+        }
+    }
 }

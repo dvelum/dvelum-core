@@ -12,4 +12,10 @@ return [
     'Template' => [
         'loader'=>'\\Dvelum\\App\\Service\\Loader\\Template'
     ],
+    'DbManager' => [
+        'loader'=>'\\Dvelum\\App\\Service\\Loader\\DbManager'
+    ],
+    'Cache' => [
+        'loader'=>'\\Dvelum\\App\\Service\\Loader\\Cache'
+    ]
 ];

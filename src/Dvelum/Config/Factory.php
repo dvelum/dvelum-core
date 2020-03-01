@@ -144,27 +144,6 @@ class Factory
     }
 
     /**
-     * Clear cache
-     * @return void
-     */
-    static public function resetCache() : void
-    {
-        if(empty(self::$store))
-            self::connectLocalStore();
-
-        if(empty(self::$store))
-            return;
-
-        foreach(self::$store as $k => $v)
-        {
-            if(self::$cache)
-                self::$cache->remove($k);
-
-            self::$store->remove($k);
-        }
-    }
-
-    /**
      * Instantiate storage
      * @return AdapterInterface
      */
@@ -186,10 +165,15 @@ class Factory
 
         if($key === false)
         {
+            /**
+             * @todo  NEED REFACTORING !!!
+             */
+            /*
             foreach(self::$store as $k => $v)
             {
                 self::$cache->save($v , $k);
             }
+            */
         }
         else
         {
