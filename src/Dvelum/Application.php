@@ -65,6 +65,10 @@ class Application
      * @var Autoload
      */
     protected $autoloader;
+    /**
+     * @var Manager|null
+     */
+    protected $extensionsManager;
 
     /**
      * The constructor accepts the main configuration object as an argument
@@ -100,7 +104,7 @@ class Application
         /*
          * Init extensions
          */
-        $this->initExtensions();
+        $this->loadExtensions();
 
         $config = & $this->config->dataLink();
 
@@ -152,6 +156,9 @@ class Application
                 'cache' => $cache
             ])
         );
+
+        $this->initExtensions();
+
         $this->initialized = true;
     }
 
@@ -308,19 +315,27 @@ class Application
     }
 
     /**
-     * Init additional external modules
-     * defined in external_modules option
-     * of main configuration file
+     * Load additional core extensions
      * @return void
      */
-    protected function initExtensions() : void
+    protected function loadExtensions() : void
     {
         $extensions = Config\Factory::storage()->get('extensions.php');
         if(empty($extensions)){
             return;
         }
 
-        $manager = new Manager($this->config, $this->autoloader);
-        $manager->loadExtensions();
+        $this->extensionsManager = new Manager($this->config, $this->autoloader);
+        $this->extensionsManager->loadExtensions();
+    }
+
+    /**
+     * Initialize core and service dependent extensions
+     */
+    protected function initExtensions() : void
+    {
+        if(!empty($this->extensionsManager)){
+            $this->extensionsManager->initExtensions();
+        }
     }
 }

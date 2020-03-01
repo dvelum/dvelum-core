@@ -96,14 +96,12 @@ class Manager
         $autoLoadPaths = [];
         $autoLoadPathsPsr4 = [];
         $configPaths = [];
-        $templatesPaths = [];
-        $langPaths = [];
 
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
 
-            if (!$config['enabled'] || isset($this->loadedExtensions[$index])) {
+            if (!$config['enabled'] || isset($this->loadedExtensions[$index]['loaded'])) {
                 continue;
             }
 
@@ -117,7 +115,6 @@ class Manager
                 $configPaths[] =  $path . $config['paths']['configs'] . '/';
             }
 
-
             /*
              * @todo implement extension locales an templates
 
@@ -126,15 +123,11 @@ class Manager
                     $autoLoadPathsPsr4[$ns] = str_replace('./', $path, $classPath);
                 }
             }
-            if (!empty($modCfg['locales'])) {
-                $langPaths[] = str_replace(['./', '//'], [$path, ''], $modCfg['locales'] . '/');
-            }
 
-            if (!empty($modCfg['templates'])) {
-                $templatesPaths[] = str_replace(['./', '//'], [$path, ''], $modCfg['templates'] . '/');
-            }
+
+
             */
-            $this->loadedExtensions[$index] = true;
+            $this->loadedExtensions[$index]['load'] = true;
         }
 
         // Add autoloader paths
@@ -184,7 +177,44 @@ class Manager
             $resultPaths[] = $writePath;
             $storage->replacePaths($resultPaths);
         }
-        /*
+    }
+
+    /**
+     * Initialize core and service dependent extensions
+     */
+    public function initExtensions() : void
+    {
+        $modules = $this->config->__toArray();
+
+        if (empty($modules)) {
+            return;
+        }
+
+        $templatesPaths = [];
+        $langPaths = [];
+
+        $extensionsDir = $this->extensionsConfig['path'];
+
+        foreach ($modules as $index => $config) {
+
+            if (!$config['enabled'] || isset($this->loadedExtensions[$index]['init'])) {
+                continue;
+            }
+
+            $path = $extensionsDir  . File::fillEndSep($config['dir']);
+
+
+            if (!empty($config['paths']['locales'])) {
+                $langPaths[] = $path . $config['paths']['locales'] . '/';
+            }
+
+            if (!empty($config['paths']['templates'])) {
+                $templatesPaths[] = $path . $config['paths']['templates'] . '/';
+            }
+
+            $this->loadedExtensions[$index]['init'] = true;
+        }
+
         // Add localization paths
         if (!empty($langPaths)) {
             $langStorage = Lang::storage();
@@ -192,6 +222,7 @@ class Manager
                 $langStorage->addPath($path);
             }
         }
+
         // Add Templates paths
         if (!empty($templatesPaths)) {
             $templateStorage = \Dvelum\View::storage();
@@ -201,9 +232,7 @@ class Manager
             $pathsResult = [];
             $pathsResult[] = $mainPath;
             $pathsResult = array_merge($pathsResult, $templatesPaths, $paths);
-
             $templateStorage->setPaths($pathsResult);
         }
-        */
     }
 }
