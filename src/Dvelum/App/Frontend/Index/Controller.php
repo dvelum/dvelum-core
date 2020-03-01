@@ -37,6 +37,6 @@ class Controller extends App\Frontend\Controller
      */
     public function indexAction()
     {
-        $this->page->addText('<h2>Index</h2>');
+        $this->response->put('<h2>Index</h2>');
     }
 }

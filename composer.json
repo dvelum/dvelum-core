@@ -40,5 +40,13 @@
         "phpunit/phpunit": "^9",
         "phpstan/phpstan": "^0.12",
         "codacy/coverage": "dev-master"
+    },
+    "extra": {
+        "installer-types": ["js-library","dvelum3-extension", "library"],
+        "installer-paths": {
+            "www/js/lib/{$name}": ["type:js-library"],
+            "modules/{$vendor}/{$name}":["type:dvelum3-module"],
+            "extensions/{$vendor}-{$name}":["type:dvelum3-extension"]
+        }
     }
 }
