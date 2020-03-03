@@ -30,7 +30,7 @@ declare(strict_types=1);
 
 namespace Dvelum;
 
-use Dvelum\{App\Cache, Config\ConfigInterface, Db, Cache\CacheInterface};
+use Dvelum\{App\Cache, Config\ConfigInterface, Db, Cache\CacheInterface, Extensions\Manager};
 
 
 /**
@@ -97,6 +97,11 @@ class Application
             return;
         }
 
+        /*
+         * Init extensions
+         */
+        $this->initExtensions();
+
         $config = & $this->config->dataLink();
 
         date_default_timezone_set($config['timezone']);
@@ -147,7 +152,6 @@ class Application
                 'cache' => $cache
             ])
         );
-
         $this->initialized = true;
     }
 
@@ -301,5 +305,22 @@ class Application
         if (!$response->isSent()) {
             $response->send();
         }
+    }
+
+    /**
+     * Init additional external modules
+     * defined in external_modules option
+     * of main configuration file
+     * @return void
+     */
+    protected function initExtensions() : void
+    {
+        $extensions = Config\Factory::storage()->get('extensions.php');
+        if(empty($extensions)){
+            return;
+        }
+
+        $manager = new Manager($this->config, $this->autoloader);
+        $manager->loadExtensions();
     }
 }

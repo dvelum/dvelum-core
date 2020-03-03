@@ -14,26 +14,7 @@ return array(
      * 2 - test (development mode + test DB)
      * 3 - installation mode
      */
-    'development' => 3,
-    /*
-     * Development version (used by use_orm_build_log)
-     */
-    'development_version' => '0.1',
-    /*
-     * Background tasks log path
-     */
-    'task_log_path' => $docRoot . '/data/logs/task/',
-    /*
-     * File uploads path
-     */
-    'uploads' => $wwwPath . 'media/',
-    /*
-     * Back-office panel URL
-     * For safety reasons adminPath may be changed, however,
-     * keep in mind that IDE builds full paths in the current version,
-     * thus, they would have to be manually updated in the projects.
-     */
-    'adminPath' => 'backoffice',
+    'development' => 1,
     /*
      * Templates directory
      */
@@ -48,11 +29,6 @@ return array(
      * Please note. Changing the language will switch ORM storage settings.
      */
     'language' => $language,
-    /**
-     * Localization files path
-     */
-    'js_lang_path' => $wwwPath . 'js/lang/',
-    'salt' => 'ThSc-9086',
     'timezone' => 'Europe/Moscow',
 
     'jsPath' => $wwwPath . 'js/',
@@ -67,22 +43,6 @@ return array(
      * Main directory for config files
      */
     'configs' => '', // configs path $docRoot . '/config/',
-    /*
-     * Report configs directory
-     */
-    'report_configs' => 'reports/',
-    /*
-     * Modules directory
-     */
-    'modules' => 'modules/',
-    /*
-     * Backend modules config file
-     */
-    'backend_modules' => 'modules_backend.php',
-    /**
-     * Backend controllers directories
-     */
-    'backend_controllers_dirs' => ['Dvelum/App/Backend','App/Backend','Backend'],
     /**
      * Frontend controllers directories
      */
@@ -91,14 +51,6 @@ return array(
      * Local controllers path
      */
     'local_controllers' => './application/classes/',
-    /**
-     * Local models path
-     */
-    'local_models' => './application/classes/app/',
-    /*
-     * Frontend modules config file
-     */
-    'frontend_modules' => 'modules_frontend.php',
     /*
      * Dictionary directory
      */
@@ -111,7 +63,6 @@ return array(
     * Use memcached
     */
     'use_cache' => false,
-    'themes' => 'public/',
     /*
      * Stop the site with message "Essential maintenance in progress. Please check back later."
      */
@@ -121,21 +72,14 @@ return array(
      */
     'debug_panel' => false,
     /*
-     * HTML WYSIWYG Editor
-     * default  - ckeditor
-     */
-    'html_editor' => 'ckeditor',
-    /*
-     *  Use hard cache expiration time defined in frontend_hardcache for caching blocks;
-     *  allows to reduce the cache time of dynamic blocks;
-     *  is used if there are not enough triggers for cache invalidation
-     */
-    'blockmanager_hard_cache' => false,
-    /*
      * www root
      */
     'wwwroot' => $wwwRoot,
     'wwwpath' => $wwwPath,
+    /*
+     * Frontend modules config file
+     */
+    'frontend_modules' => 'modules_frontend.php',
     /**
      * Relative path to DB configs
      */
@@ -171,11 +115,9 @@ return array(
      */
     'vendor_lib'=> $docRoot . '/vendor/',
     /*
-     * Default Authentication provider. Or uncomment 'uprovider' select in login template.
+     * Extensions configuration
      */
-    'default_auth_provider' => 'dvelum',
-    /*
-     * Fallback Authentification provider. If empty or not set - fallback disabled.
-     */
-    'fallback_auth_provider' => '',
+    'extensions' => [
+        'path' => './extensions/'
+    ]
 );

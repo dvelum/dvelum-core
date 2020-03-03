@@ -1,6 +1,6 @@
 {
     "name": "dvelum/dvelum-core",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "type": "project",
     "description": "DVelum 3.x core",
     "keywords": ["dvelum","php"],
@@ -40,5 +40,13 @@
         "phpunit/phpunit": "^9",
         "phpstan/phpstan": "^0.12",
         "codacy/coverage": "dev-master"
+    },
+    "extra": {
+        "installer-types": ["js-library","dvelum3-extension", "library"],
+        "installer-paths": {
+            "www/js/lib/{$name}": ["type:js-library"],
+            "modules/{$vendor}/{$name}":["type:dvelum3-module"],
+            "extensions/{$vendor}/{$name}":["type:dvelum3-extension"]
+        }
     }
 }
