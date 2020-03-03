@@ -58,7 +58,7 @@ abstract class Model
      */
     protected $cache;
     /**
-     * @var LogInterface
+     * @var LogInterface|null
      */
     protected $log;
 
@@ -66,31 +66,34 @@ abstract class Model
      * @return static
      * @throws \Exception
      */
-    static public function factory() : self
+    static public function factory(): self
     {
         static $instance = null;
 
-        if(empty($instance)){
-            /**
-             * @var LogInterface $log
-             */
-            $log = Service::get('Log');
+        if (empty($instance)) {
+            $log = null;
+            if (Service::isRegistered('Log')) {
+                /**
+                 * @var LogInterface $log
+                 */
+                $log = Service::get('Log');
+            }
             /**
              * @var Manager $dbManager
              */
             $dbManager = Service::get('DbManager');
-            $instance = new static($log, $dbManager);
+            $instance = new static($dbManager, $log);
         }
         return $instance;
     }
 
     /**
      * Model constructor.
-     * @param LogInterface $log
+     * @param LogInterface|null $log
      * @param Manager $dbManager
      * @throws \Exception
      */
-    protected function __construct(LogInterface $log, Manager $dbManager)
+    protected function __construct(Manager $dbManager, ?LogInterface $log = null)
     {
         $this->log = $log;
         $this->dbManager = $dbManager;
@@ -103,16 +106,19 @@ abstract class Model
      * @param string $message
      * @return bool
      */
-    public function logError(string $message) : bool
+    public function logError(string $message): bool
     {
-       return $this->log->logError($message);
+        if (!empty($this->log)) {
+            return $this->log->logError($message);
+        }
+        return false;
     }
 
     /**
      * Get table name
      * @return string
      */
-    public function table() : string
+    public function table(): string
     {
         return $this->table;
     }
@@ -121,9 +127,9 @@ abstract class Model
      * Get cache adapter
      * @return CacheInterface|null
      */
-    public function getCacheAdapter() : ?CacheInterface
+    public function getCacheAdapter(): ?CacheInterface
     {
-        if(empty($this->cache)){
+        if (empty($this->cache)) {
             return null;
         }
         return $this->cache;
@@ -133,7 +139,7 @@ abstract class Model
      * Get database connection adapter
      * @return Adapter
      */
-    public function getDbConnection() : Adapter
+    public function getDbConnection(): Adapter
     {
         return $this->db;
     }
@@ -153,12 +159,12 @@ abstract class Model
      * @param string $keyField
      * @return bool
      */
-    public function delete(int $recordId, string $keyField = 'id') : bool
+    public function delete(int $recordId, string $keyField = 'id'): bool
     {
-        try{
-            $this->db->delete($this->table, $this->db->quoteIdentifier($keyField).' = '.$recordId);
+        try {
+            $this->db->delete($this->table, $this->db->quoteIdentifier($keyField) . ' = ' . $recordId);
             return true;
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->logError($e->getMessage());
             return false;
         }
@@ -172,10 +178,10 @@ abstract class Model
      * @param string $keyField
      * @return bool
      */
-    public function update(int $recordId, array $data , string $keyField = 'id') : bool
+    public function update(int $recordId, array $data, string $keyField = 'id'): bool
     {
         try {
-            $this->db->update($this->table(), $data, $this->db->quoteIdentifier($keyField).' = '.$recordId);
+            $this->db->update($this->table(), $data, $this->db->quoteIdentifier($keyField) . ' = ' . $recordId);
             return true;
         } catch (\Exception $e) {
             $this->logError($e->getMessage());
@@ -189,15 +195,15 @@ abstract class Model
      * @param string $keyField
      * @return array
      */
-    public function getItem(int $recordId, string $keyField = 'id') : array
+    public function getItem(int $recordId, string $keyField = 'id'): array
     {
-        return $this->query()->filters([$keyField=>$recordId])->fetchRow();
+        return $this->query()->filters([$keyField => $recordId])->fetchRow();
     }
 
     /**
      * @return Insert
      */
-    public function insert() : Insert
+    public function insert(): Insert
     {
         return new Insert($this->getDbConnection());
     }
@@ -217,25 +223,25 @@ abstract class Model
      * @param string $keyField
      * @return array
      */
-    public function getCachedItem(int $recordId, int $lifetime, string $keyField = 'id') : array
+    public function getCachedItem(int $recordId, int $lifetime, string $keyField = 'id'): array
     {
         $cache = $this->getCacheAdapter();
-        $key =  $this->table.'_item_'.$recordId;
+        $key = $this->table . '_item_' . $recordId;
 
         $data = null;
 
 
-        if(!empty($cache)){
+        if (!empty($cache)) {
             $data = $cache->load($key);
         }
 
-        if(!empty($data)){
+        if (!empty($data)) {
             return $data;
         }
 
         $data = $this->getItem($recordId, $keyField);
 
-        if($cache) {
+        if ($cache) {
             $cache->save($data, $key, $lifetime);
         }
         return $data;
