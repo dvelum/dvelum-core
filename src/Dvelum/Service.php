@@ -92,4 +92,14 @@ class Service
         }
         return self::$services[$name];
     }
+
+    /**
+     * Check service by name
+     * @param string $service
+     * @return bool
+     */
+    static public function isRegistered(string $service) : bool
+    {
+        return self::$config->offsetExists($service);
+    }
 }
