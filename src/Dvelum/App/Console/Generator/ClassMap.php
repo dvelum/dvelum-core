@@ -43,6 +43,7 @@ class ClassMap extends Console\Action
     public function action(): bool
     {
         $mapBuilder = new \Dvelum\App\Classmap($this->appConfig);
+        $mapBuilder->update();
         return $mapBuilder->save();
     }
 }

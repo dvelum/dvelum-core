@@ -82,7 +82,7 @@ class Classmap
      */
     public function update() : void
     {
-        $path = $this->autoloaderCfg['path'];
+        $path = $this->autoloaderCfg['paths'];
 
         $this->map = [];
         foreach($path as $v)
