@@ -100,6 +100,6 @@ class Service
      */
     static public function isRegistered(string $service) : bool
     {
-        return self::$config->offsetExists($service);
+        return self::$config->offsetExists(strtolower($service));
     }
 }
