@@ -63,8 +63,11 @@ class File extends AbstractAdapter
             'type' => ''
         );
 
-        $name = str_replace(' ' , '_' , (string) $data['name']);
-        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
+        $name = $this->createUploadedName($data);
+
+        if(empty($name)){
+            return false;
+        }
 
         $ext = \Dvelum\File::getExt((string) $name);
 
@@ -128,5 +131,17 @@ class File extends AbstractAdapter
         @chmod($result['path'] , 0644);
 
         return $result;
+    }
+
+    /**
+     * Create filename for uploaded file
+     * @param array $fileData
+     * @return string|null
+     */
+    protected function createUploadedName(array $fileData) : ?string
+    {
+        $name = str_replace(' ' , '_' , $fileData['name']);
+        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
+        return (string) $name;
     }
 }
