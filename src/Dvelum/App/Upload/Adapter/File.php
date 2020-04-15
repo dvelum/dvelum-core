@@ -142,6 +142,9 @@ class File extends AbstractAdapter
     {
         $name = str_replace(' ' , '_' , $fileData['name']);
         $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
-        return (string) $name;
+        if(!is_string($name)){
+            $name = null;
+        }
+        return $name;
     }
 }

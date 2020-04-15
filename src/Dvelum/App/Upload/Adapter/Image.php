@@ -46,6 +46,12 @@ class Image extends File
     {
         $name = str_replace(' ' , '_' , $fileData['name']);
         $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
+        if(!is_string($name)){
+            return null;
+        }
+        /**
+         * @var array $info
+         */
         $info = getimagesize($fileData['tmp_name']);
 
         if(!isset($info[2])){
