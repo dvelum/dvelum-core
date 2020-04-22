@@ -1,5 +1,3 @@
-includes:
-	- phar://phpstan.phar/conf/config.levelmax.neon
 parameters:
 	bootstrap: %currentWorkingDirectory%/tests/phpstan/bootstrap.php
 	excludes_analyse:
@@ -25,4 +23,5 @@ parameters:
 		- '#call_user_func_array expects callable#'
 		- '#Unsafe usage of new static#'
 		- '#spl_autoload_register expects callable#'
+	level: max
 
