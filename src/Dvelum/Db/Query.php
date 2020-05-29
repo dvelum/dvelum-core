@@ -67,6 +67,10 @@ class Query
      * @var string|null
      */
     protected $tableAlias = null;
+    /**
+     * @var bool
+     */
+    protected $distinct = false;
 
     public function __construct(Model $model)
     {
@@ -271,6 +275,10 @@ class Query
             $this->applyJoins($sql, $this->joins);
         }
 
+        if(!empty($this->distinct)){
+            $sql->distinct();
+        }
+
         return $sql;
     }
 
@@ -351,6 +359,7 @@ class Query
         $joins = $this->joins;
         $filters = $this->filters;
         $tableAlias = $this->tableAlias;
+        $distinct = $this->distinct;
 
         // disable fields selection
         if (!empty($joins)) {
@@ -362,6 +371,7 @@ class Query
 
         $sqlQuery = new Query($this->model);
         $sqlQuery->setDbConnection($this->db);
+        $sqlQuery->distinct($this->distinct);
         $sqlQuery->fields(['count' => 'COUNT(*)'])->tableAlias($tableAlias)
             ->filters($filters)
             ->joins($joins);
@@ -377,5 +387,16 @@ class Query
         }
 
         return (int)$count;
+    }
+
+    /**
+     * Set DISTINCT option
+     * @param bool $bool
+     * @return $this
+     */
+    public function distinct(bool $bool =  true) : self
+    {
+        $this->distinct = $bool;
+        return $this;
     }
 }
