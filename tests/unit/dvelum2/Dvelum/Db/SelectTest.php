@@ -137,12 +137,12 @@ class SelectTest extends TestCase
 	{
         $sql = $this->getSelect();
 		$sql->from('table')->where('`id` =?',7)->order('name DESC');
-		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =7) ORDER BY `name` DESC;';
+		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =\'7\') ORDER BY `name` DESC;';
 		$this->assertEquals($sql->assemble() , $str);
 
         $sql = $this->getSelect();
 		$sql->from('table')->where('`id` =?',0.6)->order('name DESC');
-		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =0.6) ORDER BY `name` DESC;';
+		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =\'0.6\') ORDER BY `name` DESC;';
 		$this->assertEquals($sql->assemble() , $str);
 
         $sql = $this->getSelect();
@@ -188,7 +188,7 @@ class SelectTest extends TestCase
 		->where('`code` =?',"code")
 		->orWhere('`id` =?',8)
 		->orWhere('`id` =?',9);
-		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =7 AND `code` =\'code\') OR (`id` =8 ) OR ( `id` =9);';
+		$str = 'SELECT `table`.* FROM `table` WHERE (`id` =\'7\' AND `code` =\'code\') OR (`id` =\'8\' ) OR ( `id` =\'9\');';
 		$this->assertEquals($sql->assemble() , $str);
 	}
 	

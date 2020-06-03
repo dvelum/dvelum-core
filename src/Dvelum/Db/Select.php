@@ -557,9 +557,7 @@ class Select
                     }
                     $item['bind'] = implode(',', $list);
                 } else {
-                    if(!is_numeric($item['bind'])){
-                        $item['bind'] = $this->quote((string)$item['bind']);
-                    }
+                    $item['bind'] = $this->quote((string)$item['bind']);
                 }
                 $where[] = str_replace('?', $item['bind'], $item['condition']);
             }
