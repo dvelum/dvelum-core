@@ -224,20 +224,22 @@ class File
     {
         $zip = new \ZipArchive();
 
-        if($zip->open($source) !== true)
+        if($zip->open($source) !== true){
             return false;
+        }
 
+        $result = true;
         if(!empty($fileEntries)) {
             if (!$zip->extractTo($destination, $fileEntries)) {
-                return false;
+                $result = false;
             }
         }else {
             if (!$zip->extractTo($destination)) {
-                return false;
+                $result = false;
             }
         }
-
-        return $zip->close();
+        $zip->close();
+        return $result;
     }
 
     /**
