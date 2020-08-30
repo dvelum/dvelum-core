@@ -58,6 +58,9 @@ if($autoloaderCfg['useMap'] && $autoloaderCfg['map'])
 else
     $autoloaderCfg['map'] = false;
 
+// Adding test directory for autoload
+$autoloaderCfg['paths'][] = './tests/unit/application/classes';
+
 $autoloader->setConfig($autoloaderCfg);
 
 /*
