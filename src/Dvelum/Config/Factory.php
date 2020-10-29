@@ -186,11 +186,10 @@ class Factory
 
     /**
      * Get configuration storage
-     * @param mixed $config
      * @param bool $force  - Reset runtime cache reload object, optional default false
      * @return Storage\StorageInterface
      */
-    static public function storage($config = false, $force = false) : Config\Storage\StorageInterface
+    static public function storage($force = false) : Config\Storage\StorageInterface
     {
         static $store = false;
 
@@ -203,9 +202,6 @@ class Factory
              * @var Config\Storage\StorageInterface $store;
              */
             $store = new self::$storageAdapter();
-            if(!empty($config)){
-                $store->setConfig($config->__toArray());
-            }
         }
         return $store;
     }

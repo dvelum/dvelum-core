@@ -39,12 +39,11 @@ use Dvelum\Config\ConfigInterface;
 class Config
 {
     /**
-     * @param ConfigInterface|null $config
      * @return Cfg\Storage\StorageInterface
      */
-    static public function storage(ConfigInterface $config = null) : Cfg\Storage\StorageInterface
+    static public function storage() : Cfg\Storage\StorageInterface
     {
-        return Cfg\Factory::storage($config);
+        return Cfg\Factory::storage();
     }
 
     /**
