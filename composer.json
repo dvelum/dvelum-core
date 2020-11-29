@@ -1,6 +1,6 @@
 {
     "name": "dvelum/dvelum-core",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "type": "project",
     "description": "DVelum 3.x core",
     "keywords": ["dvelum","php"],
@@ -29,8 +29,8 @@
         "ext-gd" : "*",
         "ext-mbstring" : "*",
         "ext-json": "*",
-        "composer/installers": "~1.0",
-        "oomphinc/composer-installers-extender": "^1.1",
+        "composer/installers": "~1.9",
+        "oomphinc/composer-installers-extender": "^2.0",
         "zendframework/zend-db": "^2.9.1",
         "zendframework/zend-mail": "^2.8",
         "psr/log": "^1.0",
@@ -44,7 +44,7 @@
         "codacy/coverage": "dev-master"
     },
     "extra": {
-        "installer-types": ["js-library","dvelum3-extension", "library"],
+        "installer-types": ["js-library","dvelum3-extension"],
         "installer-paths": {
             "www/js/lib/{$name}": ["type:js-library"],
             "modules/{$vendor}/{$name}":["type:dvelum3-module"],
