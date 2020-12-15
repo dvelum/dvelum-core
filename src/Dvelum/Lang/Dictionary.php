@@ -69,7 +69,7 @@ class Dictionary
     {
         if (!isset($this->data)) {
             $this->loadData();
-        };
+        }
 
         if ($this->data->offsetExists($key)) {
             return $this->data->get($key);
