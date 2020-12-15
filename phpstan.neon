@@ -1,10 +1,11 @@
 parameters:
-	bootstrap: %currentWorkingDirectory%/tests/phpstan/bootstrap.php
+	bootstrapFiles:
+	    -  %currentWorkingDirectory%/tests/phpstan/bootstrap.php
 	excludes_analyse:
 	    -  %currentWorkingDirectory%/application/templates
 	    -  %currentWorkingDirectory%/vendor
 	    -  %currentWorkingDirectory%/src/Dvelum/Cache/Memcached.php
-	autoload_directories:
+	scanDirectories:
 	    -  %currentWorkingDirectory%/application
 	    -  %currentWorkingDirectory%/src
 	    -  %currentWorkingDirectory%/tests/unit/dvelum/library

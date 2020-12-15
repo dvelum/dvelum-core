@@ -275,7 +275,7 @@ class Resize
         }
 
         $whiteBackground = imagecolorallocatealpha($newImg , 255 , 255 , 255 , 0);
-        imagefilledrectangle($newImg , 0 , 0 , $width , $height , $whiteBackground);
+        imagefilledrectangle($newImg , 0 , 0 , $width , $height , (int) $whiteBackground);
 
         $posX = ($width - $nWidth) / 2;
         $posY = ($height - $nHeight) / 2;
@@ -305,7 +305,7 @@ class Resize
             imagealphablending($img , false);
             imagesavealpha($img , true);
             $transparent = imagecolorallocatealpha($img , 255 , 255 , 255 , 127);
-            imagefilledrectangle($img , 0 , 0 , $width , $height , $transparent);
+            imagefilledrectangle($img , 0 , 0 , $width , $height , (int) $transparent);
         }
         return $img;
     }
