@@ -1,10 +1,10 @@
-name: PHP Composer
+name: Build and Test
 
 on:
   push:
-    branches: [ master, develop]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ master, develop]
+    branches: [ master, develop ]
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         operating-system: ['ubuntu-latest']
-        php-versions: ['7.3', '7.4']
+        php-versions: ['7.3','7.4']
 
     steps:
     - name: Checkout
@@ -25,30 +25,26 @@ jobs:
         php-version: ${{ matrix.php-versions }}
         extensions: mbstring, intl, mysqli, gd
         ini-values: post_max_size=256M, max_execution_time=180
-        coverage: xdebug        
-        tools: php-cs-fixer, phpunit:${{ matrix.phpunit-versions }}
+        coverage: xdebug  
+        tools: php-cs-fixer, phpunit 
+
+    - name: Shutdown Ubuntu MySQL (SUDO)
+      run: sudo service mysql stop # Shutdown the Default MySQL, "sudo" is necessary, please not remove it
 
     - name: Validate composer.json and composer.lock
       run: composer validate
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
+      
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
     - name: PHPStan tests
-      run: php -d memory_limit=256M vendor/bin/phpstan analyse src
+      run: php -d memory_limit=256M ./vendor/bin/phpstan analyse src
       
     - name: PHPUnit tests
-      run: vendor/bin/phpunit -c phpunit.xml.dist
+      run: ./vendor/bin/phpunit -c ./phpunit.xml.dist --coverage-clover coverage.xml
+      
+    - name: Send Coverage report
+      run: php vendor/bin/codacycoverage clover coverage.xml 
+      env: 
+         CODACY_PROJECT_TOKEN: ${{secrets.CODACY}}
