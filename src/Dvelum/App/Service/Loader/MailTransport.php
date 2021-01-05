@@ -34,13 +34,13 @@ use Dvelum\Config;
 class MailTransport extends AbstractAdapter
 {
     /**
-     * @return \Zend\Mail\Transport\TransportInterface
+     * @return \Laminas\Mail\Transport\TransportInterface
      */
     public function loadService()
     {
         $cfg = Config::storage()->get('mail_trasport.php')->__toArray();
         /**
-         * @var \Zend\Mail\Transport\TransportInterface $transport
+         * @var \Laminas\Mail\Transport\TransportInterface $transport
          */
         $transport  = new $cfg['adapter'];
         if(!empty($cfg['config']['optionsAdapter']) && !empty($cfg['config']['options']) && method_exists($transport,'setOptions')){

@@ -29,11 +29,11 @@ declare(strict_types=1);
 
 namespace Dvelum\Db;
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db;
-use Zend\Db\Metadata\MetadataInterface;
-use Zend\Db\Metadata\Object\ColumnObject;
-use Zend\Db\Metadata\Object\ConstraintObject;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db;
+use Laminas\Db\Metadata\MetadataInterface;
+use Laminas\Db\Metadata\Object\ColumnObject;
+use Laminas\Db\Metadata\Object\ConstraintObject;
 use Dvelum\Db\Metadata\Factory;
 
 class Metadata

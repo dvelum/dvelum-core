@@ -34,10 +34,10 @@
  */
 
 namespace Dvelum\Db\Metadata;
-use Zend\Db\Metadata\Object\ColumnObject as ZendColumnObject;
+use Laminas\Db\Metadata\Object\ColumnObject as LaminasColumnObject;
 
 
-class ColumnObject extends ZendColumnObject
+class ColumnObject extends LaminasColumnObject
 {
     /**
      *

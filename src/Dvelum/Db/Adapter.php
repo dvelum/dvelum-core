@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,10 +29,10 @@ declare(strict_types=1);
 
 namespace Dvelum\Db;
 
-use Zend\Db;
-use Zend\Db\Sql\Sql;
-use Zend\Db\Adapter\Driver\ResultInterface;
-use Zend\Db\ResultSet\ResultSet;
+use Laminas\Db;
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\ResultSet\ResultSet;
 
 
 /**
@@ -49,7 +49,7 @@ class Adapter
      */
     protected $params;
     /**
-     * @var \Zend\Db\Adapter\Adapter $adapter
+     * @var \Laminas\Db\Adapter\Adapter $adapter
      */
     protected $adapter;
     /**
@@ -79,7 +79,7 @@ class Adapter
             return;
         }
 
-        $this->adapter = new \Zend\Db\Adapter\Adapter($this->params);
+        $this->adapter = new \Laminas\Db\Adapter\Adapter($this->params);
         $this->inited = true;
         try{
             $this->adapter->getDriver()->getConnection()->connect();

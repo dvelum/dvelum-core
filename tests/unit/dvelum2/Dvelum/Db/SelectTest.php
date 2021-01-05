@@ -241,7 +241,6 @@ class SelectTest extends TestCase
 				array('title','time')
 		);
 		$str = 'SELECT `a`.*, `b`.`title`, `b`.`time` FROM `table` AS `a` RIGHT JOIN `table2` AS `b` ON a.code = b.id;';
-		//$zdb = new Zend_Select(Application::getDbConnection());
 		$this->assertEquals($sql->assemble() , $str);
 	}
 	

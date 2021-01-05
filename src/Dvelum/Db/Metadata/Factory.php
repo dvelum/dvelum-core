@@ -30,10 +30,10 @@ declare(strict_types=1);
 namespace Dvelum\Db\Metadata;
 
 
-use Zend\Db\Adapter\AdapterInterface;
-use Zend\Db\Exception\InvalidArgumentException;
-use Zend\Db\Metadata\MetadataInterface;
-use Zend\Db\Metadata\Source;
+use Laminas\Db\Adapter\AdapterInterface;
+use Laminas\Db\Exception\InvalidArgumentException;
+use Laminas\Db\Metadata\MetadataInterface;
+use Laminas\Db\Metadata\Source;
 
 /**
  * Source metadata factory.
@@ -50,7 +50,7 @@ class Factory
     public static function createSourceFromAdapter(AdapterInterface $adapter)
     {
         /**
-         * @var  \Zend\Db\Adapter\Adapter $adapter
+         * @var  \Laminas\Db\Adapter\Adapter $adapter
          */
 
         $platformName = $adapter->getPlatform()->getName();

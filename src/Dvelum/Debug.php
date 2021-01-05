@@ -75,9 +75,9 @@ class Debug
     }
 
     /**
-     * @param \Zend\Db\Adapter\Profiler\ProfilerInterface $profiler
+     * @param \Laminas\Db\Adapter\Profiler\ProfilerInterface $profiler
      */
-    static public function addDbProfiler(\Zend\Db\Adapter\Profiler\ProfilerInterface $profiler) : void
+    static public function addDbProfiler(\Laminas\Db\Adapter\Profiler\ProfilerInterface $profiler) : void
     {
         self::$dbProfilers[] = $profiler;
     }

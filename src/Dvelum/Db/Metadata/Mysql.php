@@ -29,9 +29,9 @@ declare(strict_types=1);
 
 namespace Dvelum\Db\Metadata;
 
-use Zend\Db\Metadata\Source\MysqlMetadata;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\AbstractResultSet;
+use Laminas\Db\Metadata\Source\MysqlMetadata;
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\ResultSet\AbstractResultSet;
 
 class Mysql extends MysqlMetadata
 {

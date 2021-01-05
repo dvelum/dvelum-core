@@ -1,6 +1,6 @@
 <?php
 return [
-  'adapter' => '\\Zend\\Mail\\Transport\\Sendmail',
+  'adapter' => '\\Laminas\\Mail\\Transport\\Sendmail',
   'config' => [
       'optionsAdapter' => '',
       'options' => [

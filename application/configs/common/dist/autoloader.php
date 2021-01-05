@@ -20,12 +20,12 @@ return [
     'psr-4' =>[
         'Psr\\Log'=>'./vendor/psr/log/Psr/Log',
 
-        'Zend\\Stdlib' => './vendor/zendframework/zend-stdlib/src',
-        'Zend\\Db' => './vendor/zendframework/zend-db/src',
-        'Zend\\Mail' => './vendor/zendframework/zend-mail/src',
-        'Zend\\Mime' => './vendor/zendframework/zend-mime/src',
-        'Zend\\Validator' => './vendor/zendframework/zend-validator/src',
-        'Zend\\Loader' => './vendor/zendframework/zend-loader/src',
+        'Laminas\\Stdlib' => './vendor/laminas/zend-stdlib/src',
+        'Laminas\\Db' => './vendor/laminas/zend-db/src',
+        'Laminas\\Mail' => './vendor/laminas/zend-mail/src',
+        'Laminas\\Mime' => './vendor/laminas/zend-mime/src',
+        'Laminas\\Validator' => './vendor/laminas/zend-validator/src',
+        'Laminas\\Loader' => './vendor/laminas/zend-loader/src',
 
         'MatthiasMullie\\Minify' => './vendor/matthiasmullie/minify/src',
         'MatthiasMullie\\PathConverter' => './vendor/matthiasmullie/path-converter/src'
