@@ -194,6 +194,7 @@ abstract class Model
      * @param int $recordId
      * @param string $keyField
      * @return array
+     * @throws \Exception
      */
     public function getItem(int $recordId, string $keyField = 'id'): array
     {
@@ -222,6 +223,7 @@ abstract class Model
      * @param int $lifetime
      * @param string $keyField
      * @return array
+     * @throws \Exception
      */
     public function getCachedItem(int $recordId, int $lifetime, string $keyField = 'id'): array
     {
