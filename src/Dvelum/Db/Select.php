@@ -365,7 +365,6 @@ class Select
     public function limit(int $count, $offset = false) : self
     {
         $this->limit = ['count' => $count, 'offset' => $offset];
-
         return $this;
     }
 
@@ -374,7 +373,7 @@ class Select
      * @param int $offset
      * @return self
      */
-    public function offset($offset) : self
+    public function offset(int $offset) : self
     {
         $this->limit['offset'] = $offset;
         return $this;
