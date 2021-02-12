@@ -290,7 +290,7 @@ class Adapter
      * @param mixed $sql
      * @return array
      */
-    public function fetchRow($sql) : ?array
+    public function fetchRow($sql) : array
     {
         if(!$this->inited){
             $this->init();
