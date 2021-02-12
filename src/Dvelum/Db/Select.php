@@ -254,7 +254,7 @@ class Select
 
     /**
      * Adding another table to the query using JOIN
-     * @param string $table
+     * @param string|array $table
      * @param mixed $cond
      * @param mixed $cols
      * @param string $type
