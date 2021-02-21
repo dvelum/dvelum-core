@@ -37,10 +37,20 @@ class Record
     protected Config $config;
     protected array $data = [];
     protected array $updates = [];
+    private string $name;
 
-    public function __construct(Config $config)
+    public function __construct(string $name, Config $config)
     {
+        $this->name = $name;
         $this->config = $config;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     /**

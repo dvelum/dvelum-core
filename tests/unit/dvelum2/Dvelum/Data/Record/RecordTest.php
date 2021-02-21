@@ -28,9 +28,14 @@ class RecordTest extends TestCase
         return new Config(\Dvelum\Config::storage()->get('data_object/test_record.php')->__toArray());
     }
 
+    private function createRecord(): Record
+    {
+        return new Record('TestRecord', $this->createConfig());
+    }
+
     public function testNumeric()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->set('int_field', 12);
         $this->assertEquals(12, $record->get('int_field'));
 
@@ -53,35 +58,35 @@ class RecordTest extends TestCase
 
     public function testWrongField()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('undefinedField', 123);
     }
 
     public function testNumericLimitMax()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('int_field_limit', 100);
     }
 
     public function testNumericLimitMin()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('int_field_limit', -100);
     }
 
     public function testStringLimit()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('string_field_limit', 'abcdefg');
     }
 
     public function testString()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->set('string_field', 'abcdefg');
         $this->assertEquals('abcdefg', $record->get('string_field'));
         $record->set('string_field', 123);
@@ -90,14 +95,14 @@ class RecordTest extends TestCase
 
     public function testDefaulDate()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $date = date('Y-m-d H:i:s');
         $this->assertEquals($date, $record->get('string_field_date'));
     }
 
     public function testJson()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->set('json_field', json_encode(['a' => 1, 'b' => 2]));
         $this->assertEquals(['a' => 1, 'b' => 2], $record->get('json_field'));
 
@@ -107,7 +112,7 @@ class RecordTest extends TestCase
 
     public function testJsonExceptionString()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('json_field', json_encode('abs'));
         $this->expectException(\InvalidArgumentException::class);
@@ -115,14 +120,14 @@ class RecordTest extends TestCase
     }
     public function testJsonExceptionNum()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('json_field', json_encode(123));
     }
 
     public function testSetData()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->setData(
             [
                 'int_field' => 11,
@@ -136,7 +141,7 @@ class RecordTest extends TestCase
     public function testValidator()
     {
         //string_field_email
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->set('string_field_email', 'testmail@gmail.com');
         $this->assertEquals('testmail@gmail.com', $record->get('string_field_email'));
         $this->expectException(\InvalidArgumentException::class);
@@ -145,14 +150,14 @@ class RecordTest extends TestCase
 
     public function testUndefinedField()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->get('undefinedField');
     }
 
     public function testCommitChanges()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $record->getData();
         $record->commitChanges();
         $this->assertTrue(empty($record->getUpdates()));
@@ -166,7 +171,7 @@ class RecordTest extends TestCase
 
     public function testDefault()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $this->assertEquals('default', $record->get('string_default'));
     }
 
@@ -179,7 +184,7 @@ class RecordTest extends TestCase
 
     public function testValidateRequired()
     {
-        $record = new Record($this->createConfig());
+        $record = $this->createRecord();
         $result = $record->validateRequired();
         $this->assertFalse($result->isSuccess());
         $this->assertInstanceOf(ValidationResult::class, $result);

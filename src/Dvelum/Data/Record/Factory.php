@@ -60,6 +60,6 @@ class Factory
         }
         $info = $this->config->get($recordName);
         $config = CoreConfig::storage()->get($info['config'])->__toArray();
-        return new Record(new Config($config));
+        return new Record($recordName, new Config($config));
     }
 }
