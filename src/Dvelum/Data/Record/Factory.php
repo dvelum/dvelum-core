@@ -31,6 +31,7 @@ namespace Dvelum\Data\Record;
 
 use Dvelum\Config\ConfigInterface;
 use Dvelum\Config as CoreConfig;
+use Dvelum\Data\Record\Export\Database;
 use \InvalidArgumentException;
 use \Exception;
 
@@ -61,5 +62,13 @@ class Factory
         $info = $this->config->get($recordName);
         $config = CoreConfig::storage()->get($info['config'])->__toArray();
         return new Record($recordName, new Config($config));
+    }
+
+    /**
+     * @return Database
+     */
+    public function getDbExport() : Database
+    {
+        return new Database();
     }
 }
