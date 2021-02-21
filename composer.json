@@ -1,6 +1,6 @@
 {
     "name": "dvelum/dvelum-core",
-    "version": "3.2.0",
+    "version": "3.3.0",
     "type": "project",
     "description": "DVelum 3.x core",
     "keywords": ["dvelum","php"],
@@ -24,7 +24,7 @@
         "classmap-authoritative": true
     },
     "require": {
-        "php":">=7.3.0",
+        "php":">=7.4.0",
         "ext-mysqli" : "*",
         "ext-gd" : "*",
         "ext-mbstring" : "*",

@@ -5,7 +5,7 @@
 DVelum 3.x Core
 ======
 
-
+[Docs](./docs/ru/readme.md)
 Local installation
 -----
 
@@ -24,7 +24,7 @@ Apache VirtualHost configuration example
      </Directory>
 </VirtualHost>
 ```
-Add local domain to /etc/hosts
+Add the local domain to /etc/hosts file
 ```
 127.0.0.1 dvelum.local
 ```
