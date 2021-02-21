@@ -118,7 +118,7 @@ class Uploader
             }
 
             $item['name'] = str_replace(' ', '_', $item['name']);
-            $item['name'] = strtolower(preg_replace("/[^A-Za-z0-9_\-\.]/i", '', (string) $item['name']));
+            $item['name'] = strtolower((string) preg_replace("/[^A-Za-z0-9_\-\.]/i", '', (string) $item['name']));
 
             $item['ext'] = \Dvelum\File::getExt($item['name']);
             $item['title'] = str_replace($item['ext'], '', $item['name']);
