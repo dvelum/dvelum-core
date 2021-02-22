@@ -93,9 +93,9 @@ $record->getData();
 $export = new \Dvelum\Data\Record\Export\Database();
 // или
 $export = $factory->getDbExport();
-// все данные
+// получить все данные
 $data = $export->exportRecord($record);
-// или только обновления
+// или получить только обновления
 $data = $export->exportUpdates($record);
 
 ```
