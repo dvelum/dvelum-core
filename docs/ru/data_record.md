@@ -91,6 +91,8 @@ $record->getData();
 // Для удобства экспорта данных в хранилище, например в БД, есть подготовленный класс экспорта, 
 // который конвертируетполя в нужный вид (напрмер json поле в строку)
 $export = new \Dvelum\Data\Record\Export\Database();
+// или
+$export = $factory->getDbExport();
 // все данные
 $data = $export->exportRecord($record);
 // или только обновления
