@@ -8,6 +8,8 @@
 * bool
 * string
 * json (принимает на вход строку json или массив)
+* date
+* datetime
 
 **required** - признак обязательности заполнения
 
