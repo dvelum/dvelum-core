@@ -132,7 +132,7 @@ class Record
         // init default values
         $fields = $this->config->getFields();
         foreach ($fields as $fieldName => $field) {
-            if ($field->hasDefault() && !isset($this->updates[$fieldName]) && !isset($this->data[$fieldName])) {
+            if ($field->hasDefault() && !array_key_exists($fieldName, $this->updates) && !array_key_exists($fieldName, $this->data)) {
                 $this->setDefault($fieldName);
             }
         }
@@ -146,10 +146,7 @@ class Record
     public function setDefault(string $fieldName): void
     {
         $value = $this->config->getField($fieldName)->getDefault();
-        /**
-         * @todo Should we validate default value ?
-         */
-        $this->updates[$fieldName] = $value;
+        $this->set($fieldName, $value);
     }
 
     /**

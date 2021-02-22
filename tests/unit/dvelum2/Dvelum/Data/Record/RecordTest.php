@@ -174,7 +174,8 @@ class RecordTest extends TestCase
         $record = $this->createRecord();
         $record->getData();
         $record->commitChanges();
-        $this->assertTrue(empty($record->getUpdates()));
+        $updates = $record->getUpdates();
+        $this->assertTrue(empty($updates));
         $record->set('int_field', 1);
         $this->assertTrue($record->hasUpdates());
         $this->assertNotEmpty($record->getUpdates());
@@ -203,5 +204,61 @@ class RecordTest extends TestCase
         $this->assertFalse($result->isSuccess());
         $this->assertInstanceOf(ValidationResult::class, $result);
         $this->assertTrue(isset($result->getErrors()['string_field_email']));
+    }
+
+    public function testDateTimeDefault()
+    {
+        $record = $this->createRecord();
+        $value =  $record->get('datetime_default');
+        $this->assertInstanceOf(\DateTime::class, $value);
+        $this->assertEquals(new \DateTime('2021-01-01 00:00:00'), $value);
+    }
+
+    public function testDateTimeMinString()
+    {
+        $record = $this->createRecord();
+        $this->expectException(\InvalidArgumentException::class);
+        $record->set('datetime_min', '2020-12-31');
+       // 2021-01-01
+    }
+
+    public function testDateTimeMinObject()
+    {
+        $record = $this->createRecord();
+        $this->expectException(\InvalidArgumentException::class);
+        $record->set('datetime_min', new \DateTime('2020-12-31'));
+        // 2021-01-01
+    }
+
+    public function testDateTimeString()
+    {
+        $record = $this->createRecord();
+        $record->set('datetime_min', '2021-01-02');
+        $this->assertEquals(new \DateTime( '2021-01-02'),$record->get('datetime_min'));
+        // 2021-01-01
+    }
+
+    public function testDateTimeObject()
+    {
+        $record = $this->createRecord();
+        $record->set('datetime_min', new \DateTime( '2021-01-02'));
+        $this->assertEquals(new \DateTime( '2021-01-02'),$record->get('datetime_min'));
+        // 2021-01-01
+    }
+
+
+    public function testDateTimeMax()
+    {
+        $record = $this->createRecord();
+        $this->expectException(\InvalidArgumentException::class);
+        $record->set('datetime_max', new \DateTime( '2021-01-01 12:00:01'));
+        // 2021-01-01 12:00:00
+    }
+    public function testDateTimeMaxGood()
+    {
+        $record = $this->createRecord();
+        $record->set('datetime_max', new \DateTime( '2021-01-01 11:59:59'));
+        $this->assertEquals(new \DateTime( '2021-01-01 11:59:59'),$record->get('datetime_max'));
+        // 2021-01-01 12:00:00
     }
 }

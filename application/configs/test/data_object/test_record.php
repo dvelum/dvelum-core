@@ -48,5 +48,28 @@ return [
             'type' => 'string',
             'default' => 'default'
         ],
+        'datetime_default' => [
+            'type' => 'datetime',
+            'default' => '2021-01-01 00:00:00'
+        ],
+        'datetime' => [
+            'type' => 'datetime',
+            'default' => null
+        ],
+        'datetime_min' => [
+            'type' => 'datetime',
+            'default' => '2021-01-01',
+            'minValue'=>'2021-01-01',
+        ],
+        'datetime_max' => [
+            'type' => 'datetime',
+            'default' => null,
+            'maxValue'=>'2021-01-01 12:00:00',
+        ],
+        'date' => [
+            'type' => 'date',
+            'default' => null
+        ],
+
     ]
 ];

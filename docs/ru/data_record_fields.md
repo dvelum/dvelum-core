@@ -11,9 +11,9 @@
 
 **required** - признак обязательности заполнения
 
-**minValue** - минимальное значение для int, float
+**minValue** - минимальное значение для int, float, date, datetime (для дат может принимать объект DateTime)
 
-**maxValue** - максимальное значение для int, float
+**maxValue** - максимальное значение для int, float date, datetime для дат может принимать объект DateTime)
 
 **minLength** - минимальная длина строки в символах utf-8  для полей типа string
 

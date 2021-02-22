@@ -34,6 +34,8 @@ use Dvelum\Data\Record\Config;
 
 class Database
 {
+    protected $dateTimeFormat = 'Y-m-d H:i:s';
+    protected $dateFormat ='Y-m-d';
     /**
      * @param Record $record
      * @return array
@@ -67,6 +69,26 @@ class Database
             if($field->getType() === 'json'){
                 if(!empty($data[$name])){
                     $data[$name] = json_encode($data[$name],JSON_THROW_ON_ERROR);
+                }
+            }
+
+            if($field->getType() === 'datetime'){
+                if(!empty($data[$name])){
+                    /**
+                     * @var \DateTime $date
+                     */
+                    $date = $data[$name];
+                    $data[$name] = $date->format($this->dateTimeFormat);
+                }
+            }
+
+            if($field->getType() === 'date'){
+                if(!empty($data[$name])){
+                    /**
+                     * @var \DateTime $date
+                     */
+                    $date = $data[$name];
+                    $data[$name] = $date->format($this->dateFormat);
                 }
             }
         }

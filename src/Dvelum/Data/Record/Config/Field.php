@@ -85,14 +85,20 @@ class Field
     public function getDefault()
     {
         if (isset($this->data['defaultValueAdapter'])) {
-            return (new $this->data['defaultValueAdapter'])->getValue();
+            $default = (new $this->data['defaultValueAdapter'])->getValue();
+        }elseif (array_key_exists('default', $this->data)){
+            $default = $this->data['default'];
+        }else{
+            throw new InvalidArgumentException('Default value for field '.$this->getName().' is not set');
         }
 
-        if(array_key_exists('default', $this->data)){
-            return $this->data['default'];
+        $type = $this->getType();
+        if($type === 'date' || $type === 'datetime'){
+            if(is_string($default)){
+                $default = new \DateTime($default);
+            }
         }
-
-        throw new InvalidArgumentException('Default value for field '.$this->getName().' is not set');
+        return  $default;
     }
 
     /**
@@ -118,6 +124,13 @@ class Field
                 if(!is_string($value) && !is_array($value) && !is_null($value)){
                     return false;
                 }
+                break;
+            case 'date':
+            case 'datetime':
+                if(!is_string($value) && !is_null($value) && (!$value instanceof \DateTime)){
+                    return false;
+                }
+                break;
         }
         return true;
     }
@@ -160,6 +173,16 @@ class Field
                     throw  new InvalidArgumentException('Invalid value for json field: '. $this->getName().'. Accepts: json string(512 depth), array');
                 }
                 break;
+            case 'date':
+            case 'datetime':
+                if(is_string($value)){
+                    $value = new \DateTime($value);
+                }
+
+                if(!$value instanceof \DateTime && !is_null($value)){
+                    throw  new InvalidArgumentException('Invalid value for datetime field: '. $this->getName().'. Accepts:\DateTime or date string');
+                }
+                break;
         }
 
         return  $value;
@@ -193,6 +216,12 @@ class Field
             break;
             case 'string':
                 if(!$this->validateStringValue($value)){
+                    return false;
+                }
+                break;
+            case 'date':
+            case 'datetime':
+                if(!$this->validateDateValue($value)){
                     return false;
                 }
                 break;
@@ -231,6 +260,37 @@ class Field
         if(isset($this->data['maxLength']) && $length> $this->data['maxLength']){
             return false;
         }
+        return true;
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    private function validateDateValue($value) : bool
+    {
+        if(isset($this->data['minValue'])){
+            if(is_string($this->data['minValue'])){
+                $min = new \DateTime($this->data['minValue']);
+            }else{
+                $min = $this->data['minValue'];
+            }
+            if($min > $value){
+                return false;
+            }
+        }
+
+        if(isset($this->data['maxValue']) && !is_null($value)){
+            if(is_string($this->data['maxValue'])){
+                $max = new \DateTime($this->data['maxValue']);
+            }else{
+                $max = $this->data['maxValue'];
+            }
+            if($max < $value){
+                return false;
+            }
+        }
+
         return true;
     }
 }
