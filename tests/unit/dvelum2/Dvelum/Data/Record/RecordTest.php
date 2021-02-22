@@ -80,8 +80,22 @@ class RecordTest extends TestCase
     public function testStringLimit()
     {
         $record = $this->createRecord();
+        $record->set('string_field_limit', 'abcd');
+        $this->assertEquals('abcd', $record->get('string_field_limit'));
+    }
+
+    public function testStringLimitMax()
+    {
+        $record = $this->createRecord();
         $this->expectException(\InvalidArgumentException::class);
         $record->set('string_field_limit', 'abcdefg');
+    }
+
+    public function testStringLimitMin()
+    {
+        $record = $this->createRecord();
+        $this->expectException(\InvalidArgumentException::class);
+        $record->set('string_field_limit', 'ab');
     }
 
     public function testString()

@@ -222,9 +222,13 @@ class Field
      * @param string $value
      * @return bool
      */
-    private function validateStringValue($value) : bool
+    private function validateStringValue(string $value) : bool
     {
-        if(isset($this->data['maxLength']) && mb_strlen($value, 'utf-8') > $this->data['maxLength']){
+        $length = mb_strlen($value, 'utf-8');
+        if(isset($this->data['minLength']) && $length < $this->data['minLength']){
+            return false;
+        }
+        if(isset($this->data['maxLength']) && $length> $this->data['maxLength']){
             return false;
         }
         return true;

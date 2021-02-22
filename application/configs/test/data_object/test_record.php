@@ -28,7 +28,8 @@ return [
         'string_field_limit' => [
             'type' => 'string',
             'required' => true,
-            'maxLength' => 5
+            'maxLength' => 5,
+            'minLength' => 3
         ],
         'string_field_email' => [
             'type' => 'string',

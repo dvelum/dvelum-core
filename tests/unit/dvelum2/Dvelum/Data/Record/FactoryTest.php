@@ -18,6 +18,7 @@
  */
 namespace Dvelum\Data\Record;
 
+use Dvelum\Data\Record\Export\Database;
 use PHPUnit\Framework\TestCase;
 
 class FactoryTest extends TestCase
@@ -31,6 +32,13 @@ class FactoryTest extends TestCase
 
         $this->expectException(\InvalidArgumentException::class);
         $factory->create('undefinedObject');
+    }
+
+    public function testGetDbExport()
+    {
+        $factory = new Factory(\Dvelum\Config::storage()->get('data_record.php'));
+        $export = $factory->getDbExport();
+        $this->assertInstanceOf(Database::class, $export);
     }
 
 }
