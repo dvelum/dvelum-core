@@ -100,6 +100,11 @@ class Record
             throw new InvalidArgumentException('Invalid value for field: ' . $fieldName);
         }
 
+        // check is it real value update
+        if(!array_key_exists($fieldName, $this->updates) && array_key_exists($fieldName, $this->data) && $this->data[$fieldName]===$value){
+            return;
+        }
+
         $this->updates[$fieldName] = $value;
     }
 

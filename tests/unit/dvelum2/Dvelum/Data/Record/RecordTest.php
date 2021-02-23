@@ -261,4 +261,19 @@ class RecordTest extends TestCase
         $this->assertEquals(new \DateTime( '2021-01-01 11:59:59'),$record->get('datetime_max'));
         // 2021-01-01 12:00:00
     }
+
+    public function testNoUpdates()
+    {
+        $record = $this->createRecord();
+        //init defaults
+        $record->getData();
+
+        $record->set('int_field', 10);
+        $record->commitChanges();
+        $this->assertTrue(empty($record->getUpdates()));
+        $record->set('int_field', 10);
+        $this->assertTrue(empty($record->getUpdates()));
+        $record->set('int_field', 11);
+        $this->assertTrue(!empty($record->getUpdates()));
+    }
 }
