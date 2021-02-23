@@ -10,5 +10,5 @@ Documentation licensed under GNU Free Documentation License (GFDL)
 * [Роутинг в DVelum](routing.md)
 * [Работа через консоль, запуск в cron](console.md)
 * [Запуск тестов](tests.md)
-* [Data Record, валидация данных](data_record.md)
+* [Data Record, валидация данных](https://github.com/dvelum/DR)
 
