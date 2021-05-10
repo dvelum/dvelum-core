@@ -39,10 +39,18 @@ interface CacheInterface
      * Add / replace cache variable
      * @param mixed $data
      * @param string $key
-     * @param integer|bool $lifetime - optional
+     * @param int|false $lifetime - optional
      * @return bool
      */
     public function save($data, string $key, $lifetime = false) : bool ;
+
+    /**
+     * @param string $id
+     * @param mixed $data
+     * @param int|false $specificLifetime
+     * @return bool
+     */
+    public function add(string $id, $data, $specificLifetime = false) : bool;
 
     /**
      * Load cached variable

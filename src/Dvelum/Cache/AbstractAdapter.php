@@ -40,6 +40,7 @@ abstract class AbstractAdapter
      */
     protected $stat = [
         'load' => 0 ,
+        'add' => 0,
         'save' => 0 ,
         'remove' => 0
     ];

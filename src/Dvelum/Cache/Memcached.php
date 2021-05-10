@@ -195,4 +195,26 @@ class Memcached extends AbstractAdapter implements CacheInterface
     {
         return $this->memcached;
     }
+
+    /**
+     * @param string $id
+     * @param mixed $data
+     * @param int|false $specificLifetime If != false, set a specific lifetime for this cache record (null => infinite lifetime)
+     * @return bool
+     */
+    public function add(string $id, $data, $specificLifetime = false) : bool
+    {
+        if ($specificLifetime === false) {
+            $specificLifetime = $this->settings['defaultLifeTime'];
+        }
+        $id = $this->prepareKey($id); // cache id may need normalization
+        try {
+            $result = $this->memcached->add($id, $data, $specificLifetime);
+            $this->stat['add']++;
+            return $result;
+        } catch (\Error $e) {
+            return false;
+        }
+    }
+
 }
