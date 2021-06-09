@@ -55,7 +55,7 @@ class ActiveTemplate implements EngineInterface
     protected $useCache = false;
 
     /**
-     * @var int|bool $cacheLifetime
+     * @var int|false $cacheLifetime
      */
     protected $cacheLifetime = false;
 
