@@ -29,6 +29,7 @@ declare(strict_types=1);
 
 namespace Dvelum\App\Router;
 
+use Dvelum\App\Frontend\Index;
 use Dvelum\App\Router;
 use Dvelum\Config;
 use Dvelum\Filter;
@@ -59,11 +60,11 @@ class Path extends Router
         $controller = $request->getPart(0);
         $controller = ucfirst(Filter::filterValue('pagecode' , $controller));
 
-        $controllerClass = 'Frontend\\Index\\Controller';
+        $controllerClass = Index\Controller::class;
 
         if($controller !== false && strlen($controller)){
             $classNamespace1 = 'Frontend_' . $controller . '_Controller';
-            $classNamespace2 = 'Frontend\\' . $controller . '\\Controller';
+            $classNamespace2 = 'App\\Frontend\\' . $controller . '\\Controller';
             $classNamespace3 = 'Dvelum\\App\\Frontend\\' . $controller . '\\Controller';
 
             if(class_exists($classNamespace1)){
