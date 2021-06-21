@@ -30,6 +30,7 @@ declare(strict_types=1);
 namespace Dvelum;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Request wrapper
@@ -62,26 +63,16 @@ class Request
      */
     protected $updatedPost = [];
 
-    /**
-     * @return Request
-     */
-    static public function factory()
+    protected $psrRequest;
+
+    public function __construct(ServerRequestInterface $request)
     {
-        static $instance = null;
-
-        if(empty($instance)){
-            $instance = new static();
+        $this->psrRequest = $request;
+        $uri = $this->psrRequest->getUri()->getPath();
+        if(empty($uri)){
+            $uri = '/';
         }
-
-        return $instance;
-    }
-
-    private function __construct()
-    {
-        if(!isset($_SERVER['REQUEST_URI'])) {
-            $_SERVER['REQUEST_URI'] = '/';
-        }
-        $this->uri = $this->parseUri($_SERVER['REQUEST_URI']);
+        $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
     }
 

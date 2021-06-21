@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,25 +25,40 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
-namespace Dvelum\App\Service\Loader;
+namespace App\Service;
 
-use Dvelum;
+use App\Config\Storage;
+use App\Connection;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 
-class Cache extends AbstractAdapter
+/**
+ * Interface ServiceInterface
+ * Интерфейс описывающий поведение сервисов поиска (стадий)
+ * @package App\Service
+ * @author Kirill Yegorov 2021
+ */
+interface ServiceInterface
 {
     /**
-     * @return Dvelum\Cache\CacheInterface|null
-     * @throws \Exception
+     * ServiceInterface constructor.
+     * @param Connection\Manager $connectionManager
+     * @param LoggerInterface $logger
+     * @param Storage $configStorage
      */
-    public function loadService()
-    {
-        if($this->config->offsetExists('cache')){
-            return $this->config->get('cache');
-        }else{
-            return null;
-        }
-    }
+    public function __construct(Connection\Manager $connectionManager, LoggerInterface $logger, Storage $configStorage);
+
+    /**
+     * Инициализация сервиса, прогрев
+     */
+    public function warmup(): void;
+
+    /**
+     * Запуск обработки
+     * @param ServerRequestInterface $req - запрос
+     * @param ResultInterface $res - контейнер результатов
+     */
+    public function run(ServerRequestInterface $req, ResultInterface $res): void;
 }

@@ -30,38 +30,41 @@ declare(strict_types=1);
 
 namespace Dvelum\App;
 
+use Dvelum\Lang;
 use Dvelum\Request;
 use Dvelum\Response;
-use Dvelum\Lang;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Base class for routing of requests
  */
 abstract class Router implements Router\RouterInterface
 {
-    /**
-     * @var Request $request
-     */
-    protected $request;
-    /**
-     * @var Response $response
-     */
-    protected $response;
+
+    protected ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * Route request
-     * @param Request $request
-     * @param Response $response
+     * Run action
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @return void
+     * @throws \Exception
      */
-    abstract public function route(Request $request , Response $response) : void;
+    abstract public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
 
     /**
      * Calc url for module
      * @param string $module — module name
      * @return string
      */
-    abstract public function findUrl(string $module) : string;
+    abstract public function findUrl(string $module): string;
 
     /**
      * Run controller
@@ -71,41 +74,40 @@ abstract class Router implements Router\RouterInterface
      * @param Response $response
      * @throws \Exception
      */
-    public function runController(string $controller , ?string $action, Request $request , Response $response) : void
+    public function runController(string $controller, ?string $action, Request $request, Response $response): void
     {
-        if(!class_exists($controller)){
-            throw new \Exception('Undefined Controller: '. $controller);
+        if (!class_exists($controller)) {
+            throw new \Exception('Undefined Controller: ' . $controller);
         }
 
         /**
          * @var \Dvelum\App\Controller $controller
          */
-        $controller = new $controller($request, $response);
+        $controller = new $controller($request, $response, $this->container);
         $controller->setRouter($this);
 
-        if($response->isSent()){
+        if ($response->isSent()) {
             return;
         }
 
-        if($controller instanceof Router\RouterInterface){
+        if ($controller instanceof Router\RouterInterface) {
             $controller->route($request, $response);
-        }else{
-
-            if(empty($action)){
+        } else {
+            if (empty($action)) {
                 $action = 'index';
             }
 
-            if(!method_exists($controller , $action.'Action')) {
+            if (!method_exists($controller, $action . 'Action')) {
                 $action = 'index';
-                if(!method_exists($controller , $action.'Action')) {
-                     $response->error(Lang::lang()->get('WRONG_REQUEST').' ' . $request->getUri());
-                     return;
+                if (!method_exists($controller, $action . 'Action')) {
+                    $response->error(Lang::lang()->get('WRONG_REQUEST') . ' ' . $request->getUri());
+                    return;
                 }
             }
-            $controller->{$action.'Action'}();
+            $controller->{$action . 'Action'}();
         }
 
-        if(!$response->isSent() && method_exists($controller,'showPage')){
+        if (!$response->isSent() && method_exists($controller, 'showPage')) {
             $controller->showPage();
         }
     }

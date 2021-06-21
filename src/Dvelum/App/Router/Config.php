@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,42 +31,44 @@ declare(strict_types=1);
 namespace Dvelum\App\Router;
 
 use Dvelum\App\Router;
+use Dvelum\Config as Cfg;
 use Dvelum\Request;
 use Dvelum\Response;
-use Dvelum\Config as Cfg;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Config extends Router
 {
-    /**
-     * @var Cfg\ConfigInterface
-     */
-    protected $appConfig;
-
-    public function __construct()
-    {
-        $this->appConfig = Cfg::storage()->get('main.php');
-    }
 
     /**
-     * Route request
-     * @param Request $request
-     * @param Response $response
+     * Run action
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     * @return void
+     * @throws \Exception
      */
-    public function route(Request $request , Response $response) : void
+    public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $frontConfig = Cfg::storage()->get('frontend.php');
-        $defaultController =  $frontConfig->get('default_controller');
+        $defaultController = $frontConfig->get('default_controller');
 
-        $controller = $request->getPart(0);
-        $pathCode = \Dvelum\Filter::filterValue('pagecode' , $controller);
-        $routes = Cfg::factory(Cfg\Factory::File_Array , $this->appConfig->get('frontend_modules'))->__toArray();
+        $requestHelper = new \Dvelum\Request($request);
+        $responseHelper = new \Dvelum\Response($response);
+        $controller = $requestHelper->getPart(0);
+        $pathCode = \Dvelum\Filter::filterValue('pagecode', $controller);
+        $routes = Cfg::factory(
+            Cfg\Factory::File_Array,
+            $this->container->get('config.main')->get('frontend_modules')
+        )->__toArray();
 
-        if(isset($routes[$pathCode]) && class_exists($routes[$pathCode]['class']))
+        if (isset($routes[$pathCode]) && class_exists($routes[$pathCode]['class'])) {
             $controllerClass = $routes[$pathCode]['class'];
-        else
+        } else {
             $controllerClass = $defaultController;
+        }
 
-        $this->runController($controllerClass , $request->getPart(1), $request, $response);
+        $this->runController($controllerClass, $requestHelper->getPart(1), $requestHelper, $responseHelper);
+        return $responseHelper->getPsrResponse();
     }
 
     /**
@@ -74,12 +77,8 @@ class Config extends Router
      * @param Request $request
      * @param Response $response
      */
-    public function runController(string $controller , ?string $action, Request $request , Response $response) : void
+    public function runController(string $controller, ?string $action, Request $request, Response $response): void
     {
-        if((strpos('Backend_' , $controller) === 0)){
-            $response->redirect('/');
-            return;
-        }
         parent::runController($controller, $action, $request, $response);
     }
 
@@ -93,8 +92,8 @@ class Config extends Router
      * @param string $module- module name
      * @return string
      */
-    public function findUrl(string $module) : string
+    public function findUrl(string $module): string
     {
-        return '/'.$module;
+        return '/' . $module;
     }
 }

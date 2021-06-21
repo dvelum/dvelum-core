@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -35,67 +36,64 @@ class Debug
      * Script startup time
      * @var float
      */
-    protected static $scriptStartTime;
+    protected $scriptStartTime;
     /**
      * Database profiler
      * @var array $dbProfilers
      */
-    static protected $dbProfilers = [];
+    protected $dbProfilers = [];
+
     /**
      * @var array
      */
-    static protected $timers = [];
+    protected $loadedClasses = [];
     /**
      * @var array
      */
-    static protected $loadedClasses = [];
+    protected $loadedConfigs = [];
     /**
      * @var array
      */
-    static protected $loadedConfigs = [];
-    /**
-     * @var array
-     */
-    static protected $cacheCores = [];
+    protected $cacheCores = [];
 
     /**
      * @param array $data
      */
-    static public function setCacheCores(array $data) : void
+    public function setCacheCores(array $data): void
     {
-        self::$cacheCores = $data;
+        $this->cacheCores = $data;
     }
 
     /**
-     * @param int $time
+     * @param float $time
      */
-    static public function setScriptStartTime(int $time) : void
+    public function setScriptStartTime(float $time): void
     {
-        self::$scriptStartTime = $time;
+        $this->scriptStartTime = $time;
     }
 
     /**
      * @param \Laminas\Db\Adapter\Profiler\ProfilerInterface $profiler
      */
-    static public function addDbProfiler(\Laminas\Db\Adapter\Profiler\ProfilerInterface $profiler) : void
+    public function addDbProfiler(\Laminas\Db\Adapter\Profiler\ProfilerInterface $profiler): void
     {
-        self::$dbProfilers[] = $profiler;
+        $this->dbProfilers[] = $profiler;
     }
 
     /**
      * @param array $data
      */
-    static public function setLoadedClasses(array $data) : void
+    public function setLoadedClasses(array $data): void
     {
-        self::$loadedClasses = $data;
+        $this->loadedClasses = $data;
     }
 
     /**
      * @param array $data
      */
-    static public function setLoadedConfigs(array $data) : void
+    public function setLoadedConfigs(array $data): void
     {
-        self::$loadedConfigs = $data;
+        $this->loadedConfigs = $data;
     }
 
     /**
@@ -103,7 +101,7 @@ class Debug
      * @param array $options
      * @return string  - html formated results
      */
-    static public function getStats(array $options) : string
+    public function getStats(array $options): string
     {
         $options = array_merge(
             array(
@@ -119,50 +117,49 @@ class Debug
 
         $str = '';
 
-        if (self::$scriptStartTime) {
-            $str .= '<b>Time:</b> ' . number_format((microtime(true) - self::$scriptStartTime), 5) . "sec.<br>\n";
+        if ($this->scriptStartTime) {
+            $str .= '<b>Time:</b> ' . number_format((microtime(true) - $this->scriptStartTime), 5) . "sec.<br>\n";
         }
 
         $str .= '<b>Memory:</b> ' . number_format((memory_get_usage() / (1024 * 1024)), 3) . "mb<br>\n"
             . '<b>Memory peak:</b> ' . number_format((memory_get_peak_usage() / (1024 * 1024)), 3) . "mb<br>\n"
             . '<b>Includes:</b> ' . count(get_included_files()) . "<br>\n"
-            . '<b>Autoloaded:</b> ' . count(self::$loadedClasses) . "<br>\n"
-            . '<b>Config files:</b> ' . count(self::$loadedConfigs) . "<br>\n";
+            . '<b>Autoloaded:</b> ' . count($this->loadedClasses) . "<br>\n"
+            . '<b>Config files:</b> ' . count($this->loadedConfigs) . "<br>\n";
 
-        if (!empty(self::$dbProfilers)) {
+        if (!empty($this->dbProfilers)) {
             $str .= self::getQueryProfiles($options);
-        }
-
-        if($options['timers'] && !empty(self::$timers)) {
-            $str .= "<b>Timers:</b>\n<br>";
-            foreach (self::$timers as $name => $data){
-                $str .= $name.': '.$data['time'].'s<br>'."\n";
-            }
         }
 
 
         if ($options['configs']) {
-            $str .= "<b>Configs (" . count(self::$loadedConfigs) . "):</b>\n<br> " . implode("\n\t <br>",
-                    self::$loadedConfigs) . '<br>';
+            $str .= "<b>Configs (" . count($this->loadedConfigs) . "):</b>\n<br> " . implode(
+                    "\n\t <br>",
+                    $this->loadedConfigs
+                ) . '<br>';
         }
 
         if ($options['autoloader']) {
-            $str .= "<b>Autoloaded (" . count(self::$loadedClasses) . "):</b>\n<br> " . implode("\n\t <br>",
-                    self::$loadedClasses) . '<br>';
+            $str .= "<b>Autoloaded (" . count($this->loadedClasses) . "):</b>\n<br> " . implode(
+                    "\n\t <br>",
+                    $this->loadedClasses
+                ) . '<br>';
         }
 
         if ($options['includes']) {
-            $str .= "<b>Includes (" . count(get_included_files()) . "):</b>\n<br> " . implode("\n\t <br>",
-                    get_included_files());
+            $str .= "<b>Includes (" . count(get_included_files()) . "):</b>\n<br> " . implode(
+                    "\n\t <br>",
+                    get_included_files()
+                );
         }
 
 
-        if (!empty(self::$cacheCores) && $options['cache']) {
+        if (!empty($this->cacheCores) && $options['cache']) {
             $body = '';
             $globalCount = array('load' => 0, 'save' => 0, 'remove' => 0, 'total' => 0);
             $globalTotal = 0;
 
-            foreach (self::$cacheCores as $name => $cacheCore) {
+            foreach ($this->cacheCores as $name => $cacheCore) {
                 if (!$cacheCore) {
                     continue;
                 }
@@ -184,7 +181,6 @@ class Debug
                         <td>' . $count['remove'] . '</td>
                         <td style="border-left:2px solid #000000;">' . $count['total'] . '</td>
                     </tr>';
-
             }
 
             $body .= '
@@ -215,59 +211,10 @@ class Debug
     }
 
     /**
-     * Start timer
-     * @param string $name
-     * @return void
-     */
-    static public function startTimer(string $name) : void
-    {
-        self::$timers[$name] = array(
-            'start' => microtime(true),
-            'stop' => 0,
-            'time' => 0
-        );
-    }
-
-    /**
-     * Stop timer
-     * @param string $name
-     * @return float - time elapsed
-     */
-    static public function stopTimer($name) : float
-    {
-        if (!isset(self::$timers[$name])) {
-            return 0;
-        }
-
-        self::$timers[$name]['stop'] = microtime(true);
-        self::$timers[$name]['time'] = self::$timers[$name]['stop'] - self::$timers[$name]['start'];
-        return self::$timers[$name]['time'];
-    }
-
-    /**
-     * Get time
-     * @param string $timer
-     * @return float time elapsed
-     */
-    static public function getTimerTime($timer)
-    {
-        if (!isset(self::$timers[$timer])) {
-            return 0;
-        }
-
-        if (!self::$timers[$timer]['stop']) {
-            return self::stopTimer($timer);
-        }
-
-        self::$timers[$timer]['stop'] = microtime(true);
-        return self::$timers[$timer]['stop'] - self::$timers[$timer]['start'];
-    }
-
-    /**
      * @param array $options
      * @return string
      */
-    static protected function getQueryProfiles(array $options) : string
+    protected function getQueryProfiles(array $options): string
     {
         $str = '';
 
@@ -275,9 +222,8 @@ class Debug
         $totalTime = 0;
         $profiles = [];
 
-        foreach (self::$dbProfilers as $prof) {
+        foreach ($this->dbProfilers as $prof) {
             $totalCount += count($prof->getProfiles());
-            //$totalTime += $prof->getTotalElapsedSecs();
             $prof = $prof->getProfiles();
             if (!empty($prof)) {
                 foreach ($prof as $item) {
@@ -288,13 +234,17 @@ class Debug
         }
 
 
-        $str .= '<b>Queries:</b> ' . $totalCount . '<br>' . '<b>Queries time:</b> ' . number_format($totalTime,
-                5) . 'sec.<br>';
+        $str .= '<b>Queries:</b> ' . $totalCount . '<br>' . '<b>Queries time:</b> ' . number_format(
+                $totalTime,
+                5
+            ) . 'sec.<br>';
         if ($options['sql']) {
             if (!empty($profiles)) {
                 foreach ($profiles as $queryProfile) {
-                    $str .= '<span style="color:blue;font-size: 11px;">' . number_format($queryProfile['elapse'],
-                            5) . 's. </span><span style="font-size: 11px;color:green;">' . $queryProfile['sql'] . "</span><br>\n";
+                    $str .= '<span style="color:blue;font-size: 11px;">' . number_format(
+                            $queryProfile['elapse'],
+                            5
+                        ) . 's. </span><span style="font-size: 11px;color:green;">' . $queryProfile['sql'] . "</span><br>\n";
                 }
             }
         }

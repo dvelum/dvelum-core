@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@ declare(strict_types=1);
 
 namespace Dvelum\App\Router;
 
-use Dvelum\Request;
-use Dvelum\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Router interface
@@ -39,12 +39,12 @@ interface RouterInterface
 {
     /**
      * Run action
-     * @param Request $request
-     * @param Response $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @throws \Exception
      * @return void
      */
-    public function route(Request $request , Response $response) :void;
+    public function route(ServerRequestInterface $request , ResponseInterface $response) : ResponseInterface;
 
     /**
      * Find url

@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,34 +25,14 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
-namespace Dvelum\App\Service\Loader;
+namespace App\Service;
 
-use Dvelum\Config;
-use Dvelum;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-class Lang extends AbstractAdapter
-{
-    /**
-     * @return Dvelum\Lang|mixed
-     * @throws \Exception
-     */
-    public function loadService()
-    {
-        $language = $this->config->get('appConfig')->get('language');
+interface ActionInterface{
 
-        $langService = new Dvelum\Lang();
-        $langService->addLoader(
-            $language,
-            $language . '.php',
-            Config\Factory::File_Array
-        );
-        $langService->setDefaultDictionary($language);
-        $langStorage = $langService->getStorage();
-        $langStorage->setConfig(Config\Factory::storage()->get('lang_storage.php')->__toArray());
-
-        return $langService;
-    }
+    public function run(ServerRequestInterface $req, ResultInterface $res, ContainerInterface $container): void;
 }

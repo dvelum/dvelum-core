@@ -30,27 +30,30 @@ declare(strict_types=1);
 namespace Dvelum\App\Frontend;
 
 use Dvelum\{App, Config, Config\ConfigInterface, Lang, Page\Page, Request, Response, Resource};
+use Psr\Container\ContainerInterface;
 
 class Controller extends App\Controller
 {
     /**
      * @var ConfigInterface
      */
-    protected $frontendConfig;
+    protected ConfigInterface $frontendConfig;
     /**
      * @var Lang\Dictionary
      */
-    protected $lang;
+    protected Lang\Dictionary $lang;
     /**
      * @var Page
      */
-    protected $page;
+    protected Page $page;
 
-    public function __construct(Request $request, Response $response)
+    protected ContainerInterface $container;
+
+    public function __construct(Request $request, Response $response, ContainerInterface $container)
     {
         $this->page = Page::factory();
         $this->frontendConfig = Config::storage()->get('frontend.php');
-        $this->lang = Lang::lang();
+        $this->lang = $container->get(\Dvelum\Lang::class)::lang();
         parent::__construct($request, $response);
     }
 

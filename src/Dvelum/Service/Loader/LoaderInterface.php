@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,36 +25,17 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
-namespace Dvelum\App\Service\Loader;
+namespace App\Service\Loader;
 
-use Dvelum\Cache\CacheInterface;
-use Dvelum\Config;
-use Dvelum\Template\Service;
+use App\Service\ServiceInterface;
 
-class Template extends AbstractAdapter
+interface LoaderInterface
 {
     /**
-     * @return Service
-     * @throws \Exception
-     * @return Service
+     * @param array<string,mixed> $serviceConfig
+     * @return ServiceInterface
      */
-    public function loadService()
-    {
-        $config = Config::storage()->get('template.php');
-
-        $cache = null;
-
-        if($this->config->offsetExists('cache')){
-            $cache = $this->config->get('cache');
-            if(!$cache instanceof CacheInterface){
-                $cache = null;
-            }
-        }
-
-        $service = new Service($config, $cache);
-        return $service;
-    }
+    public function loadService(array $serviceConfig) : ServiceInterface;
 }

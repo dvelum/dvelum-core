@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,21 +25,40 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
-namespace Dvelum\App\Service\Loader;
+namespace App\Service\Loader;
 
-use Dvelum;
+use App\Config\Storage;
+use App\Connection\Manager;
+use App\Service\ServiceInterface;
+use Psr\Log\LoggerInterface;
 
-class DbManager extends AbstractAdapter
+class LoaderContainer implements LoaderInterface
 {
     /**
-     * @return Dvelum\Db\Manager
-     * @throws \Exception
+     * @var ServiceInterface[] $services
      */
-    public function loadService()
+    private array $services = [];
+    private Manager $connections;
+    private Storage $configStore;
+    private LoggerInterface $log;
+
+    public function __construct(Manager $connections, Storage $configStore, LoggerInterface $log)
     {
-        return $this->config->get('dbManager');
+        $this->connections = $connections;
+        $this->configStore = $configStore;
+        $this->log = $log;
+    }
+    /**
+     * @param array<string,mixed> $serviceConfig
+     * @return ServiceInterface
+     */
+    public function loadService(array $serviceConfig) : ServiceInterface
+    {
+        if(!isset($this->services[$serviceConfig['class']])){
+            $this->services[$serviceConfig['class']] = new $serviceConfig['class']($this->connections, $this->log, $this->configStore);
+        }
+        return $this->services[$serviceConfig['class']];
     }
 }

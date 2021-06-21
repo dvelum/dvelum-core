@@ -30,6 +30,7 @@ declare(strict_types=1);
 namespace Dvelum;
 
 use \Exception as Exception;
+use Psr\Http\Message\ResponseInterface;
 
 class Response
 {
@@ -48,28 +49,27 @@ class Response
      * @var bool
      */
     protected $sent = false;
+
+    protected ResponseInterface $psrResponse;
     /**
      * @return Response
      */
-    static public function factory()
-    {
-        static $instance = null;
+   public function __construct(ResponseInterface $response)
+   {
+       $this->psrResponse = $response;
+   }
 
-        if(empty($instance)){
-            $instance = new static();
-        }
-
-        return $instance;
-    }
-
+   public function getPsrResponse():ResponseInterface
+   {
+       return $this->psrResponse;
+   }
     /**
      * Send redirect header
      * @param mixed $location
      */
     public function redirect($location) : void
     {
-        header("Location: $location");
-        exit();
+        $this->psrResponse = $this->psrResponse->withAddedHeader("Location: $location");
     }
 
     /**
@@ -94,10 +94,10 @@ class Response
         }
 
         if($this->format === self::FORMAT_JSON){
-            $this->header('Content-Type: application/json');
+            $this->psrResponse = $this->psrResponse->withAddedHeader('Content-Type: application/json');
         }
 
-        echo $this->buffer;
+        $this->psrResponse->getBody()->write($this->buffer);
 
         if(function_exists('fastcgi_finish_request')){
             fastcgi_finish_request();
@@ -212,10 +212,6 @@ class Response
      */
     public function setResponseCode(int $code): void
     {
-        if(function_exists('http_response_code')){
-            http_response_code($code);
-        }else{
-            header('X-PHP-Response-Code: '.$code, true, $code);
-        }
+        $this->psrResponse = $this->psrResponse->withStatus($code);
     }
 }

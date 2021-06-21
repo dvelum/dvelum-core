@@ -27,75 +27,65 @@
  */
 declare(strict_types=1);
 
-namespace Dvelum\App\Cache;
+namespace Dvelum;
 
-use Dvelum\Cache\CacheInterface;
+use Psr\Container\ContainerInterface;
+use RuntimeException;
 
-class Manager
+/**
+ *
+ * @package App\Service
+ */
+class DependencyContainer implements ContainerInterface
 {
     /**
-     * @var array<string,CacheInterface> $connections
+     * @var array<string,Object>
      */
-    static protected $connections = [];
+    protected array $container;
 
     /**
-     * Register cache adapter
-     * @param string $name
-     * @param CacheInterface $cache
-     * @return void
+     * @param string $interfaceName
+     * @param object $object
      */
-    public function register($name , CacheInterface $cache) : void
+    public function bind(string $interfaceName, object $object): void
     {
-        self::$connections[$name] = $cache;
-    }
-    
-    /**
-     * Get cache adapter
-     * @param string $name
-     * @return ?CacheInterface
-     */
-    public function get(string $name)
-    {
-        if(!isset(self::$connections[$name]))
-            return null;
-        else
-            return self::$connections[$name];
-    }
-    
-    /**
-     * Remove cache adapter
-     * @param string $name
-     * @return void
-     */
-    public function remove(string $name) : void
-    {
-        if(!isset(self::$connections[$name]))
-            return;
-
-        unset(self::$connections[$name]);
-    }
-    
-    /**
-     * Get list of registered adapters
-     * @return CacheInterface[]<string,CacheInterface>
-     */
-    public function getRegistered() : array
-    {
-        return self::$connections;
+        $this->container[$interfaceName] = $object;
     }
 
     /**
-     * Init Cache adapter by config
-     * @param string $name
+     * @param string $id
+     * @return mixed
+     */
+    public function get(string $id)
+    {
+        if (!isset($this->container[$id])) {
+            throw new RuntimeException('Unresolved runtime dependency ' . $id);
+        }
+        return $this->container[$id];
+    }
+
+    /**
+     * @param string $id
+     * @return bool
+     */
+    public function has(string $id): bool
+    {
+        return isset($this->container[$id]);
+    }
+
+    /**
      * @param array<string,mixed> $config
-     * @return CacheInterface
      */
-    public function connect(string $name, array $config) : CacheInterface
+    public function bindArray(array $config) : void
     {
-        $cache = new $config['adapter']($config['options']);
-
-        self::$connections[$name] = $cache;
-
-        return $cache;
+        foreach ($config as $id => $object){
+            if(is_callable($object)){
+                $this->container[$id] = $object($this);
+            }elseif (is_object($object)){
+                $this->container[$id] = $object;
+            }elseif (is_string($object)){
+                $this->container[$id] = new $object();
+            }
+        }
     }
 }

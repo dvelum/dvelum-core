@@ -30,16 +30,18 @@ declare(strict_types=1);
 namespace Dvelum\App\Application;
 
 use Dvelum\Application;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class WebService extends Application
 {
     /**
      * Start application
-     * @return void
+     * @return ResponseInterface
      */
-    public function run() : void
+    public function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        parent::run();
-        $this->routeFrontend();
+        $response = parent::run($request, $response);
+        return $this->routeFrontend($request, $response);
     }
 }

@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +26,15 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
 namespace Dvelum;
 
-use Dvelum\{App\Cache, Config\ConfigInterface, Db, Cache\CacheInterface, Extensions\Manager};
+use App\Config\Storage;
+use Dvelum\{Cache\CacheInterface, Config\Storage\StorageInterface, Db, Extensions\Manager};
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 /**
@@ -70,23 +74,17 @@ class Application
      */
     protected $extensionsManager;
 
-    /**
-     * The constructor accepts the main configuration object as an argument
-     * @param ConfigInterface $config
-     */
-    public function __construct(ConfigInterface $config)
+    protected ContainerInterface $diContainer;
+    protected StorageInterface $configStorage;
+
+    public function __construct(ContainerInterface $container)
     {
-        $this->config = $config;
+        $this->diContainer = $container;
     }
 
-    /**
-     * Inject Auto-loader
-     * @param Autoload $autoloader
-     * @return void
-     */
-    public function setAutoloader(Autoload $autoloader) : void
+    public function getDiContainer(): ContainerInterface
     {
-        $this->autoloader = $autoloader;
+        return $this->diContainer;
     }
 
     /**
@@ -95,152 +93,41 @@ class Application
      * @return void
      * @throws \Exception
      */
-    protected function init() : void
+    protected function init(): void
     {
         if ($this->initialized) {
             return;
         }
 
+        $config = $this->diContainer->get('config.main');
+        date_default_timezone_set($config->get('timezone'));
+
         /*
          * Init extensions
          */
         $this->loadExtensions();
-
-        $config = & $this->config->dataLink();
-
-        date_default_timezone_set($config['timezone']);
-
         /*
-         * Init cache connection
+         *  Init modules
          */
-        $cache = $this->initCache();
-        $this->cache = $cache;
-
-        /*
-         * Init database connection
-         */
-        $dbManager = $this->initDb();
-
-        $request = Request::factory();
-        $request->setConfig(Config\Factory::create([
-            'delimiter' => $config['urlDelimiter'],
-            'extension' => $config['urlExtension'],
-            'wwwRoot' => $config['wwwRoot']
-        ]));
-
-        $resource = Resource::factory();
-        $resource->setConfig(Config\Factory::create([
-            'jsCacheUrl' => $config['jsCacheUrl'],
-            'jsCachePath' => $config['jsCachePath'],
-            'cssCacheUrl' => $config['cssCacheUrl'],
-            'cssCachePath' => $config['cssCachePath'],
-            'wwwRoot' => $config['wwwRoot'],
-            'wwwPath' => $config['wwwPath'],
-            'cache' => $cache
-        ]));
-
-        /*
-         * Register Services
-         */
-        Service::register(
-            Config::storage()->get('services.php'),
-            Config\Factory::create([
-                'appConfig' => $this->config,
-                'dbManager' => $dbManager,
-                'cache' => $cache,
-                'autoloader' => $this->autoloader
-            ])
-        );
-
         $this->initExtensions();
-
-        /*
-         * Init templates storage
-         */
-        $templateStorage = View::storage();
-        $templateStorage->setConfig(Config\Factory::storage()->get('template_storage.php')->__toArray());
-
-
         $this->initialized = true;
-    }
-
-
-    /**
-     * Initialize Cache connections
-     * @return CacheInterface | null
-     */
-    protected function initCache(): ? CacheInterface
-    {
-        if (!$this->config->get('use_cache')) {
-            return null;
-        }
-
-        $cacheConfig = Config::storage()->get('cache.php')->__toArray();
-        $cacheManager = new Cache\Manager();
-
-        foreach ($cacheConfig as $name => $cfg) {
-            if ($cfg['enabled']) {
-                $cacheManager->connect($name, $cfg);
-            }
-        }
-
-        if ($this->config->get('development')) {
-            Debug::setCacheCores($cacheManager->getRegistered());
-        }
-        /**
-         * @var CacheInterface $cache
-         */
-        $cache = $cacheManager->get('data');
-
-        if(empty($cache)){
-            return null;
-        }
-
-        return $cache;
-    }
-
-    /**
-     * Initialize Database connection
-     * @return Db\ManagerInterface
-     * @throws \Exception
-     */
-    protected function initDb() : Db\ManagerInterface
-    {
-        $dev = $this->config->get('development');
-        $dbErrorHandler = function ( Db\Adapter\Event $e){
-            $response = Response::factory();
-            $response->error(Lang::lang()->get('CANT_CONNECT'));
-            exit();
-        };
-
-        $useProfiler = false;
-        if($dev && $this->config->get('debug_panel')){
-            $useProfiler = Config::storage()->get('debug_panel.php')->get('options')['sql'];
-        }
-
-        $this->config->set('use_db_profiler', $useProfiler);
-
-        $managerClass = $this->config->get('db_manager');
-
-        $conManager = new $managerClass($this->config);
-        $conManager->setConnectionErrorHandler($dbErrorHandler);
-        return $conManager;
     }
 
     /**
      * Start application
      * @return void
      */
-    public function run() : void
+    public function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $this->init();
+        return $response;
     }
 
     /**
      * Start application in test mode
      * @return void
      */
-    public function runTestMode() : void
+    public function runTestMode(): void
     {
         $this->init();
     }
@@ -249,7 +136,7 @@ class Application
      * Start application in install mode
      * @return void
      */
-    public function runInstallMode() : void
+    public function runInstallMode(): void
     {
         $this->init();
     }
@@ -258,7 +145,7 @@ class Application
      * Start console application
      * @return void
      */
-    public function runConsole() : void
+    public function runConsole(): void
     {
         $this->init();
         $request = Request::factory();
@@ -277,17 +164,21 @@ class Application
      * Run frontend application
      * @return void
      */
-    protected function routeFrontend() : void
+    protected function routeFrontend(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $request = Request::factory();
-        $response = Response::factory();
+       // $request = Request::factory();
+        $result = new Response($response);
 
-        if ($this->config->get('maintenance')) {
+        $config = $this->diContainer->get('config.main');
+        $storage = $this->diContainer->get(\Dvelum\Config\Storage\StorageInterface::class);
+
+
+        if ($config->get('maintenance')) {
+            $lang =  $this->diContainer->get(\Dvelum\Lang);
             $tpl = View::factory();
-            $tpl->set('msg', Lang::lang()->get('MAINTENANCE'));
-            $response->put($tpl->render('public/maintenance.php'));
-            $response->send();
-            return;
+            $tpl->set('msg', $lang->get('MAINTENANCE'));
+            $response->getBody()->write($tpl->render('public/maintenance.php'));
+            return $response;
         }
 
         /*
@@ -298,45 +189,41 @@ class Application
         /*
          * Start routing
         */
-        $frontConfig = Config::storage()->get('frontend.php');
-        $routerClass = '\\Dvelum\\App\\Router\\' . $frontConfig->get('router');
+        $frontConfig = $storage->get('frontend.php');
+        $routerClass = $frontConfig->get('router');
 
         if (!class_exists($routerClass)) {
             $routerClass = $frontConfig->get('router');
         }
 
         /**
-         * @var \Dvelum\App\Router $router
+         * @var \Dvelum\App\Router\RouterInterface $router
          */
-        $router = new $routerClass();
-        $router->route($request, $response);
-
-        if (!$response->isSent()) {
-            $response->send();
-        }
+        $router = new $routerClass($this->diContainer);
+        return $router->route($request, $response);
     }
 
     /**
      * Load additional core extensions
      * @return void
      */
-    protected function loadExtensions() : void
+    protected function loadExtensions(): void
     {
-        $extensions = Config\Factory::storage()->get('extensions.php');
-        if(empty($extensions)){
+        $extensions = $this->diContainer->get(\Dvelum\Config\Storage\StorageInterface::class)->get('extensions.php');
+        if (empty($extensions)) {
             return;
         }
 
-        $this->extensionsManager = new Manager($this->config, $this->autoloader);
+        $this->extensionsManager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
         $this->extensionsManager->loadExtensions();
     }
 
     /**
      * Initialize core and service dependent extensions
      */
-    protected function initExtensions() : void
+    protected function initExtensions(): void
     {
-        if(!empty($this->extensionsManager)){
+        if (!empty($this->extensionsManager)) {
             $this->extensionsManager->initExtensions();
         }
     }

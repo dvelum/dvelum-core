@@ -4,7 +4,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,27 +25,33 @@
  * SOFTWARE.
  *
  */
-
 declare(strict_types=1);
 
-namespace Dvelum\App\Service\Loader;
+namespace App\Service\Loader;
 
-use Dvelum\Config;
-use Dvelum\App\Dictionary\Service;
+use App\Config\Storage;
+use App\Connection\Manager;
+use App\Service\ServiceInterface;
+use Psr\Log\LoggerInterface;
 
-class Dictionary extends AbstractAdapter
+class Loader implements LoaderInterface
 {
-    /**
-     * @return Service|mixed
-     * @throws \Exception
-     */
-    public function loadService()
+    private Manager $connections;
+    private Storage $configStore;
+    private LoggerInterface $log;
+
+    public function __construct(Manager $connections, Storage $configStore, LoggerInterface $log)
     {
-        $appConfig = $this->config->get('appConfig');
-        $service = new Service();
-        $service->setConfig(Config\Factory::create([
-            'configPath' => $appConfig->get('dictionary_folder') . $appConfig->get('language') . '/'
-        ]));
-        return $service;
+        $this->connections = $connections;
+        $this->configStore = $configStore;
+        $this->log = $log;
+    }
+    /**
+     * @param array<string,mixed> $serviceConfig
+     * @return ServiceInterface
+     */
+    public function loadService(array $serviceConfig) : ServiceInterface
+    {
+        return new $serviceConfig['class']($this->connections, $this->log, $this->configStore);
     }
 }

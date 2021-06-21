@@ -12,9 +12,6 @@ parameters:
 	    -  %currentWorkingDirectory%/tests/unit/dvelum2
 	autoload_files: []
 	polluteCatchScopeWithTryAssignments: true
-	reportUnmatchedIgnoredErrors: false
-	checkGenericClassInNonGenericObjectType: false
-	checkMissingIterableValueType: false
 	ignoreErrors:
 		- '#Function pinba_[a-zA-Z0-9\\_]#'
 		- '#Function finfo_[a-zA-Z0-9\\_]#'
