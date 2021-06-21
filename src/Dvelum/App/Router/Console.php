@@ -39,7 +39,7 @@ class Console extends Router
      * Run action
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @return void
+     * @return ResponseInterface
      * @throws \Exception
      */
     public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
