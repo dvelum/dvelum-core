@@ -136,23 +136,7 @@ class Lang
 
         return $this->dictionaries[$name];
     }
-
-    /**
-     * Get link to localization dictionary by localization name or
-     * get default dictionary
-     * @param string $name optional,
-     * @throws \Exception
-     * @return Lang\Dictionary
-     */
-    static public function lang(?string $name = null): Lang\Dictionary
-    {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        return $langService->getDictionary($name);
-    }
-
+    
     /**
      * Get configuration storage
      * @return StorageInterface
@@ -163,18 +147,5 @@ class Lang
             $this->storage = new Config\Storage\File\AsArray();
         }
         return $this->storage;
-    }
-
-    /**
-     * Get configuration storage
-     * @return StorageInterface
-     */
-    static public function storage(): StorageInterface
-    {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        return $langService->getStorage();
     }
 }

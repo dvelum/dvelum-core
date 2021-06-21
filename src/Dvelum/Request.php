@@ -76,6 +76,16 @@ class Request
         $this->parts = $this->detectParts($this->uri);
     }
 
+    public function setRequest(ServerRequestInterface $request) : void
+    {
+        $this->psrRequest = $request;
+    }
+
+    public function getPsrRequest():ServerRequestInterface
+    {
+        return $this->psrRequest;
+    }
+
     /**
      * @param string $string
      * @return string

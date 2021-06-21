@@ -54,6 +54,8 @@ class Config extends Router
 
         $requestHelper = new \Dvelum\Request($request);
         $responseHelper = new \Dvelum\Response($response);
+        $responseHelper->setFormat(Response::FORMAT_HTML);
+
         $controller = $requestHelper->getPart(0);
         $pathCode = \Dvelum\Filter::filterValue('pagecode', $controller);
         $routes = Cfg::factory(
@@ -68,6 +70,7 @@ class Config extends Router
         }
 
         $this->runController($controllerClass, $requestHelper->getPart(1), $requestHelper, $responseHelper);
+        $responseHelper->send();
         return $responseHelper->getPsrResponse();
     }
 

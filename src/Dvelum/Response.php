@@ -94,7 +94,7 @@ class Response
         }
 
         if($this->format === self::FORMAT_JSON){
-            $this->psrResponse = $this->psrResponse->withAddedHeader('Content-Type: application/json');
+            $this->psrResponse = $this->psrResponse->withAddedHeader('Content-Type','application/json');
         }
 
         $this->psrResponse->getBody()->write($this->buffer);

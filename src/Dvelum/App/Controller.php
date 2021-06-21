@@ -34,6 +34,7 @@ use Dvelum\Request;
 use Dvelum\Resource;
 use Dvelum\Response;
 use Dvelum\App\Router\RouterInterface;
+use Psr\Container\ContainerInterface;
 
 class Controller
 {
@@ -58,13 +59,16 @@ class Controller
      */
     protected $router;
 
+    protected ContainerInterface $container;
+
     /**
      * Controller constructor.
      * @param Request $request
      * @param Response $response
      */
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request, Response $response, ContainerInterface $container)
     {
+        $this->container = $container;
         $this->request = $request;
         $this->response = $response;
         $this->resource = Resource::factory();
@@ -89,7 +93,7 @@ class Controller
      */
     public function render(string $templatePath , array $data, bool $cacheResult = true) : void
     {
-        $template = \Dvelum\View::factory();
+        $template = $this->container->get(\Dvelum\Template\Service::class)->getTemplate();
         if(!$cacheResult){
             $template->disableCache();
         }

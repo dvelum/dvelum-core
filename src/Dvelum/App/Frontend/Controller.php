@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -29,7 +30,8 @@ declare(strict_types=1);
 
 namespace Dvelum\App\Frontend;
 
-use Dvelum\{App, Config, Config\ConfigInterface, Lang, Page\Page, Request, Response, Resource};
+use Dvelum\{App, Config\ConfigInterface, Lang, Page\Page, Request, Resource, Response};
+use Dvelum\Config\Storage\StorageInterface;
 use Psr\Container\ContainerInterface;
 
 class Controller extends App\Controller
@@ -47,14 +49,15 @@ class Controller extends App\Controller
      */
     protected Page $page;
 
-    protected ContainerInterface $container;
+
 
     public function __construct(Request $request, Response $response, ContainerInterface $container)
     {
+        parent::__construct($request, $response, $container);
         $this->page = Page::factory();
-        $this->frontendConfig = Config::storage()->get('frontend.php');
-        $this->lang = $container->get(\Dvelum\Lang::class)::lang();
-        parent::__construct($request, $response);
+        $this->frontendConfig = $container->get(StorageInterface::class)->get('frontend.php');
+        $this->lang = $container->get(Lang::class)->getDictionary();
+
     }
 
     /**
@@ -64,15 +67,18 @@ class Controller extends App\Controller
      */
     public function showPage(): void
     {
-        header('Content-Type: text/html; charset=utf-8');
         $this->page->setTemplatesPath('public/');
 
         $layoutPath = $this->page->getThemePath() . 'layout.php';
-        $this->render($layoutPath, [
-            'development' => $this->appConfig->get('development'),
-            'page' => $this->page,
-            'path' => $this->page->getThemePath(),
-            'resource' => Resource::factory()
-        ], false);
+        $this->render(
+            $layoutPath,
+            [
+                'development' => $this->appConfig->get('development'),
+                'page' => $this->page,
+                'path' => $this->page->getThemePath(),
+                'resource' => $this->container->get(Resource::class)
+            ],
+            false
+        );
     }
 }

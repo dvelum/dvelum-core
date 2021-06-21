@@ -158,21 +158,23 @@ $creator = new \Nyholm\Psr7Server\ServerRequestCreator(
     $psr17Factory  // StreamFactory
 );
 $serverRequest = $creator->fromGlobals();
-$response = $psr17Factory->createResponse(200)->withAddedHeader('Content-Type', 'application/json; charset=utf-8');
+$response = $psr17Factory->createResponse(200);
 
 /**
  * @var \Psr\Http\Message\ResponseInterface $resp
  */
 $resp = $app->run($serverRequest , $response);
 
+
+$p = $serverRequest->getHeader('HTTP_X_REQUESTED_WITH');
 /*
  * Print debug information (development mode)
  */
-if($config['development'] && $config->get('debug_panel') && !\Dvelum\Request::factory()->isAjax())
+if($config['development'] && $config->get('debug_panel') && (empty($serverRequest->getHeader('HTTP_X_REQUESTED_WITH')[0]) ||  $serverRequest->getHeader('HTTP_X_REQUESTED_WITH')[0]!== 'XMLHttpRequest'))
 {
     $debugCfg = $configStorage->get('debug_panel.php');
     $debug = new \Dvelum\Debug();
-    $debug->setCacheCores($app->getDiConteiner()->get(\Dvelum\App\Cache\Manager::class)->getRegistered());
+    $debug->setCacheCores($diContainer->get(\Dvelum\App\Cache\Manager::class)->getRegistered());
     $debug->setScriptStartTime($scriptStart);
     $debug->setLoadedClasses($autoloader->getLoadedClasses());
     $debug->setLoadedConfigs($configStorage->getDebugInfo());
