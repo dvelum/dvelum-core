@@ -30,22 +30,27 @@ declare(strict_types=1);
 namespace Dvelum\App\Router;
 
 use Dvelum\App\Router;
-use Dvelum\Request;
-use Dvelum\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Console extends Router
 {
     /**
-     * Route request
-     * @param Request $request
-     * @param Response $response
+     * Run action
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @return void
+     * @throws \Exception
      */
-    public function route(Request $request , Response $response) : void
+    public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-        $consoleConfig = \Dvelum\Config::storage()->get('console.php');
+        $consoleConfig = $this->container->get(\Dvelum\Config\Storage\StorageInterface::class)->get('console.php');
         $controllerClass = $consoleConfig->get('controller');
-        $this->runController($controllerClass , $request->getPart(0), $request, $response);
+        $requestHelper = new \Dvelum\Request($request);
+        $responseHelper = new \Dvelum\Response($response);
+        $this->runController($controllerClass , $request->getPart(0), $requestHelper, $responseHelper);
+        $responseHelper->send();
+        return $responseHelper->getPsrResponse();
     }
 
     /**

@@ -35,47 +35,40 @@ use Dvelum\Config;
 use Dvelum\Filter;
 use Dvelum\Request;
 use Dvelum\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Path extends Router
 {
-    /**
-     * @var bool|Config\ConfigInterface
-     */
-    protected $appConfig = false;
-
-    public function __construct()
-    {
-        $this->appConfig = Config::storage()->get('main.php');
-    }
 
     /**
-     * Route request
-     * @param Request $request
-     * @param Response $response
-     * @throws \Exception
+     * Run action
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      * @return void
+     * @throws \Exception
      */
-    public function route(Request $request , Response $response) :void
-    {
+    public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface{
         $controller = $request->getPart(0);
         $controller = ucfirst(Filter::filterValue('pagecode' , $controller));
 
         $controllerClass = Index\Controller::class;
 
         if($controller !== false && strlen($controller)){
-            $classNamespace1 = 'Frontend_' . $controller . '_Controller';
-            $classNamespace2 = 'App\\Frontend\\' . $controller . '\\Controller';
-            $classNamespace3 = 'Dvelum\\App\\Frontend\\' . $controller . '\\Controller';
+            $classNamespace1 = 'App\\Frontend\\' . $controller . '\\Controller';
+            $classNamespace2 = 'Dvelum\\App\\Frontend\\' . $controller . '\\Controller';
 
             if(class_exists($classNamespace1)){
                 $controllerClass = $classNamespace1;
             }elseif (class_exists($classNamespace2)){
                 $controllerClass = $classNamespace2;
-            }elseif (class_exists($classNamespace3)){
-                $controllerClass = $classNamespace3;
             }
         }
-        $this->runController($controllerClass , $request->getPart(1), $request, $response);
+        $requestHelper = new \Dvelum\Request($request);
+        $responseHelper = new \Dvelum\Response($response);
+        $this->runController($controllerClass , $request->getPart(1), $requestHelper, $responseHelper);
+        $responseHelper->send();
+        return $responseHelper->getPsrResponse();
     }
 
     /**
@@ -87,7 +80,7 @@ class Path extends Router
      */
     public function runController(string $controller , ?string $action, Request $request , Response $response) : void
     {
-        if((strpos('Backend_' , $controller) === 0) || strpos('\\Backend\\', $controller)!==false) {
+        if(strpos('\\Backend\\', $controller)!==false) {
             $response->redirect('/');
             return;
         }

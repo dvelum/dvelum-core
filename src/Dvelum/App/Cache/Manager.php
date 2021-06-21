@@ -44,7 +44,7 @@ class Manager
      * @param CacheInterface $cache
      * @return void
      */
-    public function register($name , CacheInterface $cache) : void
+    public function register(string $name , CacheInterface $cache) : void
     {
         self::$connections[$name] = $cache;
     }
