@@ -5,6 +5,7 @@ parameters:
 	    -  %currentWorkingDirectory%/application/templates
 	    -  %currentWorkingDirectory%/vendor
 	    -  %currentWorkingDirectory%/src/Dvelum/Cache/Memcached.php
+	    -  %currentWorkingDirectory%/src/Dvelum/Image/Resize.php
 	scanDirectories:
 	    -  %currentWorkingDirectory%/application
 	    -  %currentWorkingDirectory%/src
