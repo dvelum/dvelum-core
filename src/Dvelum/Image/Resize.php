@@ -57,10 +57,13 @@ class Resize
         }
 
         $img = self::createImg($src , $imgInfo[2]);
+        /**
+         * @var \GdImage $destImg
+         */
         $destImg = self::_createDuplicateLayer($imgInfo[2] , $w , $h);
 
         /**
-         * @var resource $img
+         * @var \GdImage $img
          */
         if(empty($img) || empty($destImg)){
             return false;
@@ -77,7 +80,7 @@ class Resize
      * Create image from file
      * @param string $path - file path
      * @param int $type - image type constant, source file type
-     * @return resource | bool
+     * @return \GdImage | false
      */
     static public function createImg($path , $type)
     {
@@ -140,7 +143,7 @@ class Resize
         $im = self::createImg($imgPath , $imgInfo[2]);
 
         /**
-         * @var resource $im
+         * @var \GdImage $im
          */
         if(empty($im)){
             return false;
@@ -233,9 +236,6 @@ class Resize
 
         $im = self::createImg($imgPath , $imgInfo[2]);
 
-        /**
-         * @var resource $im
-         */
         if(empty($im)){
             return false;
         }
@@ -292,7 +292,7 @@ class Resize
      * @param integer $type image type
      * @param integer $width
      * @param integer $height
-     * @return resource|false
+     * @return \GdImage|false
      */
     static protected function _createDuplicateLayer($type , $width , $height)
     {
@@ -312,7 +312,7 @@ class Resize
 
     /**
      * Save image to file
-     * @param resource $resource - image resource
+     * @param \GdImage $resource - image resource
      * @param string $path - path to file
      * @param mixed $imgType - image type constant deprecated
      * @return boolean
@@ -435,9 +435,7 @@ class Resize
 
         $im = self::createImg($imgPath , $imgInfo[2]);
         $dest = self::_createDuplicateLayer($imgInfo[2] , (int) $width , (int) $height);
-        /**
-         * @var resource $im
-         */
+
         if(empty($im) || empty($dest)){
             return false;
         }

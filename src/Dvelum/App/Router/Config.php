@@ -90,7 +90,7 @@ class Config extends Router
      * specified in the passed argument.
      * Thus, there is no need to know the exact page URL.
      *
-     * @param string $module- module name
+     * @param string $module -module name
      * @return string
      */
     public function findUrl(string $module) : string
