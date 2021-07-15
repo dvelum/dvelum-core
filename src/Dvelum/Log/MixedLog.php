@@ -29,7 +29,7 @@ namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
 
-class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
+class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
 {
     /**
      * @var File

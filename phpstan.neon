@@ -23,6 +23,6 @@ parameters:
 		- '#class KRB5CCache [a-zA-Z0-9\\_]#'
 		- '#call_user_func_array expects callable#'
 		- '#Unsafe usage of new static#'
-		- '#spl_autoload_register expects callable#'
+		- '#spl_autoload_register expects#'
 	level: max
 
