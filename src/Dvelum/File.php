@@ -217,7 +217,7 @@ class File
      * Extract all files
      * @param string $source
      * @param string $destination
-     * @param array|string|false $fileEntries - optional - The entries to extract. It accepts either a single entry name or an array of names.
+     * @param array<string>|string|false $fileEntries - optional - The entries to extract. It accepts either a single entry name or an array of names.
      * @return bool
      */
     static public function unzipFiles(string $source , string $destination , $fileEntries = false)
