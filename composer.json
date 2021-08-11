@@ -51,8 +51,8 @@
         "installer-types": ["js-library","dvelum3-extension"],
         "installer-paths": {
             "www/js/lib/{$name}": ["type:js-library"],
-            "modules/{$vendor}/{$name}":["type:dvelum3-module"],
-            "extensions/{$vendor}/{$name}":["type:dvelum3-extension"]
+            "modules/{$vendor}/{$name}":["type:dvelum4-module"],
+            "extensions/{$vendor}/{$name}":["type:dvelum4-extension"]
         }
     }
 }
