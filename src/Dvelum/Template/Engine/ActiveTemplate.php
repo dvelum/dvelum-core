@@ -31,8 +31,10 @@ namespace Dvelum\Template\Engine;
 
 use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Template\Storage;
 use \Exception;
-use Dvelum\View;
+
 
 /**
  * View class
@@ -59,29 +61,21 @@ class ActiveTemplate implements EngineInterface
      */
     protected $cacheLifetime = false;
 
+    protected Storage $storage;
+
     /**
      * @var ConfigInterface $config
      */
     protected $config;
 
-    /**
-     * Set template configuration
-     * @param ConfigInterface $config
-     * @return void
-     */
-    public function setConfig(ConfigInterface $config) : void
+    public function __construct(ConfigInterface $config, Storage $storage, ? CacheInterface $cache)
     {
         $this->config = $config;
+        $this->cache = $cache;
+        $this->storage = $storage;
     }
 
-    /**
-     * Set caching adapter
-     * @param CacheInterface|null $cache
-     */
-    public function setCache(?CacheInterface $cache): void
-    {
-        $this->cache = $cache;
-    }
+
     /**
      * Template Render
      * @param string $templatePath — the path to the template file
@@ -90,7 +84,7 @@ class ActiveTemplate implements EngineInterface
     public function render(string $templatePath): string
     {
         $hash = '';
-        $realPath = View::storage()->get($templatePath);
+        $realPath = $this->storage->get($templatePath);
 
         if(!$realPath){
             return '';

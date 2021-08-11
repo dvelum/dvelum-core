@@ -31,21 +31,12 @@ namespace Dvelum\Template\Engine;
 
 use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Template\Storage;
 
 interface EngineInterface
 {
-    /**
-     * Set template engine configuration options
-     * @param ConfigInterface $config
-     * @return void
-     */
-    public function setConfig(ConfigInterface $config) : void;
-
-    /**
-     * Set caching adapter
-     * @param CacheInterface|null $cache
-     */
-    public function setCache(?CacheInterface $cache): void;
+    public function __construct(ConfigInterface $config, Storage $storage, ? CacheInterface $cache);
 
     /**
      * Set lifetime for cache data

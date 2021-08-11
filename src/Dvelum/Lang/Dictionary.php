@@ -29,7 +29,7 @@ declare(strict_types=1);
 
 namespace Dvelum\Lang;
 
-use Dvelum\Lang;
+use Dvelum\Config\Storage\StorageInterface;
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
 
@@ -49,14 +49,17 @@ class Dictionary
      */
     protected $data;
 
+    private StorageInterface $storage;
+
     /**
      * @param string $name
      * @param array $loaderConfig
      */
-    public function __construct(string $name, array $loaderConfig)
+    public function __construct(string $name, array $loaderConfig , StorageInterface $storage)
     {
         $this->loader = $loaderConfig;
         $this->name = $name;
+        $this->storage = $storage;
     }
 
     /**
@@ -139,7 +142,7 @@ class Dictionary
     {
         switch ($this->loader['type']) {
             case Config\Factory::File_Array:
-                $this->data = Lang::storage()->get($this->loader['src'], true, true);
+                $this->data = $this->storage->get($this->loader['src'], true, true);
                 break;
         }
     }

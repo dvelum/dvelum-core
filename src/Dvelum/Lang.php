@@ -132,7 +132,7 @@ class Lang
             throw new \Exception('Lang::lang Dictionary "' . $name . '" is not found');
         }
 
-        $this->dictionaries[$name] = new Lang\Dictionary($name, $this->loaders[$name]);
+        $this->dictionaries[$name] = new Lang\Dictionary($name, $this->loaders[$name], $this->getStorage());
 
         return $this->dictionaries[$name];
     }

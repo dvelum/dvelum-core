@@ -14,11 +14,9 @@ return [
         );
     },
     \Dvelum\Template\Storage::class => static function (c $c): \Dvelum\Template\Storage {
-        $templateStorage = \Dvelum\View::storage();
-        $templateStorage->setConfig(
+        return new \Dvelum\Template\Storage(
             $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template_storage.php')->__toArray()
         );
-        return $templateStorage;
     },
     \Dvelum\Resource::class => static function (c $c): \Dvelum\Resource {
         $resource = \Dvelum\Resource::factory();
@@ -53,7 +51,7 @@ return [
         return new $managerClass($config);
     },
     \Dvelum\Extensions\Manager::class => static function (c $c): \Dvelum\Extensions\Manager {
-        return new \Dvelum\Extensions\Manager($c->get('config.main'), $c->get(\Dvelum\Autoload::class));
+        return new \Dvelum\Extensions\Manager($c->get('config.main'), $c);
     },
     // === services =======================================================================
     \Dvelum\Lang::class => static function (c $c): \Dvelum\Lang {
@@ -83,14 +81,22 @@ return [
         );
         return $service;
     },
+    \Dvelum\Template\Storage::class => static function (c $c): \Dvelum\Template\Storage {
+        return new \Dvelum\Template\Storage(
+            $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template_storage.php')->__toArray()
+        );
+    },
     \Dvelum\Template\Service::class => static function (c $c): \Dvelum\Template\Service {
+        $configStorage = $c->get(\Dvelum\Config\Storage\StorageInterface::class);
         return new \Dvelum\Template\Service(
-            $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template.php'),
+            $configStorage->get('template.php'),
+            $c->get(\Dvelum\Template\Storage::class),
             $c->has(\Dvelum\Cache\CacheInterface::class) ? $c->get(
                 \Dvelum\Cache\CacheInterface::class
             ) : null
         );
     },
+
     \Laminas\Mail\Transport\TransportInterface::class => static function (c $c
     ): \Laminas\Mail\Transport\TransportInterface {
         $cfg = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('mail_transport.php')->__toArray();

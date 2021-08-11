@@ -42,6 +42,11 @@ class Storage
      */
     protected $config = [];
 
+    public function __construct(array $options = [])
+    {
+        $this->config = $options;
+    }
+
     /**
      * Set configuration options
      * @param array $options

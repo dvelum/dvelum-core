@@ -58,11 +58,12 @@ class Service
      * @param CacheInterface|null $cache
      * @throws \Exception
      */
-    public function __construct(ConfigInterface $config, ?CacheInterface $cache)
+    public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache)
     {
         $this->adapterClass = $config->get('template_engine');
         $this->engineConfig = ConfigFactory::create($config->get('engine_config'));
         $this->cache = $cache;
+        $this->storage = $storage;
     }
 
     /**
@@ -73,9 +74,7 @@ class Service
         /**
          * @var EngineInterface $adapter
          */
-        $adapter = new $this->adapterClass();
-        $adapter->setConfig($this->engineConfig);
-        $adapter->setCache($this->cache);
+        $adapter = new $this->adapterClass($this->engineConfig, $this->storage, $this->cache);
 
         return $adapter;
     }

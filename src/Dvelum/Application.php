@@ -31,10 +31,13 @@ declare(strict_types=1);
 namespace Dvelum;
 
 use App\Config\Storage;
-use Dvelum\{Cache\CacheInterface, Config\Storage\StorageInterface, Db, Extensions\Manager};
+use Dvelum\Cache\CacheInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
+use Dvelum\Extensions\Manager as ExtensionManager;
+use Dvelum\Lang;
 
 
 /**
@@ -106,10 +109,6 @@ class Application
          * Init extensions
          */
         $this->loadExtensions();
-        /*
-         *  Init modules
-         */
-        $this->initExtensions();
         $this->initialized = true;
     }
 
@@ -166,25 +165,7 @@ class Application
      */
     protected function routeFrontend(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
-       // $request = Request::factory();
-        $result = new Response($response);
-
-        $config = $this->diContainer->get('config.main');
-        $storage = $this->diContainer->get(\Dvelum\Config\Storage\StorageInterface::class);
-
-
-        if ($config->get('maintenance')) {
-            $lang =  $this->diContainer->get(\Dvelum\Lang);
-            $tpl = View::factory();
-            $tpl->set('msg', $lang->get('MAINTENANCE'));
-            $response->getBody()->write($tpl->render('public/maintenance.php'));
-            return $response;
-        }
-
-        /*
-        $auth = new Auth($request, $this->config);
-        $auth->auth();
-         */
+        $storage = $this->diContainer->get(ConfigStorageInterface::class);
 
         /*
          * Start routing
@@ -209,22 +190,15 @@ class Application
      */
     protected function loadExtensions(): void
     {
-        $extensions = $this->diContainer->get(\Dvelum\Config\Storage\StorageInterface::class)->get('extensions.php');
+        $extensions = $this->diContainer->get(ConfigStorageInterface::class)->get('extensions.php');
         if (empty($extensions)) {
             return;
         }
-
-        $this->extensionsManager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
-        $this->extensionsManager->loadExtensions();
-    }
-
-    /**
-     * Initialize core and service dependent extensions
-     */
-    protected function initExtensions(): void
-    {
-        if (!empty($this->extensionsManager)) {
-            $this->extensionsManager->initExtensions();
-        }
+        /**
+         * @var ExtensionManager $extensionManager
+         */
+        $extensionManager = $this->diContainer->get(ExtensionManager::class);
+        $extensionManager->loadExtensions();
+        $extensionManager->initExtensions();
     }
 }
