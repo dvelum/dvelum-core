@@ -67,6 +67,7 @@ return [
         $langStorage->setConfig(
             $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('lang_storage.php')->__toArray()
         );
+        \Dvelum\Lang::setContainer($c);
         return $langService;
     },
     \Dvelum\App\Dictionary\Service::class => static function (c $c): \Dvelum\App\Dictionary\Service {

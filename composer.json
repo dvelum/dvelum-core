@@ -48,7 +48,7 @@
         "codacy/coverage": "dev-master"
     },
     "extra": {
-        "installer-types": ["js-library","dvelum3-extension"],
+        "installer-types": ["js-library","dvelum4-extension"],
         "installer-paths": {
             "www/js/lib/{$name}": ["type:js-library"],
             "modules/{$vendor}/{$name}":["type:dvelum4-module"],

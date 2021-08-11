@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -31,6 +32,9 @@ namespace Dvelum;
 
 use Dvelum\Config\Storage\File\AsArray;
 use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Lang\Dictionary;
+use http\Exception\RuntimeException;
+use Psr\Container\ContainerInterface;
 
 class Lang
 {
@@ -113,17 +117,10 @@ class Lang
     }
 
     /**
-     * @return Lang\Dictionary
-     * @throws \Exception
-     */
-    public function lang(): Lang\Dictionary{
-        return $this->getDictionary();
-    }
-    /**
      * Get localization dictionary by localization name or get default dictionary
      * @param string $name optional,
-     * @throws \Exception
      * @return Lang\Dictionary
+     * @throws \Exception
      */
     public function getDictionary(?string $name = null): Lang\Dictionary
     {
@@ -143,7 +140,7 @@ class Lang
 
         return $this->dictionaries[$name];
     }
-    
+
     /**
      * Get configuration storage
      * @return StorageInterface
@@ -154,5 +151,30 @@ class Lang
             $this->storage = new Config\Storage\File\AsArray();
         }
         return $this->storage;
+    }
+
+    /**
+     * @param ContainerInterface $di
+     * @deprecated
+     */
+    static private ContainerInterface $di;
+
+    /**
+     * @param ContainerInterface $di
+     * @deprecated
+     */
+    public static function setContainer(ContainerInterface $di): void
+    {
+        self::$di = $di;
+    }
+
+    /**
+     * @param string|null $lang
+     * @return Dictionary
+     * @deprecated
+     */
+    public static function lang(?string $lang = null): Dictionary
+    {
+        return self::$di->get(\Dvelum\Lang::class)->getDictionary($lang);
     }
 }

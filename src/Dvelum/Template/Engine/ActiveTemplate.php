@@ -221,7 +221,7 @@ class ActiveTemplate implements EngineInterface
      */
     public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true) : string
     {
-        $tpl = View::factory();
+        $tpl = \Dvelum\View::factory();
         $tpl->setData($data);
 
         if(!$useCache)

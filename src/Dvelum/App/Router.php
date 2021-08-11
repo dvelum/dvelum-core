@@ -74,7 +74,7 @@ abstract class Router implements Router\RouterInterface
      * @param Response $response
      * @throws \Exception
      */
-    public function runController(string $controller, ?string $action, Request $request, Response $response): void
+    public function runController(string $controller, ?string $action, Request $request, Response $response): ResponseInterface
     {
         if (!class_exists($controller)) {
             throw new \Exception('Undefined Controller: ' . $controller);
@@ -87,7 +87,7 @@ abstract class Router implements Router\RouterInterface
         $controller->setRouter($this);
 
         if ($response->isSent()) {
-            return;
+            return $response->getPsrResponse();
         }
 
         if ($controller instanceof Router\RouterInterface) {
@@ -100,8 +100,8 @@ abstract class Router implements Router\RouterInterface
             if (!method_exists($controller, $action . 'Action')) {
                 $action = 'index';
                 if (!method_exists($controller, $action . 'Action')) {
-                    $response->error(Lang::lang()->get('WRONG_REQUEST') . ' ' . $request->getUri());
-                    return;
+                    $response->error($this->container->get(Lang::class)->lang()->get('WRONG_REQUEST') . ' ' . $request->getUri());
+                    return $response->getPsrResponse();
                 }
             }
             $controller->{$action . 'Action'}();
@@ -110,5 +110,6 @@ abstract class Router implements Router\RouterInterface
         if (!$response->isSent() && method_exists($controller, 'showPage')) {
             $controller->showPage();
         }
+        return $response->getPsrResponse();
     }
 }
