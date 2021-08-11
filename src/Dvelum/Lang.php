@@ -113,6 +113,13 @@ class Lang
     }
 
     /**
+     * @return Lang\Dictionary
+     * @throws \Exception
+     */
+    public function lang(): Lang\Dictionary{
+        return $this->getDictionary();
+    }
+    /**
      * Get localization dictionary by localization name or get default dictionary
      * @param string $name optional,
      * @throws \Exception

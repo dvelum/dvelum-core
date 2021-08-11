@@ -72,10 +72,7 @@ class Application
      * @var Autoload
      */
     protected $autoloader;
-    /**
-     * @var Manager|null
-     */
-    protected $extensionsManager;
+
 
     protected ContainerInterface $diContainer;
     protected StorageInterface $configStorage;
@@ -83,6 +80,7 @@ class Application
     public function __construct(ContainerInterface $container)
     {
         $this->diContainer = $container;
+        $this->config = $container->get('config.main');
     }
 
     public function getDiContainer(): ContainerInterface
@@ -106,7 +104,7 @@ class Application
         date_default_timezone_set($config->get('timezone'));
 
         /*
-         * Init extensions
+         * Load extensions
          */
         $this->loadExtensions();
         $this->initialized = true;
