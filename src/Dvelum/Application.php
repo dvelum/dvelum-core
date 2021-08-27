@@ -142,18 +142,19 @@ class Application
      * Start console application
      * @return void
      */
-    public function runConsole(): void
+    public function runConsole(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $this->init();
-        $request = Request::factory();
-        $response = Response::factory();
-        $config = Config::storage()->get('console.php');
+        return $this->routeConsole($request, $response);
+    }
+
+    protected function routeConsole(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $storage = $this->diContainer->get(ConfigStorageInterface::class);
+        $config = $storage->get('console.php');
         $routerClass = $config->get('router');
-        $router = new $routerClass();
-        $router->route($request, $response);
-        if (!$response->isSent()) {
-            $response->send();
-        }
+        $router = new $routerClass($this->diContainer);
+        return $router->route($request, $response);
     }
 
 

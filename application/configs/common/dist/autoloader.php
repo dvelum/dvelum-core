@@ -12,13 +12,16 @@ return [
         './src',
     ],
     // Use class maps
-    'useMap' => true,
+    'useMap' => false,
     // Use class map (Reduce IO load during autoload)
     // Class map file path (string / false)
     'map' => 'classmap.php',
     // PSR-4 autoload paths
     'psr-4' =>[
         'Psr\\Log'=>'./vendor/psr/log/Psr/Log',
+
+        'Dvelum\\Db' => './vendor/dvelum/db/src',
+        'Dvelum\\Cache' => './vendor/dvelum/cache/src',
 
         'Laminas\\Stdlib' => './vendor/laminas/zend-stdlib/src',
         'Laminas\\Db' => './vendor/laminas/zend-db/src',

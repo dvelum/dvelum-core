@@ -36,6 +36,9 @@ use Dvelum\App\Router;
 use Dvelum\Request;
 use Dvelum\Response;
 use Dvelum\Service;
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LogLevel;
 
 class Controller extends App\Controller implements Router\RouterInterface
@@ -63,14 +66,14 @@ class Controller extends App\Controller implements Router\RouterInterface
      * @param Response $response
      * @throws \Exception
      */
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request, Response $response, ContainerInterface $container)
     {
         if (!defined('DVELUM_CONSOLE')) {
             $this->response->redirect('/');
             exit;
         }
 
-        parent::__construct($request, $response);
+        parent::__construct($request, $response, $container);
 
         $this->consoleConfig = Config::storage()->get('console.php');
         // Prepare action routes
@@ -83,13 +86,13 @@ class Controller extends App\Controller implements Router\RouterInterface
 
     /**
      * Run action
-     * @param Request $request
-     * @param Response $response
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
      */
-    public function route(Request $request, Response $response): void
+    public function route(ServerRequestInterface $request , ResponseInterface $response) : ResponseInterface
     {
-        $this->response = $response;
-        $this->request = $request;
+        $this->response = new \Dvelum\Response($response);
+        $this->request = new \Dvelum\Request($request);
         $this->indexAction();
     }
 
@@ -98,7 +101,7 @@ class Controller extends App\Controller implements Router\RouterInterface
      */
     public function indexAction() : void
     {
-        $action = strtolower((string)$this->request->getPart(0));
+        $action = strtolower((string) $this->request->getPart(0));
 
         if (empty($action) || !isset($this->actions[$action])) {
             $this->response->put('Undefined Action');

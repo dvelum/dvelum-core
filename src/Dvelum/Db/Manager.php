@@ -32,6 +32,8 @@ namespace  Dvelum\Db;
 
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Application;
+use Exception;
 
 class Manager implements ManagerInterface
 {
@@ -143,23 +145,25 @@ class Manager implements ManagerInterface
      * @param string $name
      * @param string|null $workMode
      * @throws \Exception
-     * @return ConfigInterface
+     * @phpstan-return array<string,string|int>
+     * @return array{host:string,username:string,password:string,dbname:string,driver:string,adapter:string,transactionIsolationLevel:string,port:int,prefix:string,charset:string}
      */
-    public function getDbConfig(string $name, ?string $workMode = null) : ConfigInterface
+    public function getDbConfig(string $name, ?string $workMode = null) : array
     {
         if(empty($workMode)){
             $workMode = $this->appConfig->get('development');
         }
 
-        if($workMode == \Dvelum\Application::MODE_INSTALL)
-            $workMode = \Dvelum\Application::MODE_DEVELOPMENT;
+        if($workMode === Application::MODE_INSTALL){
+            $workMode = Application::MODE_DEVELOPMENT;
+        }
 
         if(!isset($this->dbConfigs[$workMode][$name]))
         {
             $dbConfigPaths = $this->appConfig->get('db_configs');
 
             if(!isset($dbConfigPaths[$workMode]))
-                throw new \Exception('Invalid application work mode ' . $workMode);
+                throw new Exception('Invalid application work mode ' . $workMode);
 
             $configPath = $dbConfigPaths[$workMode]['dir'].$name.'.php';
             $configData = include $configPath;

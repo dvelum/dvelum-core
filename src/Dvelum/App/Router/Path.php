@@ -78,14 +78,14 @@ class Path extends Router
      * @param Request $request
      * @param Response $response
      */
-    public function runController(string $controller , ?string $action, Request $request , Response $response) : void
+    public function runController(string $controller , ?string $action, Request $request , Response $response) : ResponseInterface
     {
         if(strpos('\\Backend\\', $controller)!==false) {
             $response->redirect('/');
-            return;
+            return $response->getPsrResponse();
         }
 
-        parent::runController($controller, $action, $request, $response);
+        return parent::runController($controller, $action, $request, $response);
     }
 
 

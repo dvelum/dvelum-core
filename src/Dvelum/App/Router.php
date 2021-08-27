@@ -91,7 +91,7 @@ abstract class Router implements Router\RouterInterface
         }
 
         if ($controller instanceof Router\RouterInterface) {
-            $controller->route($request, $response);
+            $controller->route($request->getPsrRequest(), $response->getPsrResponse());
         } else {
             if (empty($action)) {
                 $action = 'index';

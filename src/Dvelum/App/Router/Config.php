@@ -74,16 +74,7 @@ class Config extends Router
         return $responseHelper->getPsrResponse();
     }
 
-    /**
-     * @param string $controller
-     * @param null|string $action
-     * @param Request $request
-     * @param Response $response
-     */
-    public function runController(string $controller, ?string $action, Request $request, Response $response): void
-    {
-        parent::runController($controller, $action, $request, $response);
-    }
+
 
     /**
      * Define url address to call the module

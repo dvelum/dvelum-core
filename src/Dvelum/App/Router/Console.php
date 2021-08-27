@@ -30,6 +30,8 @@ declare(strict_types=1);
 namespace Dvelum\App\Router;
 
 use Dvelum\App\Router;
+use Dvelum\Request;
+use Dvelum\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -48,7 +50,7 @@ class Console extends Router
         $controllerClass = $consoleConfig->get('controller');
         $requestHelper = new \Dvelum\Request($request);
         $responseHelper = new \Dvelum\Response($response);
-        $this->runController($controllerClass , $request->getPart(0), $requestHelper, $responseHelper);
+        $this->runController($controllerClass , $requestHelper->getPart(0), $requestHelper, $responseHelper);
         $responseHelper->send();
         return $responseHelper->getPsrResponse();
     }
