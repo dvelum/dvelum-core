@@ -75,9 +75,10 @@ class Controller extends App\Controller implements Router\RouterInterface
 
         parent::__construct($request, $response, $container);
 
-        $this->consoleConfig = Config::storage()->get('console.php');
+        $storage = $container->get(Config\Storage\StorageInterface::class);
+        $this->consoleConfig = $storage->get('console.php');
         // Prepare action routes
-        $data = Config::storage()->get('console_actions.php')->__toArray();
+        $data = $storage->get('console_actions.php')->__toArray();
         foreach ($data as $action => $config){
             $this->actions[strtolower($action)] = $config;
         }
@@ -128,7 +129,7 @@ class Controller extends App\Controller implements Router\RouterInterface
             $config = $actionConfig['config'];
         }
 
-        $adapter->init($this->appConfig, $params , $config);
+        $adapter->init($this->appConfig, $params , $config, $this->container);
         $result = $adapter->run();
 
         echo '[' . $action . ' : ' . $adapter->getInfo() . ']' . PHP_EOL;

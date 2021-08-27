@@ -30,6 +30,7 @@ declare(strict_types=1);
 namespace Dvelum\App\Console;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 interface ActionInterface
 {
@@ -37,9 +38,9 @@ interface ActionInterface
      * @param ConfigInterface $appConfig
      * @param array $params
      * @param array $config
-     * @return void
+     * @param ContainerInterface $diContainer
      */
-    public function init(ConfigInterface $appConfig, array $params = [], array $config = []): void;
+    public function init(ConfigInterface $appConfig, array $params = [], array $config = [], ContainerInterface $diContainer): void;
 
     /**
      * Get job statistics as string

@@ -42,7 +42,7 @@ interface RouterInterface
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @throws \Exception
-     * @return void
+     * @return ResponseInterface
      */
     public function route(ServerRequestInterface $request , ResponseInterface $response) : ResponseInterface;
 

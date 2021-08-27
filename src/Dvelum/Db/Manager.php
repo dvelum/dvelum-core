@@ -171,7 +171,7 @@ class Manager implements ManagerInterface
             $this->dbConfigs[$workMode][$name] = $config;
         }
 
-        return $this->dbConfigs[$workMode][$name];
+        return $this->dbConfigs[$workMode][$name]->__toArray();
     }
 
     /**

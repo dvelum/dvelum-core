@@ -30,6 +30,7 @@ declare(strict_types=1);
 namespace Dvelum\App\Console;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 abstract class Action implements ActionInterface
 {
@@ -52,17 +53,20 @@ abstract class Action implements ActionInterface
      */
     protected $params = [];
 
+    protected ContainerInterface $diContainer;
+
     /**
      * @param ConfigInterface $appConfig
      * @param array $params
      * @param array $config
      * @return void
      */
-    public function init(ConfigInterface $appConfig, array $params = [], array $config = []): void
+    public function init(ConfigInterface $appConfig, array $params = [], array $config = [], ContainerInterface $diContainer): void
     {
         $this->appConfig = $appConfig;
         $this->params = $params;
         $this->config = $config;
+        $this->diContainer = $diContainer;
     }
 
     /**

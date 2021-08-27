@@ -3,7 +3,7 @@
  *  Console actions
  */
 return [
-    // Create Model classes
+    // Create class map
     'generateClassMap'=>[
         'adapter' => \Dvelum\App\Console\Generator\ClassMap::class
     ],

@@ -12,7 +12,7 @@ return [
         './src',
     ],
     // Use class maps
-    'useMap' => false,
+    'useMap' => true,
     // Use class map (Reduce IO load during autoload)
     // Class map file path (string / false)
     'map' => 'classmap.php',
