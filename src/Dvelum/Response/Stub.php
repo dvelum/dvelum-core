@@ -29,6 +29,7 @@
 namespace Dvelum\Response;
 
 use Dvelum\Response;
+use Psr\Http\Message\ResponseInterface;
 
 class Stub extends Response
 {
@@ -37,9 +38,9 @@ class Stub extends Response
      */
     protected $headers = [];
 
-    static public function factory()
+    static public function factory(ResponseInterface $response)
     {
-        return new static();
+        return new static($response);
     }
 
     public function send() : void

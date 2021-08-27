@@ -76,7 +76,8 @@ class Controller extends App\Controller
                 'development' => $this->appConfig->get('development'),
                 'page' => $this->page,
                 'path' => $this->page->getThemePath(),
-                'resource' => $this->container->get(Resource::class)
+                'request' => $this->request,
+                'resource' => $this->resource
             ],
             false
         );

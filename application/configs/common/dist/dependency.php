@@ -73,6 +73,7 @@ return [
     \Dvelum\App\Dictionary\Service::class => static function (c $c): \Dvelum\App\Dictionary\Service {
         $config = $c->get('config.main');
         $service = new \Dvelum\App\Dictionary\Service();
+        \Dvelum\App\Dictionary::setContainer($c);
         $service->setConfig(
             Dvelum\Config\Factory::create(
                 [

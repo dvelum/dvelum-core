@@ -104,6 +104,10 @@ abstract class Router implements Router\RouterInterface
                     return $response->getPsrResponse();
                 }
             }
+            if($action !== 'index'){
+                // Default JSON response from server actions
+                $response->setFormat(Response::FORMAT_JSON);
+            }
             $controller->{$action . 'Action'}();
         }
 
