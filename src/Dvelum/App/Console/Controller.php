@@ -116,7 +116,7 @@ class Controller extends App\Controller implements Router\RouterInterface
             trigger_error('Undefined Action Adapter ' . $adapterCls);
         }
 
-        $adapter = new $adapterCls($actionConfig);
+        $adapter = new $adapterCls();
 
         if (!$adapter instanceof \Dvelum\App\Console\ActionInterface) {
             trigger_error($adapterCls . ' is not instance of ActionInterface');

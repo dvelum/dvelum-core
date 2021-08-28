@@ -40,14 +40,17 @@
         "nyholm/psr7": "^1.4",
         "nyholm/psr7-server": "^1.0",
         "dvelum/cache": "^4.0",
-        "dvelum/db": "^4.0"
+        "dvelum/db": "^4.0",
+
+        "dvelum/orm": "^4.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "^9",
         "phpstan/phpstan": "^0.12",
-        "codacy/coverage": "dev-master"
+        "codacy/coverage": "dev-master",
+        "dvelum/orm-ui": "^4.0"
     },
     "extra": {
         "installer-types": ["js-library","dvelum4-extension"],
@@ -55,6 +58,11 @@
             "www/js/lib/{$name}": ["type:js-library"],
             "modules/{$vendor}/{$name}":["type:dvelum4-module"],
             "extensions/{$vendor}/{$name}":["type:dvelum4-extension"]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Dvelum\\Orm\\Ui\\": "vendor/dvelum/orm-ui/src"
         }
     }
 }

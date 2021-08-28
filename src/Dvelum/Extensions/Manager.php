@@ -128,6 +128,8 @@ class Manager
         $autoLoadPathsPsr4 = [];
         $configPaths = [];
 
+        $dependencyPaths = [];
+
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
@@ -144,6 +146,10 @@ class Manager
 
             if (!empty($config['paths']['configs'])) {
                 $configPaths[] =  $path . $config['paths']['configs'] . '/';
+            }
+
+            if (!empty($config['paths']['dependency'])) {
+                $dependencyPaths[] =  $path . $config['paths']['dependency'];
             }
 
             /*
@@ -204,6 +210,12 @@ class Manager
             \array_unshift($resultPaths , $applyPath);
             $resultPaths[] = $writePath;
             $configStorage->replacePaths($resultPaths);
+        }
+        // register dependencies
+        if(!empty($dependencyPaths)){
+            foreach ($dependencyPaths as $file){
+                $this->di->bindArray(include $file);
+            }
         }
     }
 

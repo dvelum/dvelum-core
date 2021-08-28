@@ -32,15 +32,16 @@ class Add extends Console\Action
 {
     public function action(): bool
     {
-        $request = Request::factory();
-        $vendor = Filter::filterString((string)$request->getPart(1));
-        $extension = Filter::filterString((string)$request->getPart(2));
+        $params = $this->params;
+
+        $vendor = Filter::filterString((string)$params[0]);
+        $extension = Filter::filterString((string)$params[1]);
 
         if(empty($vendor) || empty($extension)){
             return false;
         }
 
-        $moduleDir = $this->appConfig->get('extensions')['path'] . '/' . $vendor . '/' . $extension;
+        $moduleDir = $this->appConfig->get('extensions')['path']  . $vendor . '/' . $extension;
 
         if(!is_dir($moduleDir)){
             return false;
@@ -57,11 +58,9 @@ class Add extends Console\Action
 
         $moduleId = $vendor . '/' . $extension;
         /**
-         * @var Autoload $autoload
+         * @var \Dvelum\Extensions\Manager $manager
          */
-        $autoload = Service::get('autoloader');
-
-        $manager = new Manager($this->appConfig , $autoload);
+        $manager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
 
         if($manager->extensionRegistered($moduleId)){
             return true;

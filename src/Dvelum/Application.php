@@ -94,7 +94,7 @@ class Application
      * @return void
      * @throws \Exception
      */
-    protected function init(): void
+    public function init(): void
     {
         if ($this->initialized) {
             return;

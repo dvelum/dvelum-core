@@ -86,20 +86,20 @@ class Manager implements ManagerInterface
         {
             $cfg = $this->getDbConfig($name);
 
-            $cfg->set('driver', $cfg->get('adapter'));
+            $cfg['driver'] =  $cfg['adapter'];
             /*
              * Enable Db profiler for development mode Attention! Db Profiler causes
              * memory leaks at background tasks. (Dev mode)
              */
             if($this->appConfig->get('development') && $this->appConfig->offsetExists('use_db_profiler') && $this->appConfig->get('use_db_profiler')){
-                $cfg->set('profiler' , true);
+                $cfg['profiler']  =  true;
             }
 
             if(!empty($shard)) {
                throw new \Exception('Orm Db manager is not installed');
             }
 
-            $db = $this->initConnection($cfg->__toArray());
+            $db = $this->initConnection($cfg);
             $this->dbConnections[$workMode][$name][$shardKey] = $db;
         }
         return $this->dbConnections[$workMode][$name][$shardKey];
