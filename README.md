@@ -5,6 +5,15 @@
 DVelum 4.x Core
 ======
 
+New version of DVelum core. Better performance (up to 8x in comparison with dvelum-core 3.x).
+
+Highest level of PHPStan static analysis.
+
+Dependency injections using constructors and DependencyContainer, Lazy initialization.
+
+ORM and ORM-UI support.
+
+
 [Docs](./docs/ru/readme.md)
 
 Local installation
