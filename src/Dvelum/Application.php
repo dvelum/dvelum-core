@@ -32,6 +32,7 @@ namespace Dvelum;
 
 use App\Config\Storage;
 use Dvelum\Cache\CacheInterface;
+use Dvelum\Config\Storage\StorageInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

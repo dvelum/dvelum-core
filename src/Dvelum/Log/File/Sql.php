@@ -40,6 +40,10 @@ class Sql extends \Dvelum\Log\File implements LogInterface
      */
     public function log($level, $message, array $context = []) : bool
     {
+        $dir = dirname($this->file);
+        if(!is_dir($dir) && !mkdir($dir, 0777, true)){
+            return false;
+        }
         return (bool) file_put_contents($this->file, $message ."\n", FILE_APPEND);
     }
 }

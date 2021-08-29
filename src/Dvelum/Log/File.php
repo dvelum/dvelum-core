@@ -54,7 +54,7 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
     }
 
     /**
-     * @param mixed $level
+     * @param MixedLog $level
      * @param string $message
      * @param array $context
      * @return bool

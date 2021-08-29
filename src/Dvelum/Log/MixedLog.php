@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +30,7 @@ namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
 
-class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
+class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
 {
     /**
      * @var File
@@ -47,7 +48,7 @@ class Mixed extends \Psr\Log\AbstractLogger implements LogInterface
     }
 
     /**
-     * @param mixed $level
+     * @param MixedLog $level
      * @param string $message
      * @param array $context
      * @return bool

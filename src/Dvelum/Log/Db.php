@@ -81,7 +81,7 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
 
     /**
      * Set log message
-     * @param mixed $level
+     * @param MixedLog $level
      * @param string $message
      * @param array $context
      * @return bool

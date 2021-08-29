@@ -35,7 +35,7 @@ namespace Dvelum\Log;
  */
 interface LogInterface{
     /**
-     * @param mixed $level
+     * @param MixedLog $level
      * @param string $message
      * @param array $context
      * @return bool
