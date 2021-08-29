@@ -5,7 +5,7 @@
 DVelum 4.x Core
 ======
 
-New version of DVelum core. Better performance (up to 8x in comparison with dvelum-core 3.x).
+New version of DVelum core. Better performance.
 
 Highest level of PHPStan static analysis.
 
