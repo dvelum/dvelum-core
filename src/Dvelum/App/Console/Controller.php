@@ -95,6 +95,7 @@ class Controller extends App\Controller implements Router\RouterInterface
         $this->response = new \Dvelum\Response($response);
         $this->request = new \Dvelum\Request($request);
         $this->indexAction();
+        return $this->response->getPsrResponse();
     }
 
     /**
