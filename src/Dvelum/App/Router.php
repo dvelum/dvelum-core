@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -32,17 +33,14 @@ namespace Dvelum\App;
 
 use Dvelum\Lang;
 use Dvelum\Request;
-use Dvelum\Response;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Response\ResponseInterface;
 
 /**
  * Base class for routing of requests
  */
 abstract class Router implements Router\RouterInterface
 {
-
     protected ContainerInterface $container;
 
     public function __construct(ContainerInterface $container)
@@ -52,12 +50,12 @@ abstract class Router implements Router\RouterInterface
 
     /**
      * Run action
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param ResponseInterface $response
      * @return void
      * @throws \Exception
      */
-    abstract public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface;
+    abstract public function route(Request $request, ResponseInterface $response): ResponseInterface;
 
     /**
      * Calc url for module
@@ -71,11 +69,15 @@ abstract class Router implements Router\RouterInterface
      * @param string $controller
      * @param null|string $action
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      * @throws \Exception
      */
-    public function runController(string $controller, ?string $action, Request $request, Response $response): ResponseInterface
-    {
+    public function runController(
+        string $controller,
+        ?string $action,
+        Request $request,
+        ResponseInterface $response
+    ): ResponseInterface {
         if (!class_exists($controller)) {
             throw new \Exception('Undefined Controller: ' . $controller);
         }
@@ -87,11 +89,11 @@ abstract class Router implements Router\RouterInterface
         $controller->setRouter($this);
 
         if ($response->isSent()) {
-            return $response->getPsrResponse();
+            return $response;
         }
 
         if ($controller instanceof Router\RouterInterface) {
-            $controller->route($request->getPsrRequest(), $response->getPsrResponse());
+            $controller->route($request, $response);
         } else {
             if (empty($action)) {
                 $action = 'index';
@@ -100,13 +102,15 @@ abstract class Router implements Router\RouterInterface
             if (!method_exists($controller, $action . 'Action')) {
                 $action = 'index';
                 if (!method_exists($controller, $action . 'Action')) {
-                    $response->error($this->container->get(Lang::class)->lang()->get('WRONG_REQUEST') . ' ' . $request->getUri());
-                    return $response->getPsrResponse();
+                    $response->error(
+                        $this->container->get(Lang::class)->lang()->get('WRONG_REQUEST') . ' ' . $request->getUri()
+                    );
+                    return $response;
                 }
             }
-            if($action !== 'index'){
+            if ($action !== 'index') {
                 // Default JSON response from server actions
-                $response->setFormat(Response::FORMAT_JSON);
+                $response->setFormat(ResponseInterface::FORMAT_JSON);
             }
             $controller->{$action . 'Action'}();
         }
@@ -114,6 +118,6 @@ abstract class Router implements Router\RouterInterface
         if (!$response->isSent() && method_exists($controller, 'showPage')) {
             $controller->showPage();
         }
-        return $response->getPsrResponse();
+        return $response;
     }
 }

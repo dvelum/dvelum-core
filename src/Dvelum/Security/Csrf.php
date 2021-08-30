@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Security;
@@ -34,7 +36,7 @@ use Dvelum\Store\AdapterInterface;
 use Dvelum\Store\Factory;
 use Dvelum\Store\Session;
 use Dvelum\Utils;
-use \Exception;
+use Exception;
 
 /**
  * Security_Csrf class handles creation and validation
@@ -49,37 +51,37 @@ class Csrf
      * A constant value, the name of the header parameter carrying the token
      * @var string
      */
-    const HEADER_VAR = 'HTTP_X_CSRF_TOKEN';
+    public const HEADER_VAR = 'HTTP_X_CSRF_TOKEN';
 
     /**
      * A constant value, the name of the token parameter being passed by POST request
      * @var string
      */
-    const POST_VAR = 'xscrftoken';
+    public const POST_VAR = 'xscrftoken';
 
     /**
      * Token lifetime (1 hour 3600s)
      * @var integer
      */
-    static protected $lifetime = 3600;
+    protected static $lifetime = 3600;
     /**
      * Limit of tokens count to perform cleanup
      * @var integer
      */
-    static protected $cleanupLimit = 300;
+    protected static $cleanupLimit = 300;
 
     /**
      * Token storage
      * @var AdapterInterface
      */
-    static protected $storage;
+    protected static $storage;
 
     /**
      * Set token storage implementing the Store_interface
      * @param AdapterInterface $store
      * @return void
      */
-    static public function setStorage(AdapterInterface $store) : void
+    public static function setStorage(AdapterInterface $store): void
     {
         static::$storage = $store;
     }
@@ -87,10 +89,10 @@ class Csrf
     /**
      * Set config options (storage , lifetime , cleanupLimit)
      * @param array $options
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
-    static public function setOptions(array $options) : void
+    public static function setOptions(array $options): void
     {
         if (isset($options['storage'])) {
             if ($options['storage'] instanceof AdapterInterface) {
@@ -107,7 +109,6 @@ class Csrf
         if (isset($options['cleanupLimit'])) {
             static::$cleanupLimit = intval($options['cleanupLimit']);
         }
-
     }
 
     /**
@@ -125,7 +126,7 @@ class Csrf
      * Create and store token
      * @return string
      */
-    public function createToken() : string
+    public function createToken(): string
     {
         /*
          * Cleanup storage
@@ -144,13 +145,13 @@ class Csrf
      * @param string $token
      * @return bool
      */
-    public function isValidToken(string $token) : bool
+    public function isValidToken(string $token): bool
     {
         if (!self::$storage->keyExists($token)) {
             return false;
         }
 
-        if (time() < intval(self::$storage->get($token)) + self::$lifetime) {
+        if (time() < (int)(self::$storage->get($token)) + self::$lifetime) {
             return true;
         } else {
             self::$storage->remove($token);
@@ -161,7 +162,7 @@ class Csrf
     /**
      * Remove tokens with expired lifetime
      */
-    public function cleanup() : void
+    public function cleanup(): void
     {
         $tokens = self::$storage->getData();
         $time = time();
@@ -178,7 +179,7 @@ class Csrf
      * @param string $token
      * @return void
      */
-    public function removeToken(string $token) : void
+    public function removeToken(string $token): void
     {
         self::$storage->remove($token);
     }
@@ -188,9 +189,9 @@ class Csrf
      * @param string $tokenVar - Variable name in the request
      * @return bool
      */
-    public function checkPost($tokenVar = self::POST_VAR) : bool
+    public function checkPost(Request $request, $tokenVar = self::POST_VAR): bool
     {
-        $var = Request::factory()->post($tokenVar, 'string', false);
+        $var = $request->post($tokenVar, 'string', false);
         if ($var !== false && $this->isValidToken($var)) {
             return true;
         } else {
@@ -203,9 +204,9 @@ class Csrf
      * @param string $tokenVar - Variable name in the header
      * @return bool
      */
-    public function checkHeader($tokenVar = self::HEADER_VAR) : bool
+    public function checkHeader(Request $request, $tokenVar = self::HEADER_VAR): bool
     {
-        $var = Request::factory()->server($tokenVar, 'string', false);
+        $var = $request->server($tokenVar, 'string', false);
         if ($var !== false && $this->isValidToken($var)) {
             return true;
         } else {

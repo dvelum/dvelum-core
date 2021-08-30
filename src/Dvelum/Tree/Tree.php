@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Tree;
 
-use \Exception as Exception;
+use Exception as Exception;
 
 /**
  * Class optimized for fast work with tree structures.
@@ -44,7 +46,7 @@ class Tree
      */
     protected $items = [];
     /**
-     * @var array
+     * @var array<int|string,mixed>
      */
     protected $children = [];
 
@@ -109,7 +111,7 @@ class Tree
      */
     public function addItem($id, $parent, $data, ?int $order = null): bool
     {
-        if ((string) $id === '0' || isset($this->items[$id])) {
+        if ((string)$id === '0' || isset($this->items[$id])) {
             return false;
         }
 
@@ -127,12 +129,12 @@ class Tree
     /**
      * Update the node data
      * @param mixed $id — node identifier
-     * @param array $data — node data
+     * @param array<int|string,mixed> $data — node data
      * @return bool — successfully invoked
      */
     public function updateItem($id, array $data): bool
     {
-        if ((string) $id === '0' || !isset($this->items[$id])) {
+        if ((string)$id === '0' || !isset($this->items[$id])) {
             return false;
         }
 
@@ -143,8 +145,8 @@ class Tree
     /**
      * Get node structure by ID
      * @param mixed $id
-     * @throws Exception
      * @return Item - an array with keys ('id','parent','order','data')
+     * @throws Exception
      */
     public function getItem($id): Item
     {
@@ -183,19 +185,20 @@ class Tree
     /**
      * Get data on all child elements (recursively)
      * @param mixed $id - parent node identifier
-     * @return array - an array with keys ('id','parent','order','data')
+     * @phpstan-return array<int|string,mixed> - an array with keys ('id','parent','order','data')
+     * @return array{id:int|string,parent:int|string,order:int,data:array|mixed}
      */
     public function getChildrenRecursive($id): array
     {
         $data = [];
-        if($this->hasChildren($id)) {
+        if ($this->hasChildren($id)) {
             $elements = $this->getChildren($id);
-            foreach($elements as $v) {
+            foreach ($elements as $v) {
                 $id = $v->getId();
                 $data[] = $id;
                 $subElements = $this->getChildrenRecursive($id);
-                if(!empty($subElements)){
-                    $data = array_merge($data , $subElements);
+                if (!empty($subElements)) {
+                    $data = array_merge($data, $subElements);
                 }
             }
         }
@@ -215,7 +218,7 @@ class Tree
         $chCount = 0;
         foreach ($this->children[$id] as $itemId) {
             $order = $this->items[$itemId]->getOrder();
-            if(is_null($order)){
+            if (is_null($order)) {
                 $order = $chCount;
             }
             $tmp[$itemId] = $order;
@@ -236,7 +239,7 @@ class Tree
     /**
      * Get child nodes’ structures
      * @param int|string $id
-     * @return array
+     * @return array<int|string,mixed>
      */
     public function getChildren($id): array
     {
@@ -245,7 +248,7 @@ class Tree
         }
 
         $data = [];
-        foreach ($this->children[$id] as $itemId){
+        foreach ($this->children[$id] as $itemId) {
             $data[] = $this->items[$itemId];
         }
 
@@ -274,8 +277,8 @@ class Tree
         $parent = $this->items[$id]->getParent();
 
         if (!empty($this->children[$parent])) {
-            foreach ($this->children[$parent] as $index =>$item){
-                if($item === $id){
+            foreach ($this->children[$parent] as $index => $item) {
+                if ($item === $id) {
                     unset($this->children[$parent][$index]);
                 }
             }
@@ -305,7 +308,7 @@ class Tree
      */
     public function changeParent($id, $newParent): bool
     {
-        if (!isset($this->items[$id]) || !isset($this->items[$newParent]) || (string) $id == (string) $newParent) {
+        if (!isset($this->items[$id]) || !isset($this->items[$newParent]) || (string)$id == (string)$newParent) {
             return false;
         }
 
@@ -313,8 +316,8 @@ class Tree
         $this->items[$id]->setParent($newParent);
 
         if (!empty($this->children[$oldParent])) {
-            foreach ($this->children[$oldParent] as $index =>$item){
-                if($item === $id){
+            foreach ($this->children[$oldParent] as $index => $item) {
+                if ($item === $id) {
                     unset($this->children[$oldParent][$index]);
                 }
             }
@@ -348,7 +351,7 @@ class Tree
     /**
      * Get list of parent nodes
      * @param mixed $id
-     * @return array
+     * @return array<int,int|string>
      */
     public function getParentsList($id): array
     {
@@ -360,10 +363,10 @@ class Tree
         $parentId = $id;
         while ($parentId) {
             $p = $this->items[$parentId]->getParent();
-            if(isset($this->items[$p])){
+            if (isset($this->items[$p])) {
                 $parentId = $p;
                 $parents[] = $p;
-            }else{
+            } else {
                 $parentId = false;
             }
         }

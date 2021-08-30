@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Dictionary\Adapter;
@@ -45,14 +47,15 @@ class File implements DictionaryInterface
      */
     protected $data;
 
-    public function __construct(string $name , Config\ConfigInterface $config)
+    public function __construct(string $name, Config\ConfigInterface $config)
     {
         $this->name = $name;
 
         $configPath = $config->get('configPath') . $name . '.php';
 
-        if(!Config::storage()->exists($configPath))
+        if (!Config::storage()->exists($configPath)) {
             Config::storage()->create($configPath);
+        }
 
         $this->data = Config::storage()->get($configPath, true, false);
     }
@@ -61,7 +64,7 @@ class File implements DictionaryInterface
      * Get dictionary name
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -71,7 +74,7 @@ class File implements DictionaryInterface
      * @param string $key
      * @return bool
      */
-    public function isValidKey(string $key) : bool
+    public function isValidKey(string $key): bool
     {
         return $this->data->offsetExists($key);
     }
@@ -81,7 +84,7 @@ class File implements DictionaryInterface
      * @param string $key
      * @return string
      */
-    public function getValue(string $key) : string
+    public function getValue(string $key): string
     {
         return $this->data->get($key);
     }
@@ -90,7 +93,7 @@ class File implements DictionaryInterface
      * Get dictionary data
      * @return array
      */
-    public function getData() : array
+    public function getData(): array
     {
         return $this->data->__toArray();
     }
@@ -101,7 +104,7 @@ class File implements DictionaryInterface
      * @param string $value
      * @return void
      */
-    public function addRecord(string $key , string $value) : void
+    public function addRecord(string $key, string $value): void
     {
         $this->data->set($key, $value);
     }
@@ -111,36 +114,38 @@ class File implements DictionaryInterface
      * @param string $key
      * @return void
      */
-    public function removeRecord(string $key) : void
+    public function removeRecord(string $key): void
     {
-       $this->data->remove($key);
+        $this->data->remove($key);
     }
 
     /**
      * Get dictionary as JavaScript code representation
      * @param boolean $addAll - add value 'All' with a blank key,
      * @param boolean $addBlank - add empty value is used in drop-down lists
-     * @param string|boolean $allText, optional - text for not selected value
+     * @param string|boolean $allText , optional - text for not selected value
      * @return string
      */
-    public function __toJs($addAll = false , $addBlank = false , $allText = false) : string
+    public function __toJs($addAll = false, $addBlank = false, $allText = false): string
     {
         $result = [];
 
-        if($addAll){
-            if($allText === false){
+        if ($addAll) {
+            if ($allText === false) {
                 $allText = Lang::lang()->get('ALL');
             }
-            $result[] = ['id' => '' , 'title' => $allText];
+            $result[] = ['id' => '', 'title' => $allText];
         }
 
-        if(!$addAll && $addBlank)
-            $result[] = ['id' => '' , 'title' => ''];
+        if (!$addAll && $addBlank) {
+            $result[] = ['id' => '', 'title' => ''];
+        }
 
-        foreach($this->data as $k => $v)
-            $result[] = ['id' => strval($k) , 'title' => $v];
+        foreach ($this->data as $k => $v) {
+            $result[] = ['id' => strval($k), 'title' => $v];
+        }
 
-        return (string) json_encode($result);
+        return (string)json_encode($result);
     }
 
     /**
@@ -151,13 +156,12 @@ class File implements DictionaryInterface
      */
     public function getKeyByValue(string $value, $i = false)
     {
-        foreach($this->data as $k=>$v)
-        {
-            if($i){
+        foreach ($this->data as $k => $v) {
+            if ($i) {
                 $v = strtolower($v);
                 $value = strtolower($value);
             }
-            if($v === $value){
+            if ($v === $value) {
                 return $k;
             }
         }
@@ -168,7 +172,7 @@ class File implements DictionaryInterface
      * Save dictionary
      * @return bool
      */
-    public function save() : bool
+    public function save(): bool
     {
         $storage = Config::storage();
         return $storage->save($this->data);

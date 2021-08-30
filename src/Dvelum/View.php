@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum , https://github.com/k-samuel/dvelum , http://dvelum.net
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -17,10 +18,10 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
-
 
 use Dvelum\Template\Engine\EngineInterface;
 use Dvelum\Template\Service;
@@ -34,14 +35,14 @@ use Psr\Container\ContainerInterface;
  */
 class View
 {
-    static private ContainerInterface $di;
+    private static ContainerInterface $di;
 
-    public static function setContainer(ContainerInterface $di) : void
+    public static function setContainer(ContainerInterface $di): void
     {
         self::$di = $di;
     }
 
-    public static function factory() : EngineInterface
+    public static function factory(): EngineInterface
     {
         return self::$di->get(Service::class)->getTemplate();
     }

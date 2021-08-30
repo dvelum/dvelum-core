@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
@@ -63,48 +65,35 @@ class Request
      */
     protected $updatedPost = [];
 
-    protected $psrRequest;
-
-    public function __construct(ServerRequestInterface $request)
+    public function __construct()
     {
-        $this->psrRequest = $request;
-        $uri = $this->psrRequest->getUri()->getPath();
-        if(empty($uri)){
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (empty($uri)) {
             $uri = '/';
         }
         $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
     }
 
-    public function setRequest(ServerRequestInterface $request) : void
-    {
-        $this->psrRequest = $request;
-    }
-
-    public function getPsrRequest():ServerRequestInterface
-    {
-        return $this->psrRequest;
-    }
-
     /**
      * @param string $string
      * @return string
      */
-    protected function parseUri(string $string) : string
+    protected function parseUri(string $string): string
     {
-        if(strpos($string , '?')!==false) {
-            $string = substr($string , 0 , strpos($string , '?'));
+        if (strpos($string, '?') !== false) {
+            $string = substr($string, 0, strpos($string, '?'));
         }
 
         $string = str_ireplace(array(
-            '.html' ,
-            '.php' ,
-            '.xml' ,
-            '.phtml' ,
-            '.json'
-        ) , '' , $string);
+                                   '.html',
+                                   '.php',
+                                   '.xml',
+                                   '.phtml',
+                                   '.json'
+                               ), '', $string);
 
-        return (string)preg_replace("/[^A-Za-z0-9_\.\-\/]/i" , '' , $string);
+        return (string)preg_replace("/[^A-Za-z0-9_\.\-\/]/i", '', $string);
     }
 
 
@@ -113,20 +102,20 @@ class Request
      * @param string $uri
      * @return array
      */
-    protected function detectParts(string $uri) : array
+    protected function detectParts(string $uri): array
     {
         $parts = [];
 
         $wwwRoot = $this->wwwRoot();
         $rootLen = strlen($wwwRoot);
 
-        if(substr($uri, 0 , $rootLen) === $wwwRoot) {
+        if (substr($uri, 0, $rootLen) === $wwwRoot) {
             $uri = substr($uri, $rootLen);
         }
 
-        $array = explode('/' , $uri);
+        $array = explode('/', $uri);
 
-        for($i = 0, $sz = count($array); $i < $sz; $i++) {
+        for ($i = 0, $sz = count($array); $i < $sz; $i++) {
             $parts[] = $array[$i];
         }
 
@@ -139,7 +128,7 @@ class Request
      * @param ConfigInterface $config
      * @return void
      */
-    public function setConfig(ConfigInterface $config) : void
+    public function setConfig(ConfigInterface $config): void
     {
         $this->config = $config;
     }
@@ -150,7 +139,7 @@ class Request
      * @param mixed $value
      * @return void
      */
-    public function setConfigOption(string $name , $value) : void
+    public function setConfigOption(string $name, $value): void
     {
         $this->config->set($name, $value);
     }
@@ -162,9 +151,9 @@ class Request
      * @param int $index — index of the part
      * @return null|string
      */
-    public function getPart(int $index) : ?string
+    public function getPart(int $index): ?string
     {
-        if(isset($this->parts[$index]) && strlen($this->parts[$index])) {
+        if (isset($this->parts[$index]) && strlen($this->parts[$index])) {
             return $this->parts[$index];
         } else {
             return null;
@@ -180,16 +169,16 @@ class Request
      * @param mixed $default — default value if the parameter is missing.
      * @return mixed
      */
-    public function get(string $name , string $type , $default)
+    public function get(string $name, string $type, $default)
     {
-        if(isset($this->updatedGet[$name])) {
-            return Filter::filterValue($type , $this->updatedGet[$name]);
+        if (isset($this->updatedGet[$name])) {
+            return Filter::filterValue($type, $this->updatedGet[$name]);
         }
 
-        if(!isset($_GET[$name])) {
+        if (!isset($_GET[$name])) {
             return $default;
         } else {
-            return Filter::filterValue($type , $_GET[$name]);
+            return Filter::filterValue($type, $_GET[$name]);
         }
     }
 
@@ -197,18 +186,18 @@ class Request
      * Get all parameters passed by the $_POST method in an array
      * @return array
      */
-    public function postArray() : array
+    public function postArray(): array
     {
-        return array_merge($_POST , $this->updatedPost);
+        return array_merge($_POST, $this->updatedPost);
     }
 
     /**
      * Get all parameters passed by the $_GET method in an array
      * @return array
      */
-    public function getArray() : array
+    public function getArray(): array
     {
-        return array_merge($_GET , $this->updatedGet);
+        return array_merge($_GET, $this->updatedGet);
     }
 
     /**
@@ -260,9 +249,9 @@ class Request
      * @param array $parts — request parameters array
      * @return string
      */
-    public function url(array $parts) : string
+    public function url(array $parts): string
     {
-        return strtolower($this->wwwRoot() . implode( '/' , $parts));
+        return strtolower($this->wwwRoot() . implode('/', $parts));
     }
 
     /**
@@ -271,19 +260,21 @@ class Request
      * @param string $method
      * @return array
      */
-    public function extFilters($container = 'storefilter' , $method = 'POST')
+    public function extFilters($container = 'storefilter', $method = 'POST')
     {
-        if($method == 'POST'){
-            $data = self::post($container, 'raw', []);
-        }else{
-            $data = self::get($container, 'raw', []);
+        if ($method == 'POST') {
+            $data = $this->post($container, 'raw', []);
+        } else {
+            $data = $this->get($container, 'raw', []);
         }
 
-        if(is_string($data))
-            $data = json_decode($data , true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
 
-        if(empty($data))
+        if (empty($data)) {
             return [];
+        }
 
         $filter = new Filter\ExtJs();
 
@@ -294,7 +285,7 @@ class Request
      * Check if request is sent by XMLHttpRequest
      * @return bool
      */
-    public function isAjax() : bool
+    public function isAjax(): bool
     {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
             return true;
@@ -307,7 +298,7 @@ class Request
      * Check if any POST requests have been sent
      * @return bool
      */
-    public function hasPost() : bool
+    public function hasPost(): bool
     {
         if (empty($_POST) && empty($this->updatedPost)) {
             return false;
@@ -329,37 +320,35 @@ class Request
      * Get the list of sent files
      * @return array
      */
-    public function files() : array
+    public function files(): array
     {
-        if(empty($_FILES)) {
+        if (empty($_FILES)) {
             return [];
         }
 
         $result = [];
 
-        if(empty($_FILES)) {
+        if (empty($_FILES)) {
             return $result;
         }
 
-        foreach($_FILES as $key => $data)
-        {
-            if(!isset($data['name'])) {
+        foreach ($_FILES as $key => $data) {
+            if (!isset($data['name'])) {
                 continue;
             }
 
-            if(!is_array($data['name'])){
+            if (!is_array($data['name'])) {
                 $result[$key] = $data;
             } else {
-                foreach($data['name'] as $subKey => $value){
+                foreach ($data['name'] as $subKey => $value) {
                     $result[$key][$subKey] = [
-                        'name' => $data['name'][$subKey] ,
-                        'type' => $data['type'][$subKey] ,
-                        'tmp_name' => $data['tmp_name'][$subKey] ,
-                        'error' => $data['error'][$subKey] ,
+                        'name' => $data['name'][$subKey],
+                        'type' => $data['type'][$subKey],
+                        'tmp_name' => $data['tmp_name'][$subKey],
+                        'error' => $data['error'][$subKey],
                         'size' => $data['size'][$subKey]
                     ];
                 }
-
             }
         }
         return $result;
@@ -369,17 +358,22 @@ class Request
      * Check HTTP_SCHEME for https
      * @return bool
      */
-    public function isHttps() : bool
+    public function isHttps(): bool
     {
         static $scheme = false;
 
-        if($scheme === false){
-            $scheme = isset($_SERVER['HTTP_SCHEME']) ? $_SERVER['HTTP_SCHEME'] : (((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || 443 == $_SERVER['SERVER_PORT']) ? 'https' : 'http');
+        if ($scheme === false) {
+            $scheme = isset($_SERVER['HTTP_SCHEME']) ? $_SERVER['HTTP_SCHEME'] : (
+                (
+                    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ||
+                    443 == $_SERVER['SERVER_PORT']
+                ) ? 'https' : 'http'
+            );
         }
 
-        if($scheme ==='https'){
+        if ($scheme === 'https') {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -388,11 +382,11 @@ class Request
      * Get web toot path
      * @return string
      */
-    public function wwwRoot() : string
+    public function wwwRoot(): string
     {
-        $wwwRoot =  '/';
+        $wwwRoot = '/';
 
-        if($this->config instanceof ConfigInterface && $this->config->offsetExists('wwwRoot')){
+        if ($this->config instanceof ConfigInterface && $this->config->offsetExists('wwwRoot')) {
             $wwwRoot = $this->config->get('wwwRoot');
         }
 
@@ -436,7 +430,7 @@ class Request
      * @param string $name — parameter name
      * @param mixed $value — parameter value
      */
-    public function updatePost(string $name , $value) : void
+    public function updatePost(string $name, $value): void
     {
         $this->updatedPost[$name] = $value;
     }
@@ -445,7 +439,7 @@ class Request
      * Set POST data
      * @param array $data
      */
-    public function setPostParams(array $data) : void
+    public function setPostParams(array $data): void
     {
         $this->updatedPost = $data;
     }
@@ -454,7 +448,7 @@ class Request
      * Set GET data
      * @param array $data
      */
-    public function setGetParams(array $data) : void
+    public function setGetParams(array $data): void
     {
         $this->updatedGet = $data;
     }
@@ -464,7 +458,7 @@ class Request
      * @param string $name — parameter name
      * @param mixed $value — parameter value
      */
-    public function updateGet($name , $value) : void
+    public function updateGet($name, $value): void
     {
         $this->updatedGet[$name] = $value;
     }
@@ -472,10 +466,10 @@ class Request
     /**
      * Get request parts
      * The query string is divided into parts by the delimiter "/" and indexed from 0
-     * @param int $offset, optional default 0 - index to start from
+     * @param int $offset , optional default 0 - index to start from
      * @return array
      */
-    public function getPathParts(int $offset = 0) : array
+    public function getPathParts(int $offset = 0): array
     {
         return array_slice($this->parts, $offset);
     }
@@ -485,7 +479,7 @@ class Request
      * @param string $uri
      * @return void
      */
-    public function setUri($uri) : void
+    public function setUri($uri): void
     {
         $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
@@ -495,9 +489,9 @@ class Request
      * Get request cookie
      * @return array
      */
-    public function cookie():array
+    public function cookie(): array
     {
-        if(!empty($_COOKIE)){
+        if (!empty($_COOKIE)) {
             return $_COOKIE;
         }
         return [];

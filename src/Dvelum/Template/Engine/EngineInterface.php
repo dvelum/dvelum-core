@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Template\Engine;
@@ -36,13 +38,13 @@ use Dvelum\Template\Storage;
 
 interface EngineInterface
 {
-    public function __construct(ConfigInterface $config, Storage $storage, ? CacheInterface $cache);
+    public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache);
 
     /**
      * Set lifetime for cache data
      * @param int $sec
      */
-    public function setCacheLifetime(int $sec) : void;
+    public function setCacheLifetime(int $sec): void;
 
     /**
      * Get property
@@ -50,26 +52,29 @@ interface EngineInterface
      * @return mixed
      */
     public function get(string $name);
+
     /**
      * Get property
      * @param string $name
      * @return mixed
      */
     public function __get($name);
+
     /**
      * Set property
      * @param string $name
      * @param mixed $value
      * @return void
      */
-    public function set(string $name , $value) : void;
+    public function set(string $name, $value): void;
+
     /**
      * Set property
      * @param string $name
      * @param mixed $value
      * @return void
      */
-    public function __set($name , $value);
+    public function __set($name, $value);
 
     /**
      * @param string $name
@@ -87,25 +92,25 @@ interface EngineInterface
      * Empty template data
      * @return void
      */
-    public function clear() : void;
+    public function clear(): void;
 
     /**
      * Disable caching
      * @return void
      */
-    public function disableCache() : void;
+    public function disableCache(): void;
 
     /**
      * Enable caching
      * @return void
      */
-    public function enableCache() : void;
+    public function enableCache(): void;
 
     /**
      * Get template data
      * @return array
      */
-    public function getData() : array;
+    public function getData(): array;
 
     /**
      * Redefine template data using an associative key-value array,
@@ -113,14 +118,15 @@ interface EngineInterface
      * @param array $data
      * @return void
      */
-    public function setData(array $data) : void;
+    public function setData(array $data): void;
 
     /**
      * Render current template
      * @param string $templatePath — the path to the template file
      * @return string
      */
-    public function render(string $templatePath) : string;
+    public function render(string $templatePath): string;
+
     /**
      * Render sub template
      * @param string $templatePath
@@ -128,5 +134,5 @@ interface EngineInterface
      * @param bool|true $useCache
      * @return string
      */
-    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true) : string;
+    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true): string;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -54,7 +55,7 @@ abstract class AbstractAdapter
      * Get error message
      * @return string
      */
-    public function getError() : string
+    public function getError(): string
     {
         return $this->error;
     }
@@ -62,8 +63,8 @@ abstract class AbstractAdapter
     /**
      * Upload file
      * @param array $data- $_FILES array item
-     * @param bool $formUpload  - optional, default true
+     * @param bool $formUpload - optional, default true
      * @return array|false on error
      */
-    abstract public function upload(array $data , string $path , bool $formUpload = true);
+    abstract public function upload(array $data, string $path, bool $formUpload = true);
 }

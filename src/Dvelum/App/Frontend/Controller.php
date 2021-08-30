@@ -26,38 +26,27 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Frontend;
 
-use Dvelum\{App, Config\ConfigInterface, Lang, Page\Page, Request, Resource, Response};
-use Dvelum\Config\Storage\StorageInterface;
-use Psr\Container\ContainerInterface;
+use Dvelum\App;
+use Dvelum\Page\Page;
 
 class Controller extends App\Controller
 {
     /**
-     * @var ConfigInterface
-     */
-    protected ConfigInterface $frontendConfig;
-    /**
-     * @var Lang\Dictionary
-     */
-    protected Lang\Dictionary $lang;
-    /**
      * @var Page
      */
-    protected Page $page;
+    private Page $page;
 
-
-
-    public function __construct(Request $request, Response $response, ContainerInterface $container)
+    public function getPage(): Page
     {
-        parent::__construct($request, $response, $container);
-        $this->page = Page::factory();
-        $this->frontendConfig = $container->get(StorageInterface::class)->get('frontend.php');
-        $this->lang = $container->get(Lang::class)->getDictionary();
-
+        if (!isset($this->page)) {
+            $this->page = Page::factory();
+        }
+        return $this->page;
     }
 
     /**
@@ -67,15 +56,16 @@ class Controller extends App\Controller
      */
     public function showPage(): void
     {
-        $this->page->setTemplatesPath('public/');
+        $page = $this->getPage();
+        $page->setTemplatesPath('public/');
 
         $layoutPath = $this->page->getThemePath() . 'layout.php';
         $this->render(
             $layoutPath,
             [
                 'development' => $this->appConfig->get('development'),
-                'page' => $this->page,
-                'path' => $this->page->getThemePath(),
+                'page' => $page,
+                'path' => $page->getThemePath(),
                 'request' => $this->request,
                 'resource' => $this->resource
             ],

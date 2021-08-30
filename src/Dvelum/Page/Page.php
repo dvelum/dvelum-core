@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -35,7 +36,7 @@ class Page
     /**
      * @var array
      */
-    static protected $pages = [];
+    protected static $pages = [];
 
     /**
      * @var string
@@ -95,22 +96,24 @@ class Page
      */
     protected $properties = [];
 
-    static public function factory(string $id = 'default'):Page
+    public static function factory(string $id = 'default'): Page
     {
-        if(!isset(static::$pages[$id])){
+        if (!isset(static::$pages[$id])) {
             static::$pages[$id] = new static();
         }
         return static::$pages[$id];
     }
 
-    protected function __construct(){}
+    protected function __construct()
+    {
+    }
 
     /**
      * @param array $properties
      */
-    public function setProperties(array $properties) : void
+    public function setProperties(array $properties): void
     {
-        foreach ($properties as $k=>$v){
+        foreach ($properties as $k => $v) {
             $this->properties[$k] = $v;
         }
     }
@@ -122,8 +125,8 @@ class Page
      */
     public function getProperty(string $name)
     {
-        if(!isset($this->properties[$name])){
-            throw new \Exception('Undefined page property '.$name);
+        if (!isset($this->properties[$name])) {
+            throw new \Exception('Undefined page property ' . $name);
         }
         return $this->properties[$name];
     }
@@ -131,9 +134,9 @@ class Page
     /**
      * @return OpenGraph
      */
-    public function openGraph():OpenGraph
+    public function openGraph(): OpenGraph
     {
-        if(empty($this->openGraph)){
+        if (empty($this->openGraph)) {
             $this->openGraph = new OpenGraph();
         }
         return $this->openGraph;
@@ -238,9 +241,9 @@ class Page
     /**
      * @param string $text
      */
-    public function addText(string $text):void
+    public function addText(string $text): void
     {
-        $this->text.= $text;
+        $this->text .= $text;
     }
 
     /**

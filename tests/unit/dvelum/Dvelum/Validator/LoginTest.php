@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,15 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace Dvelum\Validator;
 
 use PHPUnit\Framework\TestCase;
 
-class Validator_AlphanumTest extends TestCase
+class LoginTest extends TestCase
 {
-    public function testValidate()
+    public function testValidate() : void
     {
-        $this->assertTrue(Alphanum::validate('myName12'));
-        $this->assertFalse(Alphanum::validate('myName 12 \\'));
+        $this->assertTrue(Login::validate('1my@login-._'));
+        $this->assertFalse(Login::validate('mylogin  |'));
     }
 }

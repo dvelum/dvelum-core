@@ -26,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
@@ -41,7 +42,7 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
      */
     protected $logDb;
 
-    public function __construct(File $logFile , Db $logDb)
+    public function __construct(File $logFile, Db $logDb)
     {
         $this->logFile = $logFile;
         $this->logDb = $logDb;
@@ -53,15 +54,16 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = array()) : bool
+    public function log($level, $message, array $context = array()): bool
     {
-        if(!$this->logDb->log($level, $message, $context)){
+        if (!$this->logDb->log($level, $message, $context)) {
             $this->logFile->log($level, $message, $context);
             $this->logFile->log(\Psr\Log\LogLevel::ERROR, $this->logDb->getLastError());
             return false;
         }
         return true;
     }
+
     /**
      * @param string $message
      * @param array $context

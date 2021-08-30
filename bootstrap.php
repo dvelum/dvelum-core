@@ -29,7 +29,10 @@
  * Startup time
  */
 $scriptStart = microtime(true);
-
+/*
+ * Turning on output buffering
+ */
+ob_start();
 /**
  * @var \Dvelum\Application $app
  */
@@ -44,38 +47,36 @@ $container = $app->getDiContainer();
  */
 $config = $container->get('config.main');
 
+$request = new \Dvelum\Request();
 
-$psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-$creator = new \Nyholm\Psr7Server\ServerRequestCreator(
-    $psr17Factory, // ServerRequestFactory
-    $psr17Factory, // UriFactory
-    $psr17Factory, // UploadedFileFactory
-    $psr17Factory  // StreamFactory
-);
-$serverRequest = $creator->fromGlobals();
-$response = $psr17Factory->createResponse(200);
+// Can be replaced with \Dvelum\Response\PsrResponse($psrResponse)
+$response = new \Dvelum\Response\Response();
 
 /**
- * @var \Psr\Http\Message\ResponseInterface $resp
+ * @var \Dvelum\Response\ResponseInterface $resp
  */
-$resp = $app->run($serverRequest , $response);
-/*
- * Print debug information (development mode)
- */
-if($config['development'] && $config->get('debug_panel') && (empty($serverRequest->getHeader('HTTP_X_REQUESTED_WITH')[0]) ||  $serverRequest->getHeader('HTTP_X_REQUESTED_WITH')[0]!== 'XMLHttpRequest'))
-{
-    $configStorage = $container->get(\Dvelum\Config\Storage\StorageInterface::class);
-    $debugCfg = $configStorage->get('debug_panel.php');
-    $debug = new \Dvelum\Debug();
-    $debug->setCacheCores($container->get(\Dvelum\App\Cache\Manager::class)->getRegistered());
-    $debug->setScriptStartTime($scriptStart);
-    $debug->setLoadedClasses($container->get(\Dvelum\Autoload::class)->getLoadedClasses());
-    $debug->setLoadedConfigs($configStorage->getDebugInfo());
-    $resp->getBody()->write($debug->getStats($debugCfg->get('options')));
+$resp = $app->run($request , $response);
+if(!$resp->isSent()){
+    $resp->send();
 }
 
-(new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($resp);
 /*
  * Clean the buffer and send response
  */
 echo ob_get_clean();
+$scriptStop = microtime(true);
+/*
+ * Print debug information (development mode)
+ */
+if($config['development'] && $config->get('debug_panel') && !$request->isAjax())
+{
+    $configStorage = $container->get(\Dvelum\Config\Storage\StorageInterface::class);
+    $debugCfg = $configStorage->get('debug_panel.php');
+    $debug = \Dvelum\Debug::instance();
+    $debug->setCacheCores($container->get(\Dvelum\App\Cache\Manager::class)->getRegistered());
+    $debug->setScriptStartTime($scriptStart);
+    $debug->setScriptStopTime($scriptStop);
+    $debug->setLoadedClasses($container->get(\Dvelum\Autoload::class)->getLoadedClasses());
+    $debug->setLoadedConfigs($configStorage->getDebugInfo());
+    echo $debug->getStats($debugCfg->get('options'));
+}

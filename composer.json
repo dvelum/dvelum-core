@@ -33,16 +33,14 @@
         "oomphinc/composer-installers-extender": "^2.0",
         "laminas/laminas-db": "^2.11",
         "laminas/laminas-mail": "^2.12",
-        "laminas/laminas-httphandlerrunner": "^1.3",
+
         "psr/log": "^1.1",
         "psr/container": "^2.0",
         "matthiasmullie/minify": "~1.3",
-        "nyholm/psr7": "^1.4",
-        "nyholm/psr7-server": "^1.0",
         "dvelum/cache": "^4.0",
-        "dvelum/db": "^4.0",
+        "dvelum/db": "^4.0"
 
-        "dvelum/orm": "^4.0"
+
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -50,7 +48,8 @@
         "phpunit/phpunit": "^9",
         "phpstan/phpstan": "^0.12",
         "codacy/coverage": "dev-master",
-        "dvelum/orm-ui": "^4.0"
+        "squizlabs/php_codesniffer": "^3.6",
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
     "extra": {
         "installer-types": ["js-library","dvelum4-extension"],
@@ -58,11 +57,6 @@
             "www/js/lib/{$name}": ["type:js-library"],
             "modules/{$vendor}/{$name}":["type:dvelum4-module"],
             "extensions/{$vendor}/{$name}":["type:dvelum4-extension"]
-        }
-    },
-    "autoload": {
-        "psr-4": {
-            "Dvelum\\Orm\\Ui\\": "vendor/dvelum/orm-ui/src"
         }
     }
 }

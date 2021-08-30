@@ -1,12 +1,14 @@
 <?php
-$dvelumRoot =  str_replace('\\', '/' ,  dirname(dirname(dirname(__FILE__))));
+
+$dvelumRoot = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
 // should be without last slash
-if ($dvelumRoot[strlen($dvelumRoot) - 1] == '/')
+if ($dvelumRoot[strlen($dvelumRoot) - 1] == '/') {
     $dvelumRoot = substr($dvelumRoot, 0, -1);
+}
 
 define('DVELUM', true);
-define('DVELUM_ROOT' ,$dvelumRoot);
-define('DVELUM_WWW_PATH', $dvelumRoot.'/www/');
+define('DVELUM_ROOT', $dvelumRoot);
+define('DVELUM_WWW_PATH', $dvelumRoot . '/www/');
 $_SERVER['DOCUMENT_ROOT'] = DVELUM_WWW_PATH;
 
 chdir(DVELUM_ROOT);
@@ -26,7 +28,7 @@ require DVELUM_ROOT . '/vendor/autoload.php';
 require DVELUM_ROOT . '/src/Dvelum/Autoload.php';
 $autoloader = new \Dvelum\Autoload($bootCfg['autoloader']);
 
-use \Dvelum\Config\Factory as ConfigFactory;
+use Dvelum\Config\Factory as ConfigFactory;
 
 $configStorage = ConfigFactory::storage();
 $configStorage->setConfig($bootCfg['config_storage']);
@@ -50,13 +52,15 @@ $configStorage->addPath('./application/configs/test/');
 $autoloaderCfg = ConfigFactory::storage()->get('autoloader.php')->__toArray();
 $autoloaderCfg['debug'] = $config->get('development');
 
-if(!isset($autoloaderCfg['useMap']))
+if (!isset($autoloaderCfg['useMap'])) {
     $autoloaderCfg['useMap'] = true;
+}
 
-if($autoloaderCfg['useMap'] && $autoloaderCfg['map'])
+if ($autoloaderCfg['useMap'] && $autoloaderCfg['map']) {
     $autoloaderCfg['map'] = require ConfigFactory::storage()->getPath($autoloaderCfg['map']);
-else
+} else {
     $autoloaderCfg['map'] = false;
+}
 
 // Adding test directory for autoload
 $autoloaderCfg['paths'][] = './tests/unit/application/classes';
@@ -67,9 +71,19 @@ $autoloader->setConfig($autoloaderCfg);
  * Starting the application
  */
 $appClass = $config->get('application');
-if(!class_exists($appClass))
-    throw new Exception('Application class '.$appClass.' does not exist! Check config "application" option!');
+if (!class_exists($appClass)) {
+    throw new Exception('Application class ' . $appClass . ' does not exist! Check config "application" option!');
+}
 
-$app = new $appClass($config);
-$app->setAutoloader($autoloader);
+use Dvelum\Autoload;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\DependencyContainer;
+
+$diContainer= new DependencyContainer();
+$diContainer->bind('config.main', $config);
+$diContainer->bind(StorageInterface::class, $configStorage);
+$diContainer->bind(Autoload::class, $autoloader);
+$diContainer->bindArray($configStorage->get('dependency.php')->__toArray());
+
+$app = new $appClass($diContainer);
 $app->runTestMode();

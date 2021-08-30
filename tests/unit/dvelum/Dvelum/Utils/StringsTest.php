@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,22 +17,17 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Dvelum;
+
+namespace Dvelum\Utils;
 
 use PHPUnit\Framework\TestCase;
 
-class ConfigTest extends TestCase
+class StringsTest extends TestCase
 {
-
-    public function testStorage()
+    public function testGetRandomString() : void
     {
-        $cfg = Config::storage()->get('main.php');
-        $this->assertTrue($cfg instanceof  Config\ConfigInterface);
-    }
-
-    public function testFactory()
-    {
-        $newConfig = Config::factory(Config\Factory::Simple,'name');
-        $this->assertTrue($newConfig instanceof  Config\ConfigInterface);
+        $str = Strings::getRandomString(5);
+        $this->assertTrue(is_string($str));
+        $this->assertEquals(5, strlen($str));
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -41,7 +42,7 @@ class Config
     /**
      * @return Cfg\Storage\StorageInterface
      */
-    static public function storage() : Cfg\Storage\StorageInterface
+    public static function storage(): Cfg\Storage\StorageInterface
     {
         return Cfg\Factory::storage();
     }
@@ -52,7 +53,7 @@ class Config
      * @param bool $useCache
      * @return ConfigInterface
      */
-    static public function factory($type, $name, $useCache = true) : ConfigInterface
+    public static function factory($type, $name, $useCache = true): ConfigInterface
     {
         return Cfg\Factory::config($type, $name, $useCache);
     }

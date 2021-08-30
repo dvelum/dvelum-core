@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,13 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Frontend\Index;
+
 use Dvelum\App;
-use Dvelum\Response;
+use Dvelum\Response\ResponseInterface;
 
 class Controller extends App\Frontend\Controller
 {
@@ -38,7 +41,7 @@ class Controller extends App\Frontend\Controller
      */
     public function indexAction()
     {
-        $this->response->setFormat(Response::FORMAT_HTML);
+        $this->response->setFormat(ResponseInterface::FORMAT_HTML);
         $this->response->put('<h2>Index</h2>');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console;
@@ -61,8 +63,12 @@ abstract class Action implements ActionInterface
      * @param array $config
      * @return void
      */
-    public function init(ConfigInterface $appConfig, array $params = [], array $config = [], ContainerInterface $diContainer): void
-    {
+    public function init(
+        ContainerInterface $diContainer,
+        ConfigInterface $appConfig,
+        array $params = [],
+        array $config = []
+    ): void {
         $this->appConfig = $appConfig;
         $this->params = $params;
         $this->config = $config;
@@ -84,11 +90,11 @@ abstract class Action implements ActionInterface
         return $s;
     }
 
-    public function run() : bool
+    public function run(): bool
     {
         $t = microtime(true);
         $result = $this->action();
-        $this->stat['time'] = number_format(microtime(true) - $t, 5).'s.';
+        $this->stat['time'] = number_format(microtime(true) - $t, 5) . 's.';
         return $result;
     }
 

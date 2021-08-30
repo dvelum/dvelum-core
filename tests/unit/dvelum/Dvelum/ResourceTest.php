@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,6 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace Dvelum;
 
 use Dvelum\Resource;
@@ -23,31 +25,45 @@ use PHPUnit\Framework\TestCase;
 
 class ResourceTest extends TestCase
 {
-    public function testAddJs()
+    private function createResource(): Resource
     {
-        $resource = Resource::factory();
+        return new Resource([
+            'jsCacheUrl' => '/js/cache/',
+            'jsCachePath' => 'www/js/cache/',
+            'cssCacheUrl' => '/css/cache/',
+            'cssCachePath' => 'www/css/cache/',
+            'wwwRoot' => '/',
+            'wwwPath' => 'www',
+        ]);
+    }
+    public function testAddJs() : void
+    {
+        $resource = $this->createResource();
         $resource->addJs('/app/system/common.js', false, false, 'head_test');
         $resource->addJsRawFile('/app/system/Application.js');
-        $result = $resource->includeJs(false,false,'head_test');
-        $result2 =  $resource->includeJs(false,false);
-        $this->assertEquals('<script type="text/javascript" src="/app/system/common.js"></script>' , trim($result));
-        $this->assertEquals('<script type="text/javascript" src="/app/system/Application.js"></script>' , trim($result2));
+        $result = $resource->includeJs(false, false, 'head_test');
+        $result2 = $resource->includeJs(false, false);
+        $this->assertEquals('<script type="text/javascript" src="/app/system/common.js"></script>', trim($result));
+        $this->assertEquals(
+            '<script type="text/javascript" src="/app/system/Application.js"></script>',
+            trim($result2)
+        );
     }
 
-    public function testGetInlineJS()
+    public function testGetInlineJS() : void
     {
-        $resource = Resource::factory();
+        $resource = $this->createResource();
         $resource->addRawJs('var a = 1;');
-        $this->assertEquals('var a = 1;',$resource->getInlineJs());
+        $this->assertEquals('var a = 1;', $resource->getInlineJs());
         $resource->cleanInlineJs();
-        $this->assertEquals('',$resource->getInlineJs());
+        $this->assertEquals('', $resource->getInlineJs());
     }
 
-    public function testCacheJs()
+    public function testCacheJs() : void
     {
-        $resource = Resource::factory();
+        $resource = $this->createResource();
         $code = 'var a=7;';
-        $filePath = str_replace('//','/',$resource->getConfig()->get('wwwPath').$resource->cacheJs($code));
+        $filePath = str_replace('//', '/', ($resource->getConfig()['wwwPath'] . $resource->cacheJs($code)));
         $this->assertTrue(file_exists($filePath));
         $this->assertEquals('var a=7;', file_get_contents($filePath));
     }

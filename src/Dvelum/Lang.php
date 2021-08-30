@@ -26,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
@@ -42,10 +43,8 @@ class Lang
      * @var string
      */
     protected $defaultDictionary = '';
-    /**
-     * @var AsArray
-     */
-    protected $storage;
+
+    protected StorageInterface $storage;
     /**
      * @var array
      */
@@ -54,6 +53,27 @@ class Lang
      * @var array
      */
     protected $loaders = [];
+
+    /**
+     * @param StorageInterface $storage
+     * @param string|null $defaultDictionary
+     * @param array<string,string|int> $loaders
+     * @throws \Exception
+     */
+    public function __construct(StorageInterface $storage, ?string $defaultDictionary = null, array $loaders = [])
+    {
+        $this->storage = $storage;
+
+        if (!empty($loaders)) {
+            foreach ($loaders as $item) {
+                $this->addLoader($item['name'], $item['src'], $item['type']);
+            }
+        }
+
+        if ($defaultDictionary !== null) {
+            $this->setDefaultDictionary($defaultDictionary);
+        }
+    }
 
     /**
      * Set default localization
@@ -91,34 +111,18 @@ class Lang
 
     /**
      * Add localization loader
-     * Backward compatibility
      * @param string $name - dictionary name
      * @param mixed $src - dictionary source
      * @param int $type - Config constant
      */
-    static public function addDictionaryLoader(string $name, $src, int $type = Config\Factory::File_Array): void
-    {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        $langService->addLoader($name, $src, $type);
-    }
-
-    /**
-     * Add localization loader
-     * @param string $name - dictionary name
-     * @param mixed $src - dictionary source
-     * @param int $type - Config constant
-     */
-    public function addLoader(string $name, $src, int $type = Config\Factory::File_Array): void
+    public function addLoader(string $name, $src, int $type = Config\Factory::FILE_ARRAY): void
     {
         $this->loaders[$name] = array('src' => $src, 'type' => $type);
     }
 
     /**
      * Get localization dictionary by localization name or get default dictionary
-     * @param string $name optional,
+     * @param string|null $name optional,
      * @return Lang\Dictionary
      * @throws \Exception
      */
@@ -147,9 +151,6 @@ class Lang
      */
     public function getStorage(): StorageInterface
     {
-        if (!isset($this->storage)) {
-            $this->storage = new Config\Storage\File\AsArray();
-        }
         return $this->storage;
     }
 
@@ -157,7 +158,7 @@ class Lang
      * @param ContainerInterface $di
      * @deprecated
      */
-    static private ContainerInterface $di;
+    private static ContainerInterface $di;
 
     /**
      * @param ContainerInterface $di

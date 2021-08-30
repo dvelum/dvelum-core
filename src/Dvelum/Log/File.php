@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
@@ -40,7 +42,7 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
      * Get File name
      * @return string
      */
-    public function getFileName() : string
+    public function getFileName(): string
     {
         return $this->file;
     }
@@ -59,10 +61,10 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = []) : bool
+    public function log($level, $message, array $context = []): bool
     {
-        $message = '['.date('d.m.Y H:i:s') . '] ('.$level.') '. $message . ' '.json_encode($context)."\n";
-        return (bool) file_put_contents($this->file, $message , FILE_APPEND);
+        $message = '[' . date('d.m.Y H:i:s') . '] (' . $level . ') ' . $message . ' ' . json_encode($context) . "\n";
+        return (bool)file_put_contents($this->file, $message, FILE_APPEND);
     }
 
     /**

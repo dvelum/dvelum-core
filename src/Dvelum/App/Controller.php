@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App;
@@ -32,7 +34,7 @@ namespace Dvelum\App;
 use Dvelum\Config;
 use Dvelum\Request;
 use Dvelum\Resource;
-use Dvelum\Response;
+use Dvelum\Response\ResponseInterface;
 use Dvelum\App\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
 
@@ -43,7 +45,7 @@ class Controller
      */
     protected $request;
     /**
-     * @var Response
+     * @var ResponseInterface
      */
     protected $response;
     /**
@@ -64,15 +66,15 @@ class Controller
     /**
      * Controller constructor.
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      */
-    public function __construct(Request $request, Response $response, ContainerInterface $container)
+    public function __construct(Request $request, ResponseInterface $response, ContainerInterface $container)
     {
         $this->container = $container;
         $this->request = $request;
         $this->response = $response;
-        $this->resource = Resource::factory();
-        $this->appConfig = Config::storage()->get('main.php');
+        $this->resource = $container->get(Resource::class);
+        $this->appConfig = $container->get(Config\Storage\StorageInterface::class)->get('main.php');
     }
 
     /**
@@ -80,7 +82,7 @@ class Controller
      * @param Router\RouterInterface $router
      * @return void
      */
-    public function setRouter(Router\RouterInterface $router) : void
+    public function setRouter(Router\RouterInterface $router): void
     {
         $this->router = $router;
     }
@@ -91,10 +93,10 @@ class Controller
      * @param array $data
      * @param bool $cacheResult
      */
-    public function render(string $templatePath , array $data, bool $cacheResult = true) : void
+    public function render(string $templatePath, array $data, bool $cacheResult = true): void
     {
         $template = $this->container->get(\Dvelum\Template\Service::class)->getTemplate();
-        if(!$cacheResult){
+        if (!$cacheResult) {
             $template->disableCache();
         }
         $template->setData($data);

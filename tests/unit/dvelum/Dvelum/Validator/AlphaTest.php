@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,14 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace Dvelum\Validator;
+
 use PHPUnit\Framework\TestCase;
 
-class Validator_PagecodeTest extends TestCase
+class AlphaTest extends TestCase
 {
-    public function testValidate()
+    public function testValidate() : void
     {
-        $this->assertTrue(Pagecode::validate('mypage-1_'));
-        $this->assertFalse(Pagecode::validate('mypage@'));
+        $this->assertTrue(Alpha::validate('myName'));
+        $this->assertFalse(Alpha::validate('myName 12 \\'));
     }
 }

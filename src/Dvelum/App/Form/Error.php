@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -59,7 +60,7 @@ class Error
     /**
      * @return string|null
      */
-    public function getField() : ?string
+    public function getField(): ?string
     {
         return $this->field;
     }
@@ -67,9 +68,9 @@ class Error
     /**
      * @return string
      */
-    public function getMessage() : string
+    public function getMessage(): string
     {
-        return (string) $this->message;
+        return (string)$this->message;
     }
 
     /**

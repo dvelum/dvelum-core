@@ -19,25 +19,16 @@ define('DVELUM_CONSOLE', true);
  */
 $app = require 'bootstrap_app.php';
 
+$_SERVER['REQUEST_URI'] = $_SERVER['argv'][1];
+$request = new \Dvelum\Request();
+// Can be replaced with \Dvelum\Response\PsrResponse($psrResponse)
+$response = new \Dvelum\Response\Response();
 
-$psr17Factory = new \Nyholm\Psr7\Factory\Psr17Factory();
-$creator = new \Nyholm\Psr7Server\ServerRequestCreator(
-    $psr17Factory, // ServerRequestFactory
-    $psr17Factory, // UriFactory
-    $psr17Factory, // UploadedFileFactory
-    $psr17Factory  // StreamFactory
-);
-
-$serverRequest = $creator->fromArrays([
-    'REQUEST_URI' => $_SERVER['argv'][1],
-    'REQUEST_METHOD' => 'GET'
-]);
-
-$response = $psr17Factory->createResponse(200);
 
 /**
- * @var Psr\Http\Message\ResponseInterface $resp
+ * @var \Dvelum\Response\ResponseInterface $resp
  */
-$resp = $app->runConsole($serverRequest, $response);
-
-(new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($resp);
+$resp = $app->runConsole($request, $response);
+if(!$resp->isSent()){
+    $resp->send();
+}

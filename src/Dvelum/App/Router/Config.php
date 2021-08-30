@@ -26,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Router;
@@ -33,33 +34,28 @@ namespace Dvelum\App\Router;
 use Dvelum\App\Router;
 use Dvelum\Config as Cfg;
 use Dvelum\Request;
-use Dvelum\Response;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Response\ResponseInterface;
 
 class Config extends Router
 {
-
     /**
      * Run action
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function route(Request $request, ResponseInterface $response): ResponseInterface
     {
         $frontConfig = Cfg::storage()->get('frontend.php');
         $defaultController = $frontConfig->get('default_controller');
 
-        $requestHelper = new \Dvelum\Request($request);
-        $responseHelper = new \Dvelum\Response($response);
-        $responseHelper->setFormat(Response::FORMAT_HTML);
+        $response->setFormat(ResponseInterface::FORMAT_HTML);
 
-        $controller = $requestHelper->getPart(0);
+        $controller = $request->getPart(0);
         $pathCode = \Dvelum\Filter::filterValue('pagecode', $controller);
         $routes = Cfg::factory(
-            Cfg\Factory::File_Array,
+            Cfg\Factory::FILE_ARRAY,
             $this->container->get('config.main')->get('frontend_modules')
         )->__toArray();
 
@@ -69,11 +65,9 @@ class Config extends Router
             $controllerClass = $defaultController;
         }
 
-        $this->runController($controllerClass, $requestHelper->getPart(1), $requestHelper, $responseHelper);
-        $responseHelper->send();
-        return $responseHelper->getPsrResponse();
+        $this->runController($controllerClass, $request->getPart(1), $request, $response);
+        return $response;
     }
-
 
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Cache;
@@ -36,7 +38,7 @@ class Manager
     /**
      * @var array<string,CacheInterface> $connections
      */
-    static protected $connections = [];
+    protected static $connections = [];
 
     /**
      * Register cache adapter
@@ -44,11 +46,11 @@ class Manager
      * @param CacheInterface $cache
      * @return void
      */
-    public function register(string $name , CacheInterface $cache) : void
+    public function register(string $name, CacheInterface $cache): void
     {
         self::$connections[$name] = $cache;
     }
-    
+
     /**
      * Get cache adapter
      * @param string $name
@@ -56,30 +58,32 @@ class Manager
      */
     public function get(string $name)
     {
-        if(!isset(self::$connections[$name]))
+        if (!isset(self::$connections[$name])) {
             return null;
-        else
+        } else {
             return self::$connections[$name];
+        }
     }
-    
+
     /**
      * Remove cache adapter
      * @param string $name
      * @return void
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
-        if(!isset(self::$connections[$name]))
+        if (!isset(self::$connections[$name])) {
             return;
+        }
 
         unset(self::$connections[$name]);
     }
-    
+
     /**
      * Get list of registered adapters
      * @return CacheInterface[]<string,CacheInterface>
      */
-    public function getRegistered() : array
+    public function getRegistered(): array
     {
         return self::$connections;
     }
@@ -90,7 +94,7 @@ class Manager
      * @param array<string,mixed> $config
      * @return CacheInterface
      */
-    public function connect(string $name, array $config) : CacheInterface
+    public function connect(string $name, array $config): CacheInterface
     {
         $cache = new $config['adapter']($config['options']);
 

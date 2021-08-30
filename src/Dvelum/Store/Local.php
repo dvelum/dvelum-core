@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,9 +26,11 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Store;
+
 /**
  * The class allows you to store data locally in the form of key value pairs
  * Note that null value causes the keyExists() method return false (for better perfomance)
@@ -68,7 +71,7 @@ class Local implements AdapterInterface
      * (non-PHPdoc)
      * @see Dvelum/Store/Store_Interface#getData()
      */
-    public function getData() : array
+    public function getData(): array
     {
         return $this->storage;
     }
@@ -77,7 +80,7 @@ class Local implements AdapterInterface
      * Get items count
      * @return int
      */
-    public function getCount() : int
+    public function getCount(): int
     {
         return count($this->storage);
     }
@@ -87,8 +90,9 @@ class Local implements AdapterInterface
      */
     public function get($key)
     {
-        if(isset($this->storage[$key]))
+        if (isset($this->storage[$key])) {
             return $this->storage[$key];
+        }
         return null;
     }
 
@@ -96,7 +100,7 @@ class Local implements AdapterInterface
      * Note that null value causes keyExists return false (for better perfomance)
      * @inheritDoc
      */
-    public function set($key , $value)
+    public function set($key, $value)
     {
         $this->storage[$key] = $value;
     }
@@ -106,15 +110,16 @@ class Local implements AdapterInterface
      */
     public function setValues(array $array)
     {
-        foreach($array as $k => $v)
-            $this->set($k , $v);
+        foreach ($array as $k => $v) {
+            $this->set($k, $v);
+        }
     }
 
     /**
      * Note that null value causes the keyExists() method return false (for better perfomance)
      * @inheritDoc
      */
-    public function keyExists($key) : bool
+    public function keyExists($key): bool
     {
         return isset($this->storage[$key]);
     }
@@ -122,7 +127,7 @@ class Local implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function remove($key) : void
+    public function remove($key): void
     {
         unset($this->storage[$key]);
     }
@@ -130,16 +135,17 @@ class Local implements AdapterInterface
     /**
      * @inheritDoc
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->storage = [];
     }
+
     /**
      * Replace store data
      * @param array $data
      * @return void
      */
-    public function setData(array $data) : void
+    public function setData(array $data): void
     {
         $this->storage = $data;
     }

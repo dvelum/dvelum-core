@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,10 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
+use Dvelum\DependencyContainer\ArgumentInterface;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -42,14 +45,18 @@ class DependencyContainer implements ContainerInterface
      * @var array<string,Object>
      */
     protected array $container;
+    /**
+     * @var array<string,mixed>
+     */
+    protected array $lazyInit = [];
 
     /**
      * @param string $interfaceName
-     * @param object $object
+     * @param mixed $value
      */
-    public function bind(string $interfaceName, object $object): void
+    public function bind(string $interfaceName, $value): void
     {
-        $this->container[$interfaceName] = $object;
+        $this->container[$interfaceName] = $value;
     }
 
     /**
@@ -58,10 +65,16 @@ class DependencyContainer implements ContainerInterface
      */
     public function get(string $id)
     {
-        if (!isset($this->container[$id])) {
-            throw new RuntimeException('Unresolved runtime dependency ' . $id);
+        if (isset($this->container[$id])) {
+            return $this->container[$id];
         }
-        return $this->container[$id];
+
+        if (isset($this->lazyInit[$id])) {
+            $this->container[$id] = $this->loadDependency($id);
+            return $this->container[$id];
+        }
+
+        throw new RuntimeException('Unresolved runtime dependency ' . $id);
     }
 
     /**
@@ -70,22 +83,52 @@ class DependencyContainer implements ContainerInterface
      */
     public function has(string $id): bool
     {
-        return isset($this->container[$id]);
+        return (isset($this->container[$id]) || isset($this->lazyInit[$id]));
     }
 
     /**
      * @param array<string,mixed> $config
      */
-    public function bindArray(array $config) : void
+    public function bindArray(array $config): void
     {
-        foreach ($config as $id => $object){
-            if(is_callable($object)){
-                $this->container[$id] = $object($this);
-            }elseif (is_object($object)){
-                $this->container[$id] = $object;
-            }elseif (is_string($object)){
-                $this->container[$id] = new $object();
-            }
+        $this->lazyInit = array_merge($this->lazyInit, $config);
+    }
+
+    private function loadDependency($key)
+    {
+        $object = $this->lazyInit[$key];
+
+        if (is_callable($object)) {
+            return $object($this);
         }
+
+        if (is_object($object)) {
+            return $object;
+        }
+
+        if (is_string($object)) {
+            return new $object();
+        }
+
+        if (is_array($object)) {
+            if (!isset($object['class'])) {
+                throw new \InvalidArgumentException('Invalid dependency definition. ' . $key . ' expect class key');
+            }
+            if (isset($object['arguments']) && is_array($object['arguments'])) {
+                $arguments = [];
+                foreach ($object['arguments'] as $item) {
+                    if ($item instanceof ArgumentInterface) {
+                        $arguments[] = $item->get($this);
+                    } else {
+                        $arguments[] = $item;
+                    }
+                }
+            } else {
+                $arguments = [];
+            }
+            $rc = new \ReflectionClass($object['class']);
+            return $rc->newInstanceArgs($arguments);
+        }
+        throw new RuntimeException('Cannot load dependency ' . $key);
     }
 }

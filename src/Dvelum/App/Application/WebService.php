@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,13 +26,14 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Application;
 
 use Dvelum\Application;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Request;
+use Dvelum\Response\ResponseInterface;
 
 class WebService extends Application
 {
@@ -39,7 +41,7 @@ class WebService extends Application
      * Start application
      * @return ResponseInterface
      */
-    public function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function run(Request $request, ResponseInterface $response): ResponseInterface
     {
         $response = parent::run($request, $response);
         return $this->routeFrontend($request, $response);

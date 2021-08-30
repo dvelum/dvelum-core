@@ -26,20 +26,17 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
-use App\Config\Storage;
 use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\Storage\StorageInterface;
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Response\ResponseInterface;
 use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
 use Dvelum\Extensions\Manager as ExtensionManager;
-use Dvelum\Lang;
-
+use Psr\Container\ContainerInterface;
 
 /**
  * Application - is the main class that initializes system configuration
@@ -48,10 +45,10 @@ use Dvelum\Lang;
  */
 class Application
 {
-    const MODE_PRODUCTION = 0;
-    const MODE_DEVELOPMENT = 1;
-    const MODE_TEST = 2;
-    const MODE_INSTALL = 3;
+    public const MODE_PRODUCTION = 0;
+    public const MODE_DEVELOPMENT = 1;
+    public const MODE_TEST = 2;
+    public const MODE_INSTALL = 3;
 
     /**
      * Application config
@@ -69,14 +66,8 @@ class Application
      */
     protected $initialized = false;
 
-    /**
-     * @var Autoload
-     */
-    protected $autoloader;
-
 
     protected ContainerInterface $diContainer;
-    protected StorageInterface $configStorage;
 
     public function __construct(ContainerInterface $container)
     {
@@ -115,7 +106,7 @@ class Application
      * Start application
      * @return void
      */
-    public function run(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function run(Request $request, ResponseInterface $response): ResponseInterface
     {
         $this->init();
         return $response;
@@ -143,13 +134,13 @@ class Application
      * Start console application
      * @return void
      */
-    public function runConsole(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function runConsole(Request $request, ResponseInterface $response): ResponseInterface
     {
         $this->init();
         return $this->routeConsole($request, $response);
     }
 
-    protected function routeConsole(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    protected function routeConsole(Request $request, ResponseInterface $response): ResponseInterface
     {
         $storage = $this->diContainer->get(ConfigStorageInterface::class);
         $config = $storage->get('console.php');
@@ -161,12 +152,11 @@ class Application
 
     /**
      * Run frontend application
-     * @return void
+     * @return ResponseInterface
      */
-    protected function routeFrontend(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    protected function routeFrontend(Request $request, ResponseInterface $response): ResponseInterface
     {
         $storage = $this->diContainer->get(ConfigStorageInterface::class);
-
         /*
          * Start routing
         */

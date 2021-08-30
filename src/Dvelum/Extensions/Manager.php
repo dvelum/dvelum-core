@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum
  *
@@ -38,7 +39,7 @@ use Dvelum\Autoload;
 use Dvelum\File;
 use Dvelum\Lang;
 use Dvelum\Template\Storage;
-use \Exception;
+use Exception;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -92,7 +93,7 @@ class Manager
      * @param string $moduleId
      * @return bool
      */
-    public function extensionRegistered(string $moduleId) : bool
+    public function extensionRegistered(string $moduleId): bool
     {
         return $this->config->offsetExists($moduleId);
     }
@@ -103,16 +104,17 @@ class Manager
      * @param array $config
      * @return bool
      */
-    public function add(string $extensionId, array $config) : bool
+    public function add(string $extensionId, array $config): bool
     {
         $this->config->set($extensionId, $config);
         return $this->di->get(ConfigStorageInterface::class)->save($this->config);
     }
+
     /**
      * Load external modules configuration
      * @return void
      */
-    public function loadExtensions() : void
+    public function loadExtensions(): void
     {
         /**
          * @var ConfigStorageInterface $configStorage
@@ -133,23 +135,22 @@ class Manager
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
-
             if (!$config['enabled'] || isset($this->loadedExtensions[$index]['loaded'])) {
                 continue;
             }
 
-            $path = $extensionsDir  . File::fillEndSep($config['dir']);
+            $path = $extensionsDir . File::fillEndSep($config['dir']);
 
-            if(!empty($config['paths']['src'])){
-                $autoLoadPaths[] =  $path . $config['paths']['src'];
+            if (!empty($config['paths']['src'])) {
+                $autoLoadPaths[] = $path . $config['paths']['src'];
             }
 
             if (!empty($config['paths']['configs'])) {
-                $configPaths[] =  $path . $config['paths']['configs'] . '/';
+                $configPaths[] = $path . $config['paths']['configs'] . '/';
             }
 
             if (!empty($config['paths']['dependency'])) {
-                $dependencyPaths[] =  $path . $config['paths']['dependency'];
+                $dependencyPaths[] = $path . $config['paths']['dependency'];
             }
 
             /*
@@ -185,35 +186,34 @@ class Manager
             $autoloaderCfg['paths'] = $newChain;
 
             // update autoloader paths
-            $this->autoloader->setConfig(['paths' => $autoloaderCfg['paths'], 'psr-4'=>$autoloaderCfg['psr-4']]);
+            $this->autoloader->setConfig(['paths' => $autoloaderCfg['paths'], 'psr-4' => $autoloaderCfg['psr-4']]);
             // update main configuration
             $autoloaderConfig->setData($autoloaderCfg);
         }
         // Add Config paths
         if (!empty($configPaths)) {
-
             $writePath = $configStorage->getWrite();
             $applyPath = $configStorage->getApplyTo();
 
             $paths = $configStorage->getPaths();
             $resultPaths = [];
 
-            foreach ($paths as $path){
-                if($path!==$writePath && $path!==$applyPath){
+            foreach ($paths as $path) {
+                if ($path !== $writePath && $path !== $applyPath) {
                     $resultPaths[] = $path;
                 }
             }
             foreach ($configPaths as $path) {
-                \array_unshift($resultPaths , $path);
+                \array_unshift($resultPaths, $path);
             }
 
-            \array_unshift($resultPaths , $applyPath);
+            \array_unshift($resultPaths, $applyPath);
             $resultPaths[] = $writePath;
             $configStorage->replacePaths($resultPaths);
         }
         // register dependencies
-        if(!empty($dependencyPaths)){
-            foreach ($dependencyPaths as $file){
+        if (!empty($dependencyPaths)) {
+            foreach ($dependencyPaths as $file) {
                 $this->di->bindArray(include $file);
             }
         }
@@ -222,7 +222,7 @@ class Manager
     /**
      * Initialize core and service dependent extensions
      */
-    public function initExtensions() : void
+    public function initExtensions(): void
     {
         $modules = $this->config->__toArray();
 
@@ -236,12 +236,11 @@ class Manager
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
-
             if (!$config['enabled'] || isset($this->loadedExtensions[$index]['init'])) {
                 continue;
             }
 
-            $path = $extensionsDir  . File::fillEndSep($config['dir']);
+            $path = $extensionsDir . File::fillEndSep($config['dir']);
 
 
             if (!empty($config['paths']['locales'])) {

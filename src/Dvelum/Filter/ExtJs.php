@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Filter;
@@ -57,8 +59,7 @@ class ExtJs
     {
         $result = [];
 
-        foreach ($values as $item)
-        {
+        foreach ($values as $item) {
             if (!empty($item['operator'])) {
                 $operator = $item['operator'];
             } else {

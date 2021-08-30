@@ -26,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
@@ -37,6 +38,12 @@ class Debug
      * @var float
      */
     protected $scriptStartTime;
+
+    /**
+     * Script finish time
+     * @var float
+     */
+    protected $scriptStopTime;
     /**
      * Database profiler
      * @var array $dbProfilers
@@ -56,6 +63,15 @@ class Debug
      */
     protected $cacheCores = [];
 
+    public static function instance(): self
+    {
+        static $instance = null;
+        if ($instance === null) {
+            $instance = new static();
+        }
+        return $instance;
+    }
+
     /**
      * @param array $data
      */
@@ -70,6 +86,14 @@ class Debug
     public function setScriptStartTime(float $time): void
     {
         $this->scriptStartTime = $time;
+    }
+
+    /**
+     * @param float $time
+     */
+    public function setScriptStopTime(float $time): void
+    {
+        $this->scriptStopTime = $time;
     }
 
     /**
@@ -118,14 +142,16 @@ class Debug
         $str = '';
 
         if ($this->scriptStartTime) {
-            $str .= '<b>Time:</b> ' . number_format((microtime(true) - $this->scriptStartTime), 5) . "sec.<br>\n";
+            $str .= '<b>Time:</b> ' . number_format(($this->scriptStopTime - $this->scriptStartTime), 5) . "sec.<br>\n";
         }
 
-        $str .= '<b>Memory:</b> ' . number_format((memory_get_usage() / (1024 * 1024)), 3) . "mb<br>\n"
-            . '<b>Memory peak:</b> ' . number_format((memory_get_peak_usage() / (1024 * 1024)), 3) . "mb<br>\n"
-            . '<b>Includes:</b> ' . count(get_included_files()) . "<br>\n"
-            . '<b>Autoloaded:</b> ' . count($this->loadedClasses) . "<br>\n"
-            . '<b>Config files:</b> ' . count($this->loadedConfigs) . "<br>\n";
+        $str .= '<b>Memory:</b> ' . number_format((memory_get_usage() / (1024 * 1024)), 3)
+                . "mb<br>\n"
+                . '<b>Memory peak:</b> ' . number_format((memory_get_peak_usage() / (1024 * 1024)), 3)
+                . "mb<br>\n"
+                . '<b>Includes:</b> ' . count(get_included_files()) . "<br>\n"
+                . '<b>Autoloaded:</b> ' . count($this->loadedClasses) . "<br>\n"
+                . '<b>Config files:</b> ' . count($this->loadedConfigs) . "<br>\n";
 
         if (!empty($this->dbProfilers)) {
             $str .= self::getQueryProfiles($options);
@@ -134,23 +160,23 @@ class Debug
 
         if ($options['configs']) {
             $str .= "<b>Configs (" . count($this->loadedConfigs) . "):</b>\n<br> " . implode(
-                    "\n\t <br>",
-                    $this->loadedConfigs
-                ) . '<br>';
+                "\n\t <br>",
+                $this->loadedConfigs
+            ) . '<br>';
         }
 
         if ($options['autoloader']) {
             $str .= "<b>Autoloaded (" . count($this->loadedClasses) . "):</b>\n<br> " . implode(
-                    "\n\t <br>",
-                    $this->loadedClasses
-                ) . '<br>';
+                "\n\t <br>",
+                $this->loadedClasses
+            ) . '<br>';
         }
 
         if ($options['includes']) {
             $str .= "<b>Includes (" . count(get_included_files()) . "):</b>\n<br> " . implode(
-                    "\n\t <br>",
-                    get_included_files()
-                );
+                "\n\t <br>",
+                get_included_files()
+            );
         }
 
 
@@ -206,8 +232,11 @@ class Debug
              </div>';
         }
 
-
-        return '<div id="debugPanel" style="position:fixed;font-size:12px;left:10px;bottom:10px;overflow:auto;max-height:300px;padding:5px;background-color:#ffffff;z-index:1000;border:1px solid #cccccc;">' . $str . ' <center><a href="javascript:void(0)" onClick="document.getElementById(\'debugPanel\').style.display = \'none\'">close</a></center></div>';
+        return '<div id="debugPanel" style="position:fixed;font-size:12px;left:10px;bottom:10px;overflow:auto; ' .
+            'max-height:300px;padding:5px;background-color:#ffffff;z-index:1000;border:1px solid #cccccc;">' .
+            $str .
+            ' <center><a href="javascript:void(0)" ' .
+            'onClick="document.getElementById(\'debugPanel\').style.display = \'none\'">close</a></center></div>';
     }
 
     /**
@@ -235,16 +264,18 @@ class Debug
 
 
         $str .= '<b>Queries:</b> ' . $totalCount . '<br>' . '<b>Queries time:</b> ' . number_format(
-                $totalTime,
-                5
-            ) . 'sec.<br>';
+            $totalTime,
+            5
+        ) . 'sec.<br>';
         if ($options['sql']) {
             if (!empty($profiles)) {
                 foreach ($profiles as $queryProfile) {
                     $str .= '<span style="color:blue;font-size: 11px;">' . number_format(
-                            $queryProfile['elapse'],
-                            5
-                        ) . 's. </span><span style="font-size: 11px;color:green;">' . $queryProfile['sql'] . "</span><br>\n";
+                        $queryProfile['elapse'],
+                        5
+                    ) . 's. </span><span style="font-size: 11px;color:green;">' .
+                        $queryProfile['sql']
+                        . "</span><br>\n";
                 }
             }
         }
@@ -252,5 +283,4 @@ class Debug
 
         return $str;
     }
-
 }

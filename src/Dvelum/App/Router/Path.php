@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,50 +26,46 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Router;
 
 use Dvelum\App\Frontend\Index;
 use Dvelum\App\Router;
-use Dvelum\Config;
 use Dvelum\Filter;
 use Dvelum\Request;
-use Dvelum\Response;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Response\ResponseInterface;
 
 class Path extends Router
 {
-
     /**
      * Run action
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      * @throws \Exception
      */
-    public function route(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface{
+    public function route(Request $request, ResponseInterface $response): ResponseInterface
+    {
         $controller = $request->getPart(0);
-        $controller = ucfirst(Filter::filterValue('pagecode' , $controller));
+        $controller = ucfirst(Filter::filterValue('pagecode', $controller));
 
         $controllerClass = Index\Controller::class;
 
-        if($controller !== false && strlen($controller)){
+        if ($controller !== false && strlen($controller)) {
             $classNamespace1 = 'App\\Frontend\\' . $controller . '\\Controller';
             $classNamespace2 = 'Dvelum\\App\\Frontend\\' . $controller . '\\Controller';
 
-            if(class_exists($classNamespace1)){
+            if (class_exists($classNamespace1)) {
                 $controllerClass = $classNamespace1;
-            }elseif (class_exists($classNamespace2)){
+            } elseif (class_exists($classNamespace2)) {
                 $controllerClass = $classNamespace2;
             }
         }
-        $requestHelper = new \Dvelum\Request($request);
-        $responseHelper = new \Dvelum\Response($response);
-        $this->runController($controllerClass , $request->getPart(1), $requestHelper, $responseHelper);
-        $responseHelper->send();
-        return $responseHelper->getPsrResponse();
+
+        $this->runController($controllerClass, $request->getPart(1), $request, $response);
+        return $response;
     }
 
     /**
@@ -76,11 +73,15 @@ class Path extends Router
      * @param string $controller
      * @param null|string $action
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      */
-    public function runController(string $controller , ?string $action, Request $request , Response $response) : ResponseInterface
-    {
-        if(strpos('\\Backend\\', $controller)!==false) {
+    public function runController(
+        string $controller,
+        ?string $action,
+        Request $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        if (strpos('\\Backend\\', $controller) !== false) {
             $response->redirect('/');
             return $response->getPsrResponse();
         }

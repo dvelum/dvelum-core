@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -44,7 +45,7 @@ class Minify
     /**
      * @return Minify
      */
-    static public function factory() : Minify
+    public static function factory(): Minify
     {
         $config = Config::storage()->get('minify.php');
         return new static($config);
@@ -64,13 +65,13 @@ class Minify
      * @param string $string
      * @return string
      */
-    public function minifyJs(string $string) : string
+    public function minifyJs(string $string): string
     {
         $adapterClass = $this->config->get('js')['adapter'];
         /**
          * @var AdapterInterface $adapter
          */
-        $adapter = new $adapterClass;
+        $adapter = new $adapterClass();
         return $adapter->minify($string);
     }
 
@@ -80,13 +81,13 @@ class Minify
      * @param string $toFile
      * @return bool
      */
-    public function minifyJsFiles(array $files, string $toFile) : bool
+    public function minifyJsFiles(array $files, string $toFile): bool
     {
         $adapterClass = $this->config->get('js')['adapter'];
         /**
          * @var AdapterInterface $adapter
          */
-        $adapter = new $adapterClass;
+        $adapter = new $adapterClass();
         return $adapter->minifyFiles($files, $toFile);
     }
 
@@ -95,13 +96,13 @@ class Minify
      * @param string $string
      * @return string
      */
-    public function minifyCss(string $string) : string
+    public function minifyCss(string $string): string
     {
         $adapterClass = $this->config->get('css')['adapter'];
         /**
          * @var AdapterInterface $adapter
          */
-        $adapter = new $adapterClass;
+        $adapter = new $adapterClass();
         return $adapter->minify($string);
     }
 
@@ -111,13 +112,13 @@ class Minify
      * @param string $toFile
      * @return bool
      */
-    public function minifyCssFiles(array $files, string $toFile) : bool
+    public function minifyCssFiles(array $files, string $toFile): bool
     {
         $adapterClass = $this->config->get('css')['adapter'];
         /**
          * @var AdapterInterface $adapter
          */
-        $adapter = new $adapterClass;
+        $adapter = new $adapterClass();
         return $adapter->minifyFiles($files, $toFile);
     }
 }

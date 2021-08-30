@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,15 +17,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Dvelum\Utils;
+
+namespace Dvelum\Validator;
 
 use PHPUnit\Framework\TestCase;
 
-class StringsTest extends TestCase
+class PagecodeTest extends TestCase
 {
-    public function testGetRandomString(){
-        $str = Strings::getRandomString(5);
-        $this->assertTrue(is_string($str));
-        $this->assertEquals(5 , strlen($str));
+    public function testValidate() : void
+    {
+        $this->assertTrue(Pagecode::validate('mypage-1_'));
+        $this->assertFalse(Pagecode::validate('mypage@'));
     }
 }

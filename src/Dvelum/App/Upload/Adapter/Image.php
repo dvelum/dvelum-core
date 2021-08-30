@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Upload\Adapter;
@@ -36,17 +38,16 @@ use Dvelum\Image\Resize;
  */
 class Image extends File
 {
-
     /**
      * Create filename for uploaded file
      * @param array $fileData
      * @return string|null
      */
-    protected function createUploadedName(array $fileData) : ?string
+    protected function createUploadedName(array $fileData): ?string
     {
-        $name = str_replace(' ' , '_' , $fileData['name']);
-        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
-        if(!is_string($name)){
+        $name = str_replace(' ', '_', $fileData['name']);
+        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i", '', $name);
+        if (!is_string($name)) {
             return null;
         }
         /**
@@ -54,15 +55,16 @@ class Image extends File
          */
         $info = getimagesize($fileData['tmp_name']);
 
-        if(!isset($info[2])){
+        if (!isset($info[2])) {
             return null;
         }
         $ext = \Dvelum\File::getExt($name);
-        $name = str_replace($ext,'', $name);
+        $name = str_replace($ext, '', $name);
         // fix file extension from image type
         $ext = image_type_to_extension($info[2]);
-        return  $name . $ext;
+        return $name . $ext;
     }
+
     /**
      * @inheritDoc
      */
@@ -76,7 +78,7 @@ class Image extends File
                 $newName = str_replace($ext, ($replace), $data['path']);
 
                 switch ($this->config['thumb_types'][$name]) {
-                    case 'crop' :
+                    case 'crop':
                         Resize::resize($data['path'], $xy[0], $xy[1], $newName, true, true);
                         break;
                     case 'resize_fit':

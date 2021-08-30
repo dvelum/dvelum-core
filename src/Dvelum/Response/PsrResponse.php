@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -27,16 +28,13 @@
  */
 
 declare(strict_types=1);
-namespace Dvelum;
 
-use \Exception as Exception;
-use Psr\Http\Message\ResponseInterface;
+namespace Dvelum\Response;
 
-class Response
+use Psr\Http\Message\ResponseInterface as PsrResponseInterface;
+
+class PsrResponse implements ResponseInterface
 {
-    const FORMAT_HTML = 'html';
-    const FORMAT_JSON = 'json';
-
     /**
      * @var string
      */
@@ -44,30 +42,29 @@ class Response
     /**
      * @var string
      */
-    protected $buffer ='';
+    protected $buffer = '';
     /**
      * @var bool
      */
     protected $sent = false;
 
-    protected ResponseInterface $psrResponse;
-    /**
-     * @return Response
-     */
-   public function __construct(ResponseInterface $response)
-   {
-       $this->psrResponse = $response;
-   }
+    protected PsrResponseInterface $psrResponse;
 
-   public function getPsrResponse():ResponseInterface
-   {
-       return $this->psrResponse;
-   }
+    public function __construct(PsrResponseInterface $response)
+    {
+        $this->psrResponse = $response;
+    }
+
+    public function getPsrResponse(): PsrResponseInterface
+    {
+        return $this->psrResponse;
+    }
+
     /**
      * Send redirect header
      * @param mixed $location
      */
-    public function redirect($location) : void
+    public function redirect($location): void
     {
         $this->psrResponse = $this->psrResponse->withAddedHeader("Location: $location");
     }
@@ -76,30 +73,30 @@ class Response
      * Add string to response buffer
      * @param string $string
      */
-    public function put(string $string) : void
+    public function put(string $string): void
     {
-        if($this->sent){
+        if ($this->sent) {
             trigger_error('The response was already sent');
         }
-        $this->buffer.= $string;
+        $this->buffer .= $string;
     }
 
     /**
      * Send response, finish request
      */
-    public function send() : void
+    public function send(): void
     {
-        if($this->sent){
-            throw new Exception('Response already sent');
+        if ($this->sent) {
+            throw new \Exception('Response already sent');
         }
 
-        if($this->format === self::FORMAT_JSON){
-            $this->psrResponse = $this->psrResponse->withAddedHeader('Content-Type','application/json');
+        if ($this->format === self::FORMAT_JSON) {
+            $this->psrResponse = $this->psrResponse->withAddedHeader('Content-Type', 'application/json');
         }
 
         $this->psrResponse->getBody()->write($this->buffer);
 
-        if(function_exists('fastcgi_finish_request')){
+        if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
         $this->sent = true;
@@ -109,17 +106,17 @@ class Response
      * Send error message
      * @param string $message
      * @param array $errors
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
-    public function error(string $message , array $errors = []) : void
+    public function error(string $message, array $errors = []): void
     {
         @ob_clean();
-        switch ($this->format){
-            case self::FORMAT_JSON :
-                $message = json_encode(['success'=>false,'msg'=>$message,'errors'=>$errors]);
+        switch ($this->format) {
+            case self::FORMAT_JSON:
+                $message = json_encode(['success' => false, 'msg' => $message, 'errors' => $errors]);
                 break;
-            case self::FORMAT_HTML :
+            case self::FORMAT_HTML:
                 $this->notFound();
         }
         $this->put((string)$message);
@@ -132,21 +129,19 @@ class Response
      * @param array $params
      * @return void
      */
-    public function success(array $data = [], array $params = []) : void
+    public function success(array $data = [], array $params = []): void
     {
-        $message  = '';
-        switch ($this->format)
-        {
+        $message = '';
+        switch ($this->format) {
             case self::FORMAT_HTML:
-
-                if(Config::storage()->get('main.php')->get('development')){
+                if (Config::storage()->get('main.php')->get('development')) {
                     $this->put('<pre>');
-                    $this->put(var_export(array_merge(['data'=>$data],$params),true));
+                    $this->put(var_export(array_merge(['data' => $data], $params), true));
                 }
                 break;
-            case self::FORMAT_JSON :
-                $message = ['success'=>true,'data'=>$data];
-                if(!empty($params)){
+            case self::FORMAT_JSON:
+                $message = ['success' => true, 'data' => $data];
+                if (!empty($params)) {
                     $message = array_merge($message, $params);
                 }
                 $message = json_encode($message);
@@ -161,7 +156,7 @@ class Response
      * @param string $format
      * @return void
      */
-    public function setFormat(string $format) : void
+    public function setFormat(string $format): void
     {
         $this->format = $format;
     }
@@ -171,7 +166,7 @@ class Response
      * @param array $data
      * @return void
      */
-    public function json(array $data = []) : void
+    public function json(array $data = []): void
     {
         $this->put((string)json_encode($data));
         $this->send();
@@ -181,10 +176,10 @@ class Response
      * Send 404 Response header
      * @return void
      */
-    public function notFound() : void
+    public function notFound(): void
     {
-        if(isset($_SERVER["SERVER_PROTOCOL"])){
-            $this->header($_SERVER["SERVER_PROTOCOL"]."/1.0 404 Not Found");
+        if (isset($_SERVER["SERVER_PROTOCOL"])) {
+            $this->header($_SERVER["SERVER_PROTOCOL"] . "/1.0 404 Not Found");
         }
     }
 
@@ -193,7 +188,7 @@ class Response
      * @param string $string
      * @return void
      */
-    public function header(string $string) : void
+    public function header(string $string): void
     {
         \header($string);
     }
@@ -202,7 +197,7 @@ class Response
      * Is sent
      * @return bool
      */
-    public function isSent() : bool
+    public function isSent(): bool
     {
         return $this->sent;
     }

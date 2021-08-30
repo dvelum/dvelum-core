@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -32,7 +33,6 @@ namespace Dvelum\Security;
 
 use Dvelum\Config\ConfigInterface;
 
-
 /**
  * Simple encryption class
  * Uses Base64 storage format for keys and data
@@ -59,7 +59,7 @@ class CryptService implements CryptServiceInterface
     /**
      * @var string
      */
-    private $error ='';
+    private $error = '';
 
     /**
      * @var array|null
@@ -77,20 +77,20 @@ class CryptService implements CryptServiceInterface
      * Verify that encryption works, all dependencies are installed
      * @return bool
      */
-    public function canCrypt() : bool
+    public function canCrypt(): bool
     {
-        if(!extension_loaded('openssl')){
+        if (!extension_loaded('openssl')) {
             $this->error = 'OpenSSL Extesion is not loaded';
             return false;
         }
 
-        if(!in_array($this->chipper, openssl_get_cipher_methods(true), true)) {
-            $this->error = 'Unknown cipher algorithm '. $this->chipper;
+        if (!in_array($this->chipper, openssl_get_cipher_methods(true), true)) {
+            $this->error = 'Unknown cipher algorithm ' . $this->chipper;
             return false;
         }
 
-        if(!in_array($this->hash, openssl_get_md_methods(true), true)) {
-            $this->error = 'Unknown hash algorithm '. $this->hash;
+        if (!in_array($this->hash, openssl_get_md_methods(true), true)) {
+            $this->error = 'Unknown hash algorithm ' . $this->hash;
             return false;
         }
         return true;
@@ -100,7 +100,7 @@ class CryptService implements CryptServiceInterface
      * Get error message
      * @return string
      */
-    public function getError() : string
+    public function getError(): string
     {
         return $this->error;
     }
@@ -110,7 +110,7 @@ class CryptService implements CryptServiceInterface
      * @param array $options
      * @return void
      */
-    public function setPrivateKeyOptions(array $options) : void
+    public function setPrivateKeyOptions(array $options): void
     {
         $this->privateKeyOptions = $options;
     }
@@ -119,10 +119,10 @@ class CryptService implements CryptServiceInterface
      * Generate new private key
      * @return string
      */
-    public function createPrivateKey() :string
+    public function createPrivateKey(): string
     {
         // init private key options
-        if(empty($this->privateKeyOptions)){
+        if (empty($this->privateKeyOptions)) {
             $this->privateKeyOptions = [
                 "digest_alg" => "sha512",
                 "private_key_bits" => 4096,
@@ -130,7 +130,7 @@ class CryptService implements CryptServiceInterface
             ];
         }
         $res = openssl_pkey_new($this->privateKeyOptions);
-        if(empty($res)){
+        if (empty($res)) {
             throw new \Exception('openssl_pkey_new empty result');
         }
         openssl_pkey_export($res, $key);
@@ -142,7 +142,7 @@ class CryptService implements CryptServiceInterface
      * return vector as base64 encoded string
      * @return string
      */
-    public function createVector() : string
+    public function createVector(): string
     {
         return base64_encode((string)openssl_random_pseudo_bytes((int)openssl_cipher_iv_length($this->chipper)));
     }
@@ -151,20 +151,20 @@ class CryptService implements CryptServiceInterface
      * Encrypt a string.
      * @param string $string - string to encrypt.
      * @param string $base64Vector - base64 encoded initialization vector
-     * @throws \Exception
      * @return string - base64 encoded encryption result
+     * @throws \Exception
      */
-    public function encrypt(string $string, string $base64Vector) : string
+    public function encrypt(string $string, string $base64Vector): string
     {
         $iv = base64_decode($base64Vector);
         $keyHash = openssl_digest($this->getPrivateKey(), $this->hash, true);
 
-        if(!is_string($keyHash)){
+        if (!is_string($keyHash)) {
             throw new \Exception('Encryption failed: openssl_digest ');
         }
         $encrypted = openssl_encrypt($string, $this->chipper, $keyHash, OPENSSL_RAW_DATA, $iv);
 
-        if($encrypted === false){
+        if ($encrypted === false) {
             throw new \Exception('Encryption failed: ' . openssl_error_string());
         }
 
@@ -175,16 +175,16 @@ class CryptService implements CryptServiceInterface
      * Decrypt a string.
      * @param string $string - base64 encoded encrypted string to decrypt.
      * @param string $base64Vector - base64 encoded initialization vector
-     * @throws \Exception
      * @return string - the decrypted string.
+     * @throws \Exception
      */
-    public function decrypt(string $string, string $base64Vector) :string
+    public function decrypt(string $string, string $base64Vector): string
     {
         $iv = base64_decode($base64Vector);
         $src = base64_decode($string);
         $keyHash = openssl_digest($this->getPrivateKey(), $this->hash, true);
 
-        if(!is_string($keyHash)){
+        if (!is_string($keyHash)) {
             throw new \Exception('Encryption failed: openssl_digest ');
         }
 
@@ -198,16 +198,16 @@ class CryptService implements CryptServiceInterface
 
     /**
      * Get private key
-     * @throws \Exception
      * @return string
+     * @throws \Exception
      */
-    protected function getPrivateKey() : string
+    protected function getPrivateKey(): string
     {
-        if(is_null($this->privateKeyData)){
-            if(file_exists((string)$this->privateKey)){
-                $this->privateKeyData = (string) file_get_contents((string) $this->privateKey);
-            }else{
-                throw new \Exception('Private key file is not exists '.$this->privateKey);
+        if (is_null($this->privateKeyData)) {
+            if (file_exists((string)$this->privateKey)) {
+                $this->privateKeyData = (string)file_get_contents((string)$this->privateKey);
+            } else {
+                throw new \Exception('Private key file is not exists ' . $this->privateKey);
             }
         }
         return $this->privateKeyData;

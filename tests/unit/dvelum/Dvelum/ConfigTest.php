@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,14 +17,22 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-namespace Dvelum\Validator;
+
+namespace Dvelum;
+
 use PHPUnit\Framework\TestCase;
 
-class Validator_LoginTest extends TestCase
+class ConfigTest extends TestCase
 {
-    public function testValidate()
+    public function testStorage() : void
     {
-        $this->assertTrue(Login::validate('1my@login-._'));
-        $this->assertFalse(Login::validate('mylogin  |'));
+        $cfg = Config::storage()->get('main.php');
+        $this->assertTrue($cfg instanceof Config\ConfigInterface);
+    }
+
+    public function testFactory() : void
+    {
+        $newConfig = Config::factory(Config\Factory::SIMPLE, 'name');
+        $this->assertTrue($newConfig instanceof Config\ConfigInterface);
     }
 }

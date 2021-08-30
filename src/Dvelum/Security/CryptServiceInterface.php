@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -49,8 +50,8 @@ interface CryptServiceInterface
      * Encrypt a string.
      * @param string $string - string to encrypt.
      * @param string $base64Vector - base64 encoded initialization vector
-     * @throws \Exception
      * @return string - base64 encoded encryption result
+     * @throws \Exception
      */
     public function encrypt(string $string, string $base64Vector): string;
 
@@ -58,8 +59,8 @@ interface CryptServiceInterface
      * Decrypt a string.
      * @param string $string - base64 encoded encrypted string to decrypt.
      * @param string $base64Vector - base64 encoded initialization vector
-     * @throws \Exception
      * @return string - the decrypted string.
+     * @throws \Exception
      */
     public function decrypt(string $string, string $base64Vector): string;
 }

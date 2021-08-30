@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,9 +26,11 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Validator;
+
 /**
  * Email validator
  * @package Validator
@@ -35,13 +38,13 @@ namespace Dvelum\Validator;
  */
 class Email implements ValidatorInterface
 {
-	/**
-	 * Validate value
-	 * @param string $value
-	 * @return bool
-	 */
-	static public function validate($value) : bool
-	{
-		return (bool) filter_var($value , FILTER_VALIDATE_EMAIL);
-	}
+    /**
+     * Validate value
+     * @param string $value
+     * @return bool
+     */
+    public static function validate($value): bool
+    {
+        return (bool)filter_var($value, FILTER_VALIDATE_EMAIL);
+    }
 }

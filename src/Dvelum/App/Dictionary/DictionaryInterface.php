@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Dictionary;
@@ -102,6 +104,5 @@ interface DictionaryInterface
      * Save dictionary
      * @return bool
      */
-    public function save() : bool;
-
+    public function save(): bool;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,19 +26,20 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Validator;
 
 class Alphanum implements ValidatorInterface
 {
-	/**
-	 * Validate value
-	 * @param string $value
-	 * @return bool
-	 */
-	static public function validate($value) :bool
-	{
-		return !filter_var($value , FILTER_VALIDATE_REGEXP, array('options'=>array('regexp'=>"/[^A-Za-z0-9_]/i")));
-	}
+    /**
+     * Validate value
+     * @param string $value
+     * @return bool
+     */
+    public static function validate($value): bool
+    {
+        return !filter_var($value, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => "/[^A-Za-z0-9_]/i")));
+    }
 }

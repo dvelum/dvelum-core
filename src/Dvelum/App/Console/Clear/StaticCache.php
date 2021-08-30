@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -37,10 +38,10 @@ class StaticCache extends Console\Action
 {
     public function action(): bool
     {
-       $cssDir = $this->appConfig->get('cssCachePath');
-       $jsDir = $this->appConfig->get('jsCachePath');
-       File::rmdirRecursive($cssDir);
-       File::rmdirRecursive($jsDir);
-       return true;
+        $cssDir = $this->appConfig->get('cssCachePath');
+        $jsDir = $this->appConfig->get('jsCachePath');
+        File::rmdirRecursive($cssDir);
+        File::rmdirRecursive($jsDir);
+        return true;
     }
 }

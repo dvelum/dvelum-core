@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,8 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
+
 namespace Dvelum\Template;
+
+use Dvelum\Config\ConfigInterface;
 
 class Storage
 {
@@ -34,17 +39,17 @@ class Storage
      * Runtime cache of configuration files
      * @var array
      */
-    static protected $runtimeCache = [];
+    protected static $runtimeCache = [];
 
     /**
      * Storage configuration options
-     * @var array
+     * @var ConfigInterface
      */
-    protected $config = [];
+    protected ConfigInterface $config;
 
-    public function __construct(array $options = [])
+    public function __construct(ConfigInterface $config)
     {
-        $this->config = $options;
+        $this->config = $config;
     }
 
     /**
@@ -52,43 +57,47 @@ class Storage
      * @param array $options
      * @return void
      */
-    public function setConfig(array $options) : void
+    public function setConfig(array $options): void
     {
-        foreach($options as $k=>$v){
+        foreach ($options as $k => $v) {
             $this->config[$k] = $v;
         }
     }
+
     /**
      * Get template real path  by local path
      * @param string $localPath
-     * @param boolean $useCache, optional
+     * @param boolean $useCache , optional
      * @return string | false
      */
-    public function get($localPath , $useCache = true)
+    public function get($localPath, $useCache = true)
     {
         $key = $localPath;
 
-        if(isset(static::$runtimeCache[$key]) && $useCache)
+        if (isset(static::$runtimeCache[$key]) && $useCache) {
             return static::$runtimeCache[$key];
+        }
 
         $filePath = false;
 
         $list = $this->config['paths'];
 
-        foreach($list as $path)
-        {
-            if(!\file_exists($path . $localPath))
+        foreach ($list as $path) {
+            if (!\file_exists($path . $localPath)) {
                 continue;
+            }
 
             $filePath = $path . $localPath;
             break;
         }
 
-        if($filePath === false)
+        if ($filePath === false) {
             return false;
+        }
 
-        if($useCache)
+        if ($useCache) {
             static::$runtimeCache[$key] = $filePath;
+        }
 
         return $filePath;
     }
@@ -97,7 +106,7 @@ class Storage
      * Get template paths
      * @return array
      */
-    public function getPaths() : array
+    public function getPaths(): array
     {
         return $this->config['paths'];
     }
@@ -107,7 +116,7 @@ class Storage
      * @param string $path
      * @return void
      */
-    public function addPath($path) : void
+    public function addPath($path): void
     {
         $this->config['paths'][] = $path;
     }
@@ -116,7 +125,7 @@ class Storage
      * Set paths
      * @param array $paths
      */
-    public function setPaths(array $paths):void
+    public function setPaths(array $paths): void
     {
         $this->config['paths'] = $paths;
     }

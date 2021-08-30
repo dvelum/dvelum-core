@@ -43,10 +43,6 @@ chdir(DVELUM_ROOT);
  * Httponly cookies
  */
 ini_set("session.cookie_httponly", 1);
-/*
- * Turning on output buffering
- */
-ob_start();
 
 //===== loading kernel =========
 /*

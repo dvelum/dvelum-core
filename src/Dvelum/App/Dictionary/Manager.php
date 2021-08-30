@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Dictionary;
@@ -34,11 +36,12 @@ use Dvelum\Cache\CacheInterface;
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\File;
+use Dvelum\Lang;
 
 class Manager
 {
-    const CACHE_KEYlist = 'Dictionary_Managerlist';
-    const CACHE_KEY_DATA_HASH = 'Dictionary_Manager_dataHash';
+    public const CACHE_KEY_LIST = 'Dictionary_Manager_list';
+    public const CACHE_KEY_DATA_HASH = 'Dictionary_Manager_dataHash';
 
     /**
      * Base path
@@ -62,33 +65,36 @@ class Manager
     /**
      * @var false|mixed|null
      */
-    static protected $list = null;
+    protected static $list = null;
 
     /**
      * Valid dictionary local cache
      * @var array
      */
-    static protected $validDictionary = [];
+    protected static $validDictionary = [];
 
     /**
      * @var ConfigInterface
      */
     protected $appConfig;
 
+    protected Lang $lang;
+
     /**
      * @param ConfigInterface $appConfig
      * @param CacheInterface|false $cache
      * @throws \Exception
      */
-    protected function __construct(ConfigInterface $appConfig, $cache = false)
+    protected function __construct(Lang $lang, ConfigInterface $appConfig, $cache = false)
     {
+        $this->lang = $lang;
         $this->appConfig = $appConfig;
         $this->language = $appConfig->get('language');
         $this->path = Config::storage()->getWrite();
         $this->baseDir = $appConfig->get('dictionary_folder');
         $this->cache = $cache;
 
-        if ($this->cache && $list = $this->cache->load(self::CACHE_KEYlist)) {
+        if ($this->cache && $list = $this->cache->load(self::CACHE_KEY_LIST)) {
             self::$list = $list;
         }
     }
@@ -98,7 +104,7 @@ class Manager
      * @return array
      * @throws \Exception
      */
-    public function getList() : array
+    public function getList(): array
     {
         if (!is_null(self::$list)) {
             return array_keys(self::$list);
@@ -126,7 +132,7 @@ class Manager
         self::$list = $list;
 
         if ($this->cache) {
-            $this->cache->save($list, self::CACHE_KEYlist);
+            $this->cache->save($list, self::CACHE_KEY_LIST);
         }
 
         return array_keys($list);
@@ -149,7 +155,7 @@ class Manager
 
         $configStorage = Config::storage();
 
-        if (!file_exists($dictionaryFile)){
+        if (!file_exists($dictionaryFile)) {
             $dictionaryConfig = Config\Factory::create([], $dictionaryFile);
             if ($configStorage->save($dictionaryConfig)) {
                 if (!file_exists($indexFile)) {
@@ -172,7 +178,7 @@ class Manager
      * @param string $newName
      * @return bool
      */
-    public function rename(string $oldName, string $newName) : bool
+    public function rename(string $oldName, string $newName): bool
     {
         $dirs = File::scanFiles($this->path . $this->baseDir, false, false, File::DIRS_ONLY);
 
@@ -200,7 +206,7 @@ class Manager
      * @param string $name
      * @return bool
      */
-    public function isValidDictionary(string $name) : bool
+    public function isValidDictionary(string $name): bool
     {
         /*
          * Check local cache
@@ -221,7 +227,7 @@ class Manager
      * @param string $name
      * @return bool
      */
-    public function remove(string $name) : bool
+    public function remove(string $name): bool
     {
         $dirs = File::scanFiles($this->path . $this->baseDir, false, false, File::DIRS_ONLY);
 
@@ -246,13 +252,13 @@ class Manager
     /**
      * Reset cache
      */
-    public function resetCache() : void
+    public function resetCache(): void
     {
         if (!$this->cache) {
             return;
         }
 
-        $this->cache->remove(self::CACHE_KEYlist);
+        $this->cache->remove(self::CACHE_KEY_LIST);
         $this->cache->remove(self::CACHE_KEY_DATA_HASH);
     }
 
@@ -260,11 +266,11 @@ class Manager
      * Get data hash (all dictionaries data)
      * @return string
      */
-    public function getDataHash() : string
+    public function getDataHash(): string
     {
-        if ($this->cache){
+        if ($this->cache) {
             $hash = $this->cache->load(self::CACHE_KEY_DATA_HASH);
-            if(!empty($hash) && is_string($hash)){
+            if (!empty($hash) && is_string($hash)) {
                 return $hash;
             }
         }
@@ -292,7 +298,7 @@ class Manager
      * Get Dictionary manager
      * @return Manager
      */
-    static public function factory(): Manager
+    public static function factory(): Manager
     {
         static $manager = false;
 
@@ -330,7 +336,7 @@ class Manager
      * @param string $name
      * @return bool
      */
-    public function rebuildIndex($name) : bool
+    public function rebuildIndex($name): bool
     {
         $dict = Dictionary::factory($name);
         $storage = Config::storage();
@@ -351,13 +357,13 @@ class Manager
      * @param string $baseLocale
      * @return bool
      */
-    public function mergeLocales($name, $baseLocale) : bool
+    public function mergeLocales($name, $baseLocale): bool
     {
         $storage = Config::storage();
 
         $baseDict = $storage->get($this->baseDir . $baseLocale . '/' . $name . '.php', false, false);
 
-        $locManager = new \Dvelum\App\Localization\Manager($this->appConfig);
+        $locManager = new \Dvelum\App\Localization\Manager($this->appConfig, $this->lang);
 
         foreach ($locManager->getLangs(true) as $locale) {
             if ($locale == $baseLocale) {

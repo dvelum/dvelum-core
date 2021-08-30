@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config\Storage\File;
@@ -40,10 +42,10 @@ class AsArray implements StorageInterface
      * Runtime cache of configuration files
      * @var array
      */
-    static protected $runtimeCache = [];
+    protected static $runtimeCache = [];
     /**
      * Storage configuration options
-     * @var array
+     * @var array<string,mixed>
      */
     protected $config = [];
     /**
@@ -53,12 +55,20 @@ class AsArray implements StorageInterface
     protected $debugInfo = [];
 
     /**
+     * @param array<string,mixed> $config
+     */
+    public function __construct(array $config = [])
+    {
+        $this->config = $config;
+    }
+
+    /**
      * Get config by local path
      * @param string $localPath
      * @param bool $useCache , optional
      * @param bool $merge , optional merge with main config
-     * @throws \Exception
      * @return ConfigInterface
+     * @throws \Exception
      */
     public function get(string $localPath, bool $useCache = true, bool $merge = true): ConfigInterface
     {
@@ -67,7 +77,7 @@ class AsArray implements StorageInterface
             $merge = false;
         }
 
-        $key = $localPath . intval($merge);
+        $key = $localPath . (int)($merge);
 
         if (isset(static::$runtimeCache[$key]) && $useCache) {
             return static::$runtimeCache[$key];
@@ -138,8 +148,8 @@ class AsArray implements StorageInterface
     /**
      * Create new config file
      * @param string $id
-     * @throws \Exception
      * @return bool
+     * @throws \Exception
      */
     public function create(string $id): bool
     {
@@ -203,7 +213,6 @@ class AsArray implements StorageInterface
             if (!empty($list)) {
                 $files = array_merge($files, $list);
             }
-
         }
         return $files;
     }

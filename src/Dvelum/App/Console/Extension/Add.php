@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum , https://github.com/k-samuel/dvelum , http://dvelum.net
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -17,6 +18,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console\Extension;
@@ -37,22 +39,22 @@ class Add extends Console\Action
         $vendor = Filter::filterString((string)$params[0]);
         $extension = Filter::filterString((string)$params[1]);
 
-        if(empty($vendor) || empty($extension)){
+        if (empty($vendor) || empty($extension)) {
             return false;
         }
 
-        $moduleDir = $this->appConfig->get('extensions')['path']  . $vendor . '/' . $extension;
+        $moduleDir = $this->appConfig->get('extensions')['path'] . $vendor . '/' . $extension;
 
-        if(!is_dir($moduleDir)){
+        if (!is_dir($moduleDir)) {
             return false;
         }
 
-        if(!file_exists($moduleDir.'/extension_config.php')){
+        if (!file_exists($moduleDir . '/extension_config.php')) {
             return false;
         }
 
         $moduleInfo = include $moduleDir . '/extension_config.php';
-        if(!is_array($moduleInfo) || empty($moduleInfo)){
+        if (!is_array($moduleInfo) || empty($moduleInfo)) {
             return false;
         }
 
@@ -62,14 +64,14 @@ class Add extends Console\Action
          */
         $manager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
 
-        if($manager->extensionRegistered($moduleId)){
+        if ($manager->extensionRegistered($moduleId)) {
             return true;
         }
 
         $config = array_merge([
-            'enabled' => true,
-            'dir' => $moduleId
-        ], $moduleInfo);
+                                  'enabled' => true,
+                                  'dir' => $moduleId
+                              ], $moduleInfo);
 
         return $manager->add($moduleId, $config);
     }

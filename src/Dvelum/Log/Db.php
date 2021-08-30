@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
@@ -55,11 +57,11 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @var array
      */
     protected $logFields = [
-        'name'=>'name',
-        'message'=>'message',
-        'date'=>'date',
-        'level'=>'level',
-        'context'=>'context'
+        'name' => 'name',
+        'message' => 'message',
+        'date' => 'date',
+        'level' => 'level',
+        'context' => 'context'
     ];
     /**
      * @var string
@@ -72,7 +74,7 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @param \Dvelum\Db\Adapter $dbConnection
      * @param string $tableName
      */
-    public function __construct(string $logName , \Dvelum\Db\Adapter $dbConnection , string $tableName)
+    public function __construct(string $logName, \Dvelum\Db\Adapter $dbConnection, string $tableName)
     {
         $this->name = $logName;
         $this->table = $tableName;
@@ -86,20 +88,20 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = []) : bool
+    public function log($level, $message, array $context = []): bool
     {
-        try{
+        try {
             $this->db->insert(
                 $this->table,
                 [
                     $this->logFields['name'] => $this->name,
                     $this->logFields['message'] => htmlentities($message),
-                    $this->logFields['date']=> date('Y-m-d H:i:s'),
-                    $this->logFields['level']=> json_encode($context)
+                    $this->logFields['date'] => date('Y-m-d H:i:s'),
+                    $this->logFields['level'] => json_encode($context)
                 ]
             );
             return true;
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->lastError = $e->getMessage();
             return false;
         }
@@ -121,15 +123,16 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @param \Dvelum\Db\Adapter $db
      * @return void
      */
-    public function setDbConnection(\Dvelum\Db\Adapter $db) : void
+    public function setDbConnection(\Dvelum\Db\Adapter $db): void
     {
         $this->db = $db;
     }
+
     /**
      * Get last error
      * @return string
      */
-    public function getLastError() : string
+    public function getLastError(): string
     {
         return $this->lastError;
     }
@@ -139,7 +142,7 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * @param string $table
      * @return void
      */
-    public function setTable(string $table) : void
+    public function setTable(string $table): void
     {
         $this->table = $table;
     }

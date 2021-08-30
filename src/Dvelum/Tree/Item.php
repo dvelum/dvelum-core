@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Tree;
@@ -130,7 +132,7 @@ class Item implements \ArrayAccess
     /**
      * @return array
      */
-    public function __toArray() : array
+    public function __toArray(): array
     {
         return [
             'id' => $this->id,
@@ -141,6 +143,7 @@ class Item implements \ArrayAccess
     }
 
     // ====== Start of ArrayAccess implementation =========
+
     /**
      * @param mixed $offset
      * @return bool
@@ -164,7 +167,7 @@ class Item implements \ArrayAccess
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value) : void
+    public function offsetSet($offset, $value): void
     {
         $this->$offset = $value;
     }
@@ -173,7 +176,7 @@ class Item implements \ArrayAccess
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($offset) : void
+    public function offsetUnset($offset): void
     {
         $this->$offset = null;
     }

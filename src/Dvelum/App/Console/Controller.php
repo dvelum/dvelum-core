@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console;
@@ -34,12 +36,8 @@ use Dvelum\Config;
 use Dvelum\Log\LogInterface;
 use Dvelum\App\Router;
 use Dvelum\Request;
-use Dvelum\Response;
-use Dvelum\Service;
+use Dvelum\Response\ResponseInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LogLevel;
 
 class Controller extends App\Controller implements Router\RouterInterface
 {
@@ -63,10 +61,10 @@ class Controller extends App\Controller implements Router\RouterInterface
     /**
      * Controller constructor.
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      * @throws \Exception
      */
-    public function __construct(Request $request, Response $response, ContainerInterface $container)
+    public function __construct(Request $request, ResponseInterface $response, ContainerInterface $container)
     {
         if (!defined('DVELUM_CONSOLE')) {
             $this->response->redirect('/');
@@ -79,7 +77,7 @@ class Controller extends App\Controller implements Router\RouterInterface
         $this->consoleConfig = $storage->get('console.php');
         // Prepare action routes
         $data = $storage->get('console_actions.php')->__toArray();
-        foreach ($data as $action => $config){
+        foreach ($data as $action => $config) {
             $this->actions[strtolower($action)] = $config;
         }
     }
@@ -87,23 +85,23 @@ class Controller extends App\Controller implements Router\RouterInterface
 
     /**
      * Run action
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param ResponseInterface $response
      */
-    public function route(ServerRequestInterface $request , ResponseInterface $response) : ResponseInterface
+    public function route(Request $request, ResponseInterface $response): ResponseInterface
     {
-        $this->response = new \Dvelum\Response($response);
-        $this->request = new \Dvelum\Request($request);
+        $this->request = $request;
+        $this->response = $response;
         $this->indexAction();
-        return $this->response->getPsrResponse();
+        return $this->response;
     }
 
     /**
      * @return void
      */
-    public function indexAction() : void
+    public function indexAction(): void
     {
-        $action = strtolower((string) $this->request->getPart(0));
+        $action = strtolower((string)$this->request->getPart(0));
 
         if (empty($action) || !isset($this->actions[$action])) {
             $this->response->put('Undefined Action');
@@ -126,20 +124,20 @@ class Controller extends App\Controller implements Router\RouterInterface
         $params = $this->request->getPathParts(1);
         $config = [];
 
-        if(isset($actionConfig['config'])){
+        if (isset($actionConfig['config'])) {
             $config = $actionConfig['config'];
         }
 
-        $adapter->init($this->appConfig, $params , $config, $this->container);
+        $adapter->init($this->container, $this->appConfig, $params, $config);
         $result = $adapter->run();
 
         echo '[' . $action . ' : ' . $adapter->getInfo() . ']' . PHP_EOL;
 
         if ($result) {
             exit(0);
-        } else {
-            exit(1);
         }
+
+        exit(1);
     }
 
     /**

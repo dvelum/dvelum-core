@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,12 +26,13 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Router;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Dvelum\Request;
+use Dvelum\Response\ResponseInterface;
 
 /**
  * Router interface
@@ -39,12 +41,12 @@ interface RouterInterface
 {
     /**
      * Run action
-     * @param ServerRequestInterface $request
+     * @param Request $request
      * @param ResponseInterface $response
-     * @throws \Exception
      * @return ResponseInterface
+     * @throws \Exception
      */
-    public function route(ServerRequestInterface $request , ResponseInterface $response) : ResponseInterface;
+    public function route(Request $request, ResponseInterface $response): ResponseInterface;
 
     /**
      * Find url

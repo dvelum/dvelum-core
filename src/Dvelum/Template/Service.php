@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Template;
@@ -33,7 +35,6 @@ use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\Factory as ConfigFactory;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\Template\Engine\EngineInterface;
-
 
 class Service
 {
@@ -52,6 +53,8 @@ class Service
      */
     protected $cache = null;
 
+    protected Storage $storage;
+
     /**
      * Service constructor.
      * @param ConfigInterface $config
@@ -69,7 +72,7 @@ class Service
     /**
      * @return EngineInterface
      */
-    public function getTemplate() : EngineInterface
+    public function getTemplate(): EngineInterface
     {
         /**
          * @var EngineInterface $adapter

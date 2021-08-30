@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -38,12 +39,12 @@ class Sql extends \Dvelum\Log\File implements LogInterface
      * @param array $context
      * @return bool
      */
-    public function log($level, $message, array $context = []) : bool
+    public function log($level, $message, array $context = []): bool
     {
         $dir = dirname($this->file);
-        if(!is_dir($dir) && !mkdir($dir, 0777, true)){
+        if (!is_dir($dir) && !mkdir($dir, 0777, true)) {
             return false;
         }
-        return (bool) file_put_contents($this->file, $message ."\n", FILE_APPEND);
+        return (bool)file_put_contents($this->file, $message . "\n", FILE_APPEND);
     }
 }

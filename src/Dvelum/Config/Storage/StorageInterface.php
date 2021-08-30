@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config\Storage;
@@ -33,14 +35,14 @@ use Dvelum\Config\ConfigInterface;
 
 interface StorageInterface
 {
-    public function get(string $localPath , bool $useCache = true , bool $merge = true) : ConfigInterface;
+    public function get(string $localPath, bool $useCache = true, bool $merge = true): ConfigInterface;
 
     /**
      * Create new config file
      * @param string $id
      * @return boolean
      */
-    public function create(string $id) : bool;
+    public function create(string $id): bool;
 
     /**
      * Find path for config file (no merge)
@@ -55,71 +57,71 @@ interface StorageInterface
      * @param bool $recursive - optional, default false
      * @return array
      */
-    public function getList($path = false, $recursive = false) : array;
+    public function getList($path = false, $recursive = false): array;
 
     /**
      * Check if config file exists
      * @param string $localPath
      * @return bool
      */
-    public function exists(string $localPath) : bool;
+    public function exists(string $localPath): bool;
 
     /**
      * Get storage paths
      * @return array
      */
-    public function getPaths() : array;
+    public function getPaths(): array;
 
     /**
      * Add config path
      * @param string $path
      * @return void
      */
-    public function addPath(string $path) : void;
+    public function addPath(string $path): void;
 
     /**
      * Prepend config path
      * @param string $path
      * @return void
      */
-    public function prependPath(string $path) : void;
+    public function prependPath(string $path): void;
 
     /**
      * Get write path
      * @return string
      */
-    public function getWrite() : string;
+    public function getWrite(): string;
 
     /**
      * Get src file path (to apply)
      * @return string
      */
-    public function getApplyTo() : string;
+    public function getApplyTo(): string;
 
     /**
      * Get debug information. (loaded configs)
      * @return array
      */
-    public function getDebugInfo() : array;
+    public function getDebugInfo(): array;
 
     /**
      * Set configuration options
      * @param array $options
      * @return void
      */
-    public function setConfig(array $options) : void;
+    public function setConfig(array $options): void;
 
     /**
      * Save configuration data
      * @param ConfigInterface $config
      * @return bool
      */
-    public function save(ConfigInterface $config) : bool;
+    public function save(ConfigInterface $config): bool;
 
     /**
      * Reset cached configs
      */
-    public function resetConfigCache() : void;
+    public function resetConfigCache(): void;
 
     /**
      * Replace paths data

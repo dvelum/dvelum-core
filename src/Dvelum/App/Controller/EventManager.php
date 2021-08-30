@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -39,24 +40,24 @@ class EventManager
      */
     protected $error = '';
 
-    const BEFORE_LIST = 'before_list';
-    const AFTER_LIST = 'after_list';
-    const BEFORE_LOAD = 'before_load';
-    const BEFORE_LINKED_LIST = 'before_linked_list';
-    const AFTER_LOAD = 'after_load';
-    const AFTER_LINKED_LIST ='after_linked_list';
+    public const BEFORE_LIST = 'before_list';
+    public const AFTER_LIST = 'after_list';
+    public const BEFORE_LOAD = 'before_load';
+    public const BEFORE_LINKED_LIST = 'before_linked_list';
+    public const AFTER_LOAD = 'after_load';
+    public const AFTER_LINKED_LIST = 'after_linked_list';
 
-    const AFTER_UPDATE_BEFORE_COMMIT = 'after_update_before_commit';
-    const AFTER_INSERT_BEFORE_COMMIT = 'after_insert_before_commit';
+    public const AFTER_UPDATE_BEFORE_COMMIT = 'after_update_before_commit';
+    public const AFTER_INSERT_BEFORE_COMMIT = 'after_insert_before_commit';
 
     /**
      * @param string $event
      * @param callable|array $handler [obj,method]
      * @return void
      */
-    public function on(string $event, $handler) : void
+    public function on(string $event, $handler): void
     {
-        if(!isset($this->listeners[$event])){
+        if (!isset($this->listeners[$event])) {
             $this->listeners[$event] = [];
         }
 
@@ -71,29 +72,29 @@ class EventManager
      * @param \stdClass $data
      * @return bool
      */
-    public function fireEvent($event, \stdClass $data) : bool
+    public function fireEvent($event, \stdClass $data): bool
     {
         $this->error = '';
 
-        if(!isset($this->listeners[$event])){
+        if (!isset($this->listeners[$event])) {
             return true;
         }
 
         $e = new Event();
         $e->setData($data);
 
-        foreach ($this->listeners[$event] as $listener){
-            if($e->isPropagationStopped()){
+        foreach ($this->listeners[$event] as $listener) {
+            if ($e->isPropagationStopped()) {
                 return false;
             }
 
-            if(is_callable($listener->handler)){
+            if (is_callable($listener->handler)) {
                 ($listener->handler)($e);
-            }else{
+            } else {
                 call_user_func_array($listener->handler, [$e]);
             }
 
-            if($e->hasError()){
+            if ($e->hasError()) {
                 $this->error = $e->getError();
                 return false;
             }
@@ -105,7 +106,7 @@ class EventManager
      * Get event error message
      * @return string
      */
-    public function getError() : string
+    public function getError(): string
     {
         return $this->error;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,19 +26,20 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Validator;
 
 class Pagecode implements ValidatorInterface
 {
-	/**
+    /**
      * Validation method
      * @param mixed $value
      * @return bool
      */
-	static public function validate($value) : bool
-	{
-		return !filter_var($value , FILTER_VALIDATE_REGEXP, array('options'=>array('regexp'=>"/[^a-z0-9_-]/i")));
-	}
+    public static function validate($value): bool
+    {
+        return !filter_var($value, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => "/[^a-z0-9_-]/i")));
+    }
 }

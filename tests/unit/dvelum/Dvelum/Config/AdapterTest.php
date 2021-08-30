@@ -1,4 +1,5 @@
 <?php
+
 /**
  *  DVelum project https://github.com/dvelum/dvelum
  *  Copyright (C) 2011-2019  Kirill Yegorov
@@ -16,6 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace Dvelum\Config;
 
 use Dvelum\Config;
@@ -23,63 +25,65 @@ use PHPUnit\Framework\TestCase;
 
 class AdapterTest extends TestCase
 {
-
+    /**
+     * @param string $name
+     * @return ConfigInterface<string,mixed>
+     */
     protected function createConfig(string $name) : ConfigInterface
     {
-        return  Config\Factory::config(Config\Factory::Simple, $name);
+        return Config\Factory::config(Config\Factory::SIMPLE, $name);
     }
 
-    public function testGetCount()
+    public function testGetCount() : void
     {
         $config = $this->createConfig('test_cfg');
         $config->setData([
-            'key1'=>1,
-            'key2'=>2
-        ]);
+                             'key1' => 1,
+                             'key2' => 2
+                         ]);
         $this->assertEquals(2, $config->getCount());
         $this->assertEquals('test_cfg', $config->getName());
     }
 
-    public function testRemove()
+    public function testRemove() : void
     {
         $config = $this->createConfig('test_cfg2');
         $config->setData([
-            'key1'=>1,
-            'key2'=>2
-        ]);
+                             'key1' => 1,
+                             'key2' => 2
+                         ]);
         $config->remove('key1');
         $this->assertFalse($config->offsetExists('key1'));
         $config->removeAll();
         $this->assertEquals(0, $config->getCount());
     }
 
-    public function testIteratorAccess()
+    public function testIteratorAccess() : void
     {
         $config = $this->createConfig('test_cfg3');
         $config->setData([
-            'key1'=>1,
-            'key2'=>2
-        ]);
-        foreach ($config as $index => $item)
-        {
-            $this->assertEquals($index, 'key'.$item);
+                             'key1' => 1,
+                             'key2' => 2
+                         ]);
+        foreach ($config as $index => $item) {
+            $this->assertEquals($index, 'key' . $item);
         }
     }
 
-    public function testArrayAccess()
+    public function testArrayAccess() : void
     {
         $config = $this->createConfig('test_cfg4');
         $config->setData([
-            'key1'=>1,
-            'key2'=>2
-        ]);
+                             'key1' => 1,
+                             'key2' => 2
+                         ]);
         $this->assertEquals(1, $config['key1']);
         unset($config['key1']);
         $this->assertTrue(!$config->offsetExists('key1'));
         $this->assertTrue(isset($config['key2']));
     }
 
-    public function testSetParentId()
+    public function testSetParentId() : void
     {
         $config = $this->createConfig('test_cfg4');
         $config->setParentId('main_test.php');

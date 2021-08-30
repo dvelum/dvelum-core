@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Tree;
 
-use \Exception as Exception;
+use Exception;
 
 /**
  * Class Tree
@@ -53,7 +55,7 @@ class ArrayTree
      * @param integer $order — sorting order
      * @return bool
      */
-    public function setItemOrder($id, $order) : bool
+    public function setItemOrder($id, $order): bool
     {
         if (!$this->itemExists($id)) {
             return false;
@@ -68,7 +70,7 @@ class ArrayTree
      * @param mixed $parentId — nor required;  a parent identifier -
      * is the root node by default, which sorts all other nodes
      */
-    public function sortItems($parentId = false) : void
+    public function sortItems($parentId = false): void
     {
         if ($parentId) {
             $this->sortChildren($parentId);
@@ -84,7 +86,7 @@ class ArrayTree
      * @param mixed $id
      * @return bool
      */
-    public function itemExists($id) : bool
+    public function itemExists($id): bool
     {
         return isset($this->items[$id]);
     }
@@ -93,7 +95,7 @@ class ArrayTree
      * Get the number of elements in a tree
      * @return int
      */
-    public function getItemsCount() : int
+    public function getItemsCount(): int
     {
         return sizeof($this->items);
     }
@@ -106,7 +108,7 @@ class ArrayTree
      * @param bool|int $order - sorting order, not required
      * @return bool —  successfully invoked
      */
-    public function addItem($id, $parent, $data, $order = false) : bool
+    public function addItem($id, $parent, $data, $order = false): bool
     {
         if ($this->itemExists($id) || (string)$id === '0') {
             return false;
@@ -137,7 +139,7 @@ class ArrayTree
      * @param mixed $data — node data
      * @return bool —  successfully invoked
      */
-    public function updateItem($id, $data) : bool
+    public function updateItem($id, $data): bool
     {
         if (!$this->itemExists($id) || (string)$id === '0') {
             return false;
@@ -153,7 +155,7 @@ class ArrayTree
      * @return array - an array with keys ('id','parent','order','data')
      * @throws Exception
      */
-    public function getItem($id) : array
+    public function getItem($id): array
     {
         if ($this->itemExists($id)) {
             return $this->items[$id];
@@ -305,7 +307,11 @@ class ArrayTree
      */
     public function changeParent($id, $newParent): bool
     {
-        if (!$this->itemExists($id) || (!$this->itemExists($newParent) && (string)$newParent !== '0') || (string)$id == (string)$newParent) {
+        if (
+            !$this->itemExists($id) ||
+            (!$this->itemExists($newParent) && (string)$newParent !== '0') ||
+            (string)$id == (string)$newParent
+        ) {
             return false;
         }
 
