@@ -27,7 +27,7 @@ use Exception;
 
 class ArrayTreeTest extends TestCase
 {
-    public function testSetItemOrder() : void
+    public function testSetItemOrder(): void
     {
         $tree = new Tree();
         $tree->addItem(1, 0, 'item1');
@@ -37,7 +37,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($item['order'], 2);
     }
 
-    public function testItemExists() : void
+    public function testItemExists(): void
     {
         $tree = new Tree();
 
@@ -49,7 +49,7 @@ class ArrayTreeTest extends TestCase
     }
 
 
-    public function testGetItemsCount() : void
+    public function testGetItemsCount(): void
     {
         $tree = new Tree();
 
@@ -60,7 +60,7 @@ class ArrayTreeTest extends TestCase
     }
 
 
-    public function testAddItem() : void
+    public function testAddItem(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -80,7 +80,7 @@ class ArrayTreeTest extends TestCase
     }
 
 
-    public function testUpdateItem() : void
+    public function testUpdateItem(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -95,7 +95,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($tree->getItemData($item->id), $item2);
     }
 
-    public function testGetItem() : void
+    public function testGetItem(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -123,7 +123,7 @@ class ArrayTreeTest extends TestCase
     /**
      * @depends testGetItem
      */
-    public function testGetItemData() : void
+    public function testGetItemData(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -132,7 +132,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($tree->getItemData($item->id), $item);
     }
 
-    public function testHasChilds() : void
+    public function testHasChilds(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -148,7 +148,7 @@ class ArrayTreeTest extends TestCase
         $this->assertFalse($tree->hasChildren(2));
     }
 
-    public function testGetChildrenRecursive() : void
+    public function testGetChildrenRecursive(): void
     {
         $tree = new Tree();
         $tree->addItem(1, 0, 100);
@@ -166,7 +166,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals(count($childs), 4);
     }
 
-    public function testSortChildren() : void
+    public function testSortChildren(): void
     {
         $tree = new Tree();
         $tree->addItem('a', 0, 50, 1);
@@ -202,7 +202,7 @@ class ArrayTreeTest extends TestCase
     }
 
 
-    public function testGetChildren() : void
+    public function testGetChildren(): void
     {
         $tree = new Tree();
 
@@ -217,7 +217,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($childs[3]['data'], 200);
     }
 
-    public function testRemove() : void
+    public function testRemove(): void
     {
         $tree = new Tree();
         $tree->addItem(1, 0, 'item1');
@@ -230,7 +230,7 @@ class ArrayTreeTest extends TestCase
         $this->assertFalse($tree->itemExists(3));
     }
 
-    public function testGetParentId() : void
+    public function testGetParentId(): void
     {
         $tree = new Tree();
         $tree->addItem(1, 0, 'item1');
@@ -241,7 +241,7 @@ class ArrayTreeTest extends TestCase
     }
 
 
-    public function testChangeParent() : void
+    public function testChangeParent(): void
     {
         $tree = new Tree();
 
@@ -254,7 +254,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($tree->getParentId(4), 2);
     }
 
-    public function testRemoveItem() : void
+    public function testRemoveItem(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -271,7 +271,7 @@ class ArrayTreeTest extends TestCase
         $this->assertFalse($tree->hasChildren(1));
     }
 
-    public function testGetItems() : void
+    public function testGetItems(): void
     {
         $tree = new Tree();
         $item = new stdClass();
@@ -289,7 +289,7 @@ class ArrayTreeTest extends TestCase
         $this->assertEquals($data[2]['data'], $item2);
     }
 
-    public function testGetParentsList() : void
+    public function testGetParentsList(): void
     {
         $tree = new Tree();
         $tree->addItem(1, 0, 100);

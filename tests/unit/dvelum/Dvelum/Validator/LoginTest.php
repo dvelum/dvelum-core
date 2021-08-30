@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class LoginTest extends TestCase
 {
-    public function testValidate() : void
+    public function testValidate(): void
     {
         $this->assertTrue(Login::validate('1my@login-._'));
         $this->assertFalse(Login::validate('mylogin  |'));

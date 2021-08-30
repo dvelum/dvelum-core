@@ -20,7 +20,6 @@
 
 namespace Dvelum;
 
-use Dvelum\Resource;
 use PHPUnit\Framework\TestCase;
 
 class ResourceTest extends TestCase
@@ -28,15 +27,16 @@ class ResourceTest extends TestCase
     private function createResource(): Resource
     {
         return new Resource([
-            'jsCacheUrl' => '/js/cache/',
-            'jsCachePath' => 'www/js/cache/',
-            'cssCacheUrl' => '/css/cache/',
-            'cssCachePath' => 'www/css/cache/',
-            'wwwRoot' => '/',
-            'wwwPath' => 'www',
-        ]);
+                                'jsCacheUrl' => '/js/cache/',
+                                'jsCachePath' => 'www/js/cache/',
+                                'cssCacheUrl' => '/css/cache/',
+                                'cssCachePath' => 'www/css/cache/',
+                                'wwwRoot' => '/',
+                                'wwwPath' => 'www',
+                            ]);
     }
-    public function testAddJs() : void
+
+    public function testAddJs(): void
     {
         $resource = $this->createResource();
         $resource->addJs('/app/system/common.js', false, false, 'head_test');
@@ -50,7 +50,7 @@ class ResourceTest extends TestCase
         );
     }
 
-    public function testGetInlineJS() : void
+    public function testGetInlineJS(): void
     {
         $resource = $this->createResource();
         $resource->addRawJs('var a = 1;');
@@ -59,7 +59,7 @@ class ResourceTest extends TestCase
         $this->assertEquals('', $resource->getInlineJs());
     }
 
-    public function testCacheJs() : void
+    public function testCacheJs(): void
     {
         $resource = $this->createResource();
         $code = 'var a=7;';

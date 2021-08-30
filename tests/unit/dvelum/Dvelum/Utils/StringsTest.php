@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class StringsTest extends TestCase
 {
-    public function testGetRandomString() : void
+    public function testGetRandomString(): void
     {
         $str = Strings::getRandomString(5);
         $this->assertTrue(is_string($str));

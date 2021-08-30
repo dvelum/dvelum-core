@@ -25,7 +25,7 @@ use Dvelum\Store\Factory;
 
 class StoreTest extends TestCase
 {
-    public function testFactory() : void
+    public function testFactory(): void
     {
         $this->assertInstanceOf('\Dvelum\Store\AdapterInterface', Factory::get());
         $this->assertInstanceOf('\Dvelum\Store\Local', Factory::get(Factory::LOCAL));

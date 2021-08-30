@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class AlphanumTest extends TestCase
 {
-    public function testValidate() : void
+    public function testValidate(): void
     {
         $this->assertTrue(Alphanum::validate('myName12'));
         $this->assertFalse(Alphanum::validate('myName 12 \\'));

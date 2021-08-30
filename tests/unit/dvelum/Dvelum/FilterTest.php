@@ -1,11 +1,12 @@
 <?php
 
+namespace Dvelum;
+
 use PHPUnit\Framework\TestCase;
-use Dvelum\Filter;
 
 class FilterTest extends TestCase
 {
-    public function testFilterValue() : void
+    public function testFilterValue(): void
     {
         $this->assertEquals(Filter::filterValue('integer', 123), 123);
         $this->assertEquals(Filter::filterValue('float', 12.2), 12.2);
@@ -24,7 +25,7 @@ class FilterTest extends TestCase
         $this->assertTrue(is_array(Filter::filterValue('array', 'asd')));
     }
 
-    public function testFilterString() : void
+    public function testFilterString(): void
     {
         $this->assertEquals(Filter::filterString('  <b><?php echo "biber"; ?></b>what? '), 'what?');
     }

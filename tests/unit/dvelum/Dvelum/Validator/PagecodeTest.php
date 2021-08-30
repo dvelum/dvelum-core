@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class PagecodeTest extends TestCase
 {
-    public function testValidate() : void
+    public function testValidate(): void
     {
         $this->assertTrue(Pagecode::validate('mypage-1_'));
         $this->assertFalse(Pagecode::validate('mypage@'));

@@ -1,13 +1,12 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+namespace Dvelum;
 
-use Dvelum\File;
-use Dvelum\Config;
+use PHPUnit\Framework\TestCase;
 
 class FileTest extends TestCase
 {
-    public function testGetExt() : void
+    public function testGetExt(): void
     {
         $this->assertEquals('.php', File::getExt('index.php'));
         $this->assertEquals('.jpeg', File::getExt('1.jpeg'));
@@ -18,14 +17,14 @@ class FileTest extends TestCase
     }
 
 
-    public function testFillEndSep() : void
+    public function testFillEndSep(): void
     {
         $this->assertEquals('/path/to/file/', File::fillEndSep('/path/to/file'));
         $this->assertEquals('/path/to/file/', File::fillEndSep('/path/to/file/'));
     }
 
 
-    public function testRmdirRecursive() : void
+    public function testRmdirRecursive(): void
     {
         $tmpDir = Config::storage()->get('main.php')->get('tmp');
         $dir = $tmpDir . 'unit/' . date('Y') . '/' . date('m') . '/' . date('d');

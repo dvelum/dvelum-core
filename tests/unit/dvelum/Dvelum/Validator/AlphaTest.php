@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class AlphaTest extends TestCase
 {
-    public function testValidate() : void
+    public function testValidate(): void
     {
         $this->assertTrue(Alpha::validate('myName'));
         $this->assertFalse(Alpha::validate('myName 12 \\'));

@@ -18,14 +18,13 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Dvelum\Utils;
+namespace Dvelum;
 
-use Dvelum\Request;
 use PHPUnit\Framework\TestCase;
 
 class RequestTest extends TestCase
 {
-    public function testGetPart() : void
+    public function testGetPart(): void
     {
         $request = new Request();
         $request->setUri('/test/request/uri');
@@ -36,7 +35,7 @@ class RequestTest extends TestCase
         $this->assertEquals(null, $request->getPart(4));
     }
 
-    public function testGet() : void
+    public function testGet(): void
     {
         $request = new Request();
         $_GET['param'] = 'value';
@@ -47,7 +46,7 @@ class RequestTest extends TestCase
         $this->assertEquals(1, $request->get('param3', 'int', null));
     }
 
-    public function testPost() : void
+    public function testPost(): void
     {
         $request = new Request();
         $request->updatePost('param', 'value');
@@ -58,49 +57,49 @@ class RequestTest extends TestCase
         $this->assertTrue($request->hasPost());
     }
 
-    public function testSetPost() : void
+    public function testSetPost(): void
     {
         $request = new Request();
         $request->setPostParams(['param1' => 'val1', 'param2' => 'val2']);
         $this->assertEquals(['param1' => 'val1', 'param2' => 'val2'], $request->postArray());
     }
 
-    public function testSetGet() : void
+    public function testSetGet(): void
     {
         $request = new Request();
         $request->setGetParams(['param' => 'val1', 'param2' => 'val2']);
         $this->assertEquals(['param' => 'val1', 'param2' => 'val2'], $request->getArray());
     }
 
-    public function testUrl() : void
+    public function testUrl(): void
     {
         $request = new Request();
         $this->assertEquals('/my/path', $request->url(['my', 'path']));
     }
 
-    public function testSetUri() : void
+    public function testSetUri(): void
     {
         $request = new Request();
         $request->setUri('/news.html?a=b&d=8345');
         $this->assertEquals($request->getUri(), '/news');
     }
 
-    public function testGetArray() : void
+    public function testGetArray(): void
     {
         $request = new Request();
         $request->updateGet('key', 'val');
         $actual = $request->getArray();
-        $this->assertEquals( 'val' , $actual['key']);
+        $this->assertEquals('val', $actual['key']);
     }
 
-    public function testPostArray() : void
+    public function testPostArray(): void
     {
         $request = new Request();
         $request->updatePost('key', 'val');
         $this->assertEquals($request->postArray(), array('key' => 'val'));
     }
 
-    public function testUpdatePost() : void
+    public function testUpdatePost(): void
     {
         $request = new Request();
         $request->updatePost('key', 'val');
@@ -108,7 +107,7 @@ class RequestTest extends TestCase
         $this->assertEquals($request->post('key3', 'string', false), false);
     }
 
-    public function testUpdateGet() : void
+    public function testUpdateGet(): void
     {
         $request = new Request();
         $request->updateGet('key', 'val');
@@ -116,7 +115,7 @@ class RequestTest extends TestCase
         $this->assertEquals($request->get('key3', 'string', false), false);
     }
 
-    public function testIsAjax() : void
+    public function testIsAjax(): void
     {
         $request = new Request();
         $this->assertEquals($request->isAjax(), false);
@@ -124,7 +123,7 @@ class RequestTest extends TestCase
         $this->assertEquals($request->isAjax(), true);
     }
 
-    public function testHasPost() : void
+    public function testHasPost(): void
     {
         $request = new Request();
         $post = $request->postArray();

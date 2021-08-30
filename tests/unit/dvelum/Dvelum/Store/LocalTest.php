@@ -1,11 +1,12 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-use Dvelum\Store\Factory;
+namespace Dvelum\Store;
 
-class Store_LocalTest extends TestCase
+use PHPUnit\Framework\TestCase;
+
+class LocalTest extends TestCase
 {
-    public function testGetCount() : void
+    public function testGetCount(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $this->assertEquals(0, $store->getCount());
@@ -13,7 +14,7 @@ class Store_LocalTest extends TestCase
         $this->assertEquals(1, $store->getCount());
     }
 
-    public function testGetData() : void
+    public function testGetData(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $store->set('key', 'val');
@@ -21,7 +22,7 @@ class Store_LocalTest extends TestCase
         $this->assertEquals(array('key' => 'val', 'key2' => 'val2'), $store->getData());
     }
 
-    public function testSet() : void
+    public function testSet(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $value = array('key' => 'val', 'key2' => 'val2');
@@ -30,7 +31,7 @@ class Store_LocalTest extends TestCase
         $this->assertEquals(null, $store->get('keywefw'));
     }
 
-    public function testSetValues() : void
+    public function testSetValues(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $values = ['key' => 'val', 'key2' => 'val2'];
@@ -39,7 +40,7 @@ class Store_LocalTest extends TestCase
         $this->assertEquals('val2', $v);
     }
 
-    public function testRemove() : void
+    public function testRemove(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $store->set('key', 'val');
@@ -48,7 +49,7 @@ class Store_LocalTest extends TestCase
         $this->assertFalse($store->keyExists('key'));
     }
 
-    public function testClear() : void
+    public function testClear(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $store->set('key', 'val');
@@ -58,7 +59,7 @@ class Store_LocalTest extends TestCase
         $this->assertFalse($store->keyExists('key2'));
     }
 
-    public function testSetData() : void
+    public function testSetData(): void
     {
         $store = Factory::get(Factory::LOCAL, 'test');
         $store->set('key', 'val');

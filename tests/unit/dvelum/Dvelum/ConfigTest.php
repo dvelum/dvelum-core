@@ -24,13 +24,13 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
-    public function testStorage() : void
+    public function testStorage(): void
     {
         $cfg = Config::storage()->get('main.php');
         $this->assertTrue($cfg instanceof Config\ConfigInterface);
     }
 
-    public function testFactory() : void
+    public function testFactory(): void
     {
         $newConfig = Config::factory(Config\Factory::SIMPLE, 'name');
         $this->assertTrue($newConfig instanceof Config\ConfigInterface);

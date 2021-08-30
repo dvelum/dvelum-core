@@ -1,11 +1,12 @@
 <?php
 
+namespace Dvelum;
+
 use PHPUnit\Framework\TestCase;
-use Dvelum\Utils;
 
 class UtilsTest extends TestCase
 {
-    public function testRekey() : void
+    public function testRekey(): void
     {
         $data = array(
             array('id' => 11, 'text' => 1),
@@ -23,7 +24,7 @@ class UtilsTest extends TestCase
     }
 
 
-    public function testCollectData() : void
+    public function testCollectData(): void
     {
         $data = array(
             array('id' => 11, 'text' => 1),
@@ -40,7 +41,7 @@ class UtilsTest extends TestCase
                             ), $result);
     }
 
-    public function testFetchCol() : void
+    public function testFetchCol(): void
     {
         $data = array(
             array('id' => 11, 'text' => 1),
@@ -56,7 +57,7 @@ class UtilsTest extends TestCase
                             ), $result);
     }
 
-    public function testGroupByKey() : void
+    public function testGroupByKey(): void
     {
         $data = array(
             array('id' => 11, 'text' => 1, 'group' => 1),
@@ -79,7 +80,7 @@ class UtilsTest extends TestCase
         $this->assertEquals([], Utils::groupByKey('id', []));
     }
 
-    public function testClassFromPath() : void
+    public function testClassFromPath(): void
     {
         $this->assertEquals('Store_Session1', Utils::classFromPath('store/session1.php'));
         $this->assertEquals('Store_Session2', Utils::classFromPath('/Store/Session2.php'));
@@ -88,7 +89,7 @@ class UtilsTest extends TestCase
         $this->assertEquals(false, Utils::classFromPath('Store/Session/'));
     }
 
-    public function testRoundUp() : void
+    public function testRoundUp(): void
     {
         $this->assertEquals(12.13, Utils::roundUp(12.123, 2));
         $this->assertEquals(12.1, Utils::roundUp(12.003, 1));
@@ -96,7 +97,7 @@ class UtilsTest extends TestCase
         $this->assertEquals(12.123, Utils::roundUp(12.123, 3));
     }
 
-    public function testSortByField() : void
+    public function testSortByField(): void
     {
         $data = [
             ['code' => 'banana'],
@@ -111,7 +112,7 @@ class UtilsTest extends TestCase
         $this->assertEquals('dog', $result[3]['code']);
     }
 
-    public function testSortByProperty() : void
+    public function testSortByProperty(): void
     {
         $a = new \stdClass();
         $a->code = 'banana';
@@ -139,7 +140,7 @@ class UtilsTest extends TestCase
         $this->assertEquals('dog', $result[3]->code);
     }
 
-    public function testRandomString() : void
+    public function testRandomString(): void
     {
         $string1 = Utils::getRandomString(5);
         $string2 = Utils::getRandomString(5);
@@ -148,7 +149,7 @@ class UtilsTest extends TestCase
         $this->assertFalse($string1 === $string2);
     }
 
-    public function testListIntegers() : void
+    public function testListIntegers(): void
     {
         $data = [1, 2, 3, 4, 5, 6, 9];
         $this->assertEquals('1,2,3,4,5,6,9', Utils::listIntegers($data));

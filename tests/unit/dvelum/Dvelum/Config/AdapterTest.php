@@ -29,12 +29,12 @@ class AdapterTest extends TestCase
      * @param string $name
      * @return ConfigInterface<string,mixed>
      */
-    protected function createConfig(string $name) : ConfigInterface
+    protected function createConfig(string $name): ConfigInterface
     {
         return Config\Factory::config(Config\Factory::SIMPLE, $name);
     }
 
-    public function testGetCount() : void
+    public function testGetCount(): void
     {
         $config = $this->createConfig('test_cfg');
         $config->setData([
@@ -45,7 +45,7 @@ class AdapterTest extends TestCase
         $this->assertEquals('test_cfg', $config->getName());
     }
 
-    public function testRemove() : void
+    public function testRemove(): void
     {
         $config = $this->createConfig('test_cfg2');
         $config->setData([
@@ -58,7 +58,7 @@ class AdapterTest extends TestCase
         $this->assertEquals(0, $config->getCount());
     }
 
-    public function testIteratorAccess() : void
+    public function testIteratorAccess(): void
     {
         $config = $this->createConfig('test_cfg3');
         $config->setData([
@@ -70,7 +70,7 @@ class AdapterTest extends TestCase
         }
     }
 
-    public function testArrayAccess() : void
+    public function testArrayAccess(): void
     {
         $config = $this->createConfig('test_cfg4');
         $config->setData([
@@ -83,7 +83,7 @@ class AdapterTest extends TestCase
         $this->assertTrue(isset($config['key2']));
     }
 
-    public function testSetParentId() : void
+    public function testSetParentId(): void
     {
         $config = $this->createConfig('test_cfg4');
         $config->setParentId('main_test.php');

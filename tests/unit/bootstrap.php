@@ -79,7 +79,7 @@ use Dvelum\Autoload;
 use Dvelum\Config\Storage\StorageInterface;
 use Dvelum\DependencyContainer;
 
-$diContainer= new DependencyContainer();
+$diContainer = new DependencyContainer();
 $diContainer->bind('config.main', $config);
 $diContainer->bind(StorageInterface::class, $configStorage);
 $diContainer->bind(Autoload::class, $autoloader);
