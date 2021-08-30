@@ -13,6 +13,10 @@ Dependency injections using constructors and DependencyContainer, Lazy initializ
 
 ORM and ORM-UI support.
 
+Generate class map for better performance
+```
+php ./console.php /generateClassMap
+```
 
 [Docs](./docs/ru/readme.md)
 
