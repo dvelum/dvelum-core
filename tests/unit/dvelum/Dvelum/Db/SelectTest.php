@@ -7,14 +7,14 @@ use PHPUnit\Framework\TestCase;
 
 class SelectTest extends TestCase
 {
-    protected function getSelect() : Select
+    protected function getSelect(): Select
     {
         $select = new Select();
         //$select->setDbAdapter(Model::factory('User')->getDbConnection());
         return $select;
     }
 
-    public function testSelectSimple() : void
+    public function testSelectSimple(): void
     {
         $sql = $this->getSelect();
 
@@ -23,7 +23,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectSimpleFromString() : void
+    public function testSelectSimpleFromString(): void
     {
         $sql = $this->getSelect();
         $sql->from('table', 'id,name, date');
@@ -31,7 +31,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectFromArray() : void
+    public function testSelectFromArray(): void
     {
         $sql = $this->getSelect();
         $sql->from('table', array('id', 'title', 'name'));
@@ -39,7 +39,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectFromArrayAlias() : void
+    public function testSelectFromArrayAlias(): void
     {
         $sql = $this->getSelect();
         $sql->from('table', array('count' => 'COUNT(*)', 'field_name' => 'name', 'order'));
@@ -47,7 +47,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectFromArrayAliasTableAlias() : void
+    public function testSelectFromArrayAliasTableAlias(): void
     {
         $sql = $this->getSelect();
         $sql->from(array('t' => 'some_table'), array('count' => 'COUNT(*)', 'field_name' => 'name', 'order'));
@@ -55,7 +55,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectDistinct() : void
+    public function testSelectDistinct(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->distinct();
@@ -63,7 +63,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectLimit() : void
+    public function testSelectLimit(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->limit(10, 20);
@@ -76,7 +76,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectLimitPage() : void
+    public function testSelectLimitPage(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->limitPage(4, 10);
@@ -84,7 +84,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testSelectGroup() : void
+    public function testSelectGroup(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->group(array('type', 'cat'));
@@ -103,7 +103,7 @@ class SelectTest extends TestCase
     }
 
 
-    public function testSelectOrder() : void
+    public function testSelectOrder(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->order(array('name' => 'DESC', 'group' => 'ASC'));
@@ -133,7 +133,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testWhere() : void
+    public function testWhere(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')->where('`id` =?', 7)->order('name DESC');
@@ -161,7 +161,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testHaving() : void
+    public function testHaving(): void
     {
         $sql = $this->getSelect();
         $sql->from('sb_content', array('c_code' => 'CONCAT(code,"i")'))
@@ -170,7 +170,7 @@ class SelectTest extends TestCase
         $this->assertEquals($sql->assemble(), $str);
     }
 
-    public function testOrHaving() : void
+    public function testOrHaving(): void
     {
         $sql = $this->getSelect();
         $sql->from('sb_content', array('c_code' => 'CONCAT(code,"i")'))
@@ -182,7 +182,7 @@ class SelectTest extends TestCase
     }
 
 
-    public function testOrWhere() : void
+    public function testOrWhere(): void
     {
         $sql = $this->getSelect();
         $sql->from('table')
@@ -195,7 +195,7 @@ class SelectTest extends TestCase
         $this->assertEquals(str_replace("\n", '', $sql->assemble()), $str);
     }
 
-    public function testJoinLeft() : void
+    public function testJoinLeft(): void
     {
         $sql = $this->getSelect();
         $sql->from(array('a' => 'table'))->joinLeft(
@@ -221,10 +221,10 @@ class SelectTest extends TestCase
                 'title,time'
             );
 
-        $str = 'SELECT `a`.*, `table`.`title`, `table`.`time`, `table_1`.`title`, `table_1`.`time` '.
-        'FROM `table` AS `a` '.
-        'LEFT JOIN `table` AS `table` ON a.code = table.id '.
-        'LEFT JOIN `table` AS `table_1` ON a.code_2 = table.id;';
+        $str = 'SELECT `a`.*, `table`.`title`, `table`.`time`, `table_1`.`title`, `table_1`.`time` ' .
+            'FROM `table` AS `a` ' .
+            'LEFT JOIN `table` AS `table` ON a.code = table.id ' .
+            'LEFT JOIN `table` AS `table_1` ON a.code_2 = table.id;';
         $this->assertEquals($str, $sql->assemble());
 
 
@@ -235,10 +235,10 @@ class SelectTest extends TestCase
             '*'
         );
         $str = 'SELECT `a`.*, `table`.* FROM `table` AS `a` LEFT JOIN `table` AS `table` ON a.code = table.id;';
-        $this->assertEquals( $str, $sql->assemble());
+        $this->assertEquals($str, $sql->assemble());
     }
 
-    public function testJoinRight() : void
+    public function testJoinRight(): void
     {
         $sql = $this->getSelect();
         $sql->from(array('a' => 'table'))->joinRight(
@@ -250,7 +250,7 @@ class SelectTest extends TestCase
         $this->assertEquals(str_replace("\n", '', $str), $sql->assemble());
     }
 
-    public function testJoinIner() : void
+    public function testJoinIner(): void
     {
         $sql = $this->getSelect();
         $sql->from(array('a' => 'table'))
@@ -275,14 +275,14 @@ class SelectTest extends TestCase
                 'b.code = c.id',
                 array('ctitle' => 'title', 'ctime' => 'time')
             );
-        $str = 'SELECT `a`.*, `b`.`title`, `b`.`time`, `c`.`title` AS `ctitle`, `c`.`time` AS `ctime` '.
-        'FROM `table` AS `a` '.
-        'INNER JOIN `table2` AS `b` ON a.code = b.id '.
-        'INNER JOIN `table3` AS `c` ON b.code = c.id;';
+        $str = 'SELECT `a`.*, `b`.`title`, `b`.`time`, `c`.`title` AS `ctitle`, `c`.`time` AS `ctime` ' .
+            'FROM `table` AS `a` ' .
+            'INNER JOIN `table2` AS `b` ON a.code = b.id ' .
+            'INNER JOIN `table3` AS `c` ON b.code = c.id;';
         $this->assertEquals($str, $sql->assemble());
     }
 
-    public function testJoin() : void
+    public function testJoin(): void
     {
         $sql = $this->getSelect();
         $sql->from(array('a' => 'table'))
@@ -295,7 +295,7 @@ class SelectTest extends TestCase
         $this->assertEquals(str_replace("\n", '', $str), $sql->assemble());
     }
 
-    public function testForUpdate() : void
+    public function testForUpdate(): void
     {
         $sql = $this->getSelect();
         $sql->from('table');
