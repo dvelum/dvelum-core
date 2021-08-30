@@ -33,7 +33,6 @@ namespace Dvelum;
 
 use Dvelum\Response\ResponseInterface;
 use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
-
 use Psr\Container\ContainerInterface;
 
 /**
