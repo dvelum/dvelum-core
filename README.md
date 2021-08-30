@@ -13,11 +13,6 @@ Dependency injections using constructors and DependencyContainer, Lazy initializ
 
 ORM and ORM-UI support.
 
-Generate class map for better performance
-```
-php ./console.php /generateClassMap
-```
-
 [Docs](./docs/ru/readme.md)
 
 Local installation
@@ -26,6 +21,7 @@ Local installation
 ```
 composer create-project dvelum/dvelum-core
 ```
+
 Apache VirtualHost configuration example
 ```
 <VirtualHost *:80>
@@ -41,6 +37,15 @@ Apache VirtualHost configuration example
 Add the local domain to /etc/hosts file
 ```
 127.0.0.1 dvelum.local
+```
+
+### Prepare for production
+```
+// remove development extensions
+composer install --no dev
+
+// generate class map for better performance
+php ./console.php /generateClassMap
 ```
 
 
