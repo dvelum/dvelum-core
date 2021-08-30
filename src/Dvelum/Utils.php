@@ -279,8 +279,8 @@ class Utils
             $ip = $_SERVER['REMOTE_ADDR'];
         }
         if (stristr($ip, ",") !== false) {
-            $ip_arr = explode(",", $ip);
-            $ip = $ip_arr[0];
+            $ipArray = explode(",", $ip);
+            $ip = $ipArray[0];
         }
         return $ip;
     }
@@ -379,9 +379,9 @@ class Utils
                 } elseif (!is_array($array2[$key])) {
                     $difference[$key] = $value;
                 } else {
-                    $new_diff = self::arrayDiffAssocRecursive($value, $array2[$key]);
-                    if ($new_diff != false) {
-                        $difference[$key] = $new_diff;
+                    $newDiff = self::arrayDiffAssocRecursive($value, $array2[$key]);
+                    if (!empty($newDiff)) {
+                        $difference[$key] = $newDiff;
                     }
                 }
             } elseif (!isset($array2[$key]) || $array2[$key] != $value) {
