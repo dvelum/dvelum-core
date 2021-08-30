@@ -5,7 +5,7 @@
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ namespace Dvelum\App\Frontend;
 
 use Dvelum\App;
 use Dvelum\Page\Page;
+use Dvelum\Resource;
 
 class Controller extends App\Controller
 {
@@ -67,7 +68,7 @@ class Controller extends App\Controller
                 'page' => $page,
                 'path' => $page->getThemePath(),
                 'request' => $this->request,
-                'resource' => $this->resource
+                'resource' => $this->container->get(Resource::class)
             ],
             false
         );

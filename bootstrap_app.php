@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 $dvelumRoot =  str_replace('\\', '/' , __DIR__);
 // should be without last slash
 if ($dvelumRoot[strlen($dvelumRoot) - 1] == '/')
@@ -118,7 +120,7 @@ $autoloader->setConfig($autoloaderCfg);
  */
 if($config->get('development') === 3){
     if(strpos($_SERVER['REQUEST_URI'],'install')!==false){
-        $controller = new Dvelum\App\Install\Controller();
+        $controller = new \Dvelum\App\Install\Controller();
         $controller->setAutoloader($autoloader);
         $controller->run();
         exit;
@@ -135,13 +137,11 @@ $appClass = $config->get('application');
 if(!class_exists($appClass))
     throw new Exception('Application class '.$appClass.' does not exist! Check config "application" option!');
 
-
 $diContainer= new DependencyContainer();
 $diContainer->bind('config.main', $config);
 $diContainer->bind(StorageInterface::class, $configStorage);
 $diContainer->bind(Autoload::class, $autoloader);
 $diContainer->bindArray($configStorage->get('dependency.php')->__toArray());
-
 
 $app = new $appClass($diContainer);
 return $app;

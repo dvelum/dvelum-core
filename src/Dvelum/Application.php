@@ -31,11 +31,9 @@ declare(strict_types=1);
 
 namespace Dvelum;
 
-use Dvelum\Cache\CacheInterface;
-use Dvelum\Config\Storage\StorageInterface;
 use Dvelum\Response\ResponseInterface;
 use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
-use Dvelum\Extensions\Manager as ExtensionManager;
+
 use Psr\Container\ContainerInterface;
 
 /**
@@ -57,7 +55,7 @@ class Application
     protected $config;
 
     /**
-     * @var CacheInterface|null
+     * @var \Dvelum\Cache\CacheInterface|null
      */
     protected $cache;
 
@@ -180,14 +178,14 @@ class Application
      */
     protected function loadExtensions(): void
     {
-        $extensions = $this->diContainer->get(ConfigStorageInterface::class)->get('extensions.php');
-        if (empty($extensions)) {
+        $extensionsCount = $this->diContainer->get(ConfigStorageInterface::class)->get('extensions.php')->getCount();
+        if (empty($extensionsCount)) {
             return;
         }
         /**
-         * @var ExtensionManager $extensionManager
+         * @var $extensionManager
          */
-        $extensionManager = $this->diContainer->get(ExtensionManager::class);
+        $extensionManager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
         $extensionManager->loadExtensions();
         $extensionManager->initExtensions();
     }

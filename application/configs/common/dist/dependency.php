@@ -2,10 +2,7 @@
 
 use Psr\Container\ContainerInterface as c;
 use Dvelum\DependencyContainer\Argument;
-use Dvelum\DependencyContainer\ContainerArgument;
 use Dvelum\DependencyContainer\CallableArgument;
-
-$containerArg = new ContainerArgument();
 
 return [
     \Dvelum\App\Cache\Manager::class => \Dvelum\App\Cache\Manager::class,
@@ -64,7 +61,7 @@ return [
         'class' => \Dvelum\Extensions\Manager::class,
         'arguments' => [
             new Argument('config.main'),
-            $containerArg
+            new CallableArgument(static function(c $c){return $c;})
         ]
     ],
     'config.lang_storage' => static function (c $c) {
@@ -76,26 +73,24 @@ return [
             new Argument('config.lang_storage')
         ]
     ],
-    'language' => static function (c $c) {
-        return $c->get('config.main')->get('language');
-    },
-    'language_loaders' => static function (c $c) {
-        $lang = $c->get('language');
-        return [
-            [
-                'name' => $lang,
-                'src' => $lang . '.php',
-                'type' => 1 // \Dvelum\Config\Factory::File_Array
-            ]
-        ];
-    },
     // === services =======================================================================
     \Dvelum\Lang::class => [
         'class' => \Dvelum\Lang::class,
         'arguments' => [
             new Argument('LangStorage'),
-            new Argument('language'),
-            new Argument('language_loaders'),
+            new CallableArgument(static function(c $c){
+                return $c->get('config.main')->get('language');
+            }),
+            new CallableArgument(static function(c $c){
+                $lang = $c->get('language');
+                return [
+                    [
+                        'name' => $lang,
+                        'src' => $lang . '.php',
+                        'type' => 1 // \Dvelum\Config\Factory::File_Array
+                    ]
+                ];
+            }),
         ]
     ],
     \Dvelum\App\Dictionary\Service::class => [

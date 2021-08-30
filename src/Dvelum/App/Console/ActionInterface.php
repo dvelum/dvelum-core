@@ -46,7 +46,7 @@ interface ActionInterface
         ContainerInterface $diContainer,
         ConfigInterface $appConfig,
         array $params = [],
-        array $config = [],
+        array $config = []
     ): void;
 
     /**

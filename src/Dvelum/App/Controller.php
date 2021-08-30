@@ -33,7 +33,6 @@ namespace Dvelum\App;
 
 use Dvelum\Config;
 use Dvelum\Request;
-use Dvelum\Resource;
 use Dvelum\Response\ResponseInterface;
 use Dvelum\App\Router\RouterInterface;
 use Psr\Container\ContainerInterface;
@@ -53,10 +52,6 @@ class Controller
      */
     protected $appConfig;
     /**
-     * @var \Dvelum\Resource $resource
-     */
-    protected $resource;
-    /**
      * @var RouterInterface
      */
     protected $router;
@@ -73,8 +68,7 @@ class Controller
         $this->container = $container;
         $this->request = $request;
         $this->response = $response;
-        $this->resource = $container->get(Resource::class);
-        $this->appConfig = $container->get(Config\Storage\StorageInterface::class)->get('main.php');
+        $this->appConfig = $container->get('config.main');
     }
 
     /**
