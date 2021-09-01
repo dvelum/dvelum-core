@@ -1,6 +1,9 @@
 [![PHP Version](https://img.shields.io/badge/php-7.4%2B-blue.svg)](https://packagist.org/packages/dvelum/dvelum-core)
 [![Total Downloads](https://img.shields.io/packagist/dt/dvelum/dvelum-core.svg?style=flat-square)](https://packagist.org/packages/dvelum/dvelum-core)
-![Build and Test](https://github.com/dvelum/dvelum-core/workflows/Build%20and%20Test/badge.svg?branch=4.x-dev&event=push)
+![Build and Test](https://github.com/dvelum/dvelum-core/workflows/Build%20and%20Test/badge.svg?branch=master&event=push)
+
+
+##[Stable Branch: 3.x](https://github.com/dvelum/dvelum-core/tree/3.x)
 
 DVelum 4.x Core
 ======
