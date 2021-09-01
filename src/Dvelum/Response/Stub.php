@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -28,21 +29,16 @@
 
 namespace Dvelum\Response;
 
-use Dvelum\Response;
+use Dvelum\Response\ResponseInterface;
 
 class Stub extends Response
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $headers = [];
+    protected array $headers = [];
 
-    static public function factory()
-    {
-        return new static();
-    }
-
-    public function send() : void
+    public function send(): void
     {
         $this->sent = true;
     }
@@ -51,10 +47,10 @@ class Stub extends Response
      * Send 404 Response header
      * @return void
      */
-    public function notFound() : void
+    public function notFound(): void
     {
-        if(isset($_SERVER["SERVER_PROTOCOL"])){
-            $this->header($_SERVER["SERVER_PROTOCOL"]."/1.0 404 Not Found");
+        if (isset($_SERVER["SERVER_PROTOCOL"])) {
+            $this->header($_SERVER["SERVER_PROTOCOL"] . "/1.0 404 Not Found");
         }
     }
 
@@ -63,7 +59,8 @@ class Stub extends Response
      * @param string $string
      * @return void
      */
-    public function header(string $string) : void {
+    public function header(string $string): void
+    {
         $this->headers[] = $string;
     }
 }

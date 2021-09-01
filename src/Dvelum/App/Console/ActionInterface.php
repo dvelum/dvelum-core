@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,21 +26,28 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 interface ActionInterface
 {
     /**
-     * @param ConfigInterface $appConfig
-     * @param array $params
-     * @param array $config
-     * @return void
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param array<int,mixed> $params
+     * @param array<string,mixed> $config
+     * @param ContainerInterface $diContainer
      */
-    public function init(ConfigInterface $appConfig, array $params = [], array $config = []): void;
+    public function init(
+        ContainerInterface $diContainer,
+        ConfigInterface $appConfig,
+        array $params = [],
+        array $config = []
+    ): void;
 
     /**
      * Get job statistics as string

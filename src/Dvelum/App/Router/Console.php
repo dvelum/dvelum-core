@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Router;
@@ -32,20 +34,24 @@ namespace Dvelum\App\Router;
 use Dvelum\App\Router;
 use Dvelum\Request;
 use Dvelum\Response;
+use Dvelum\Response\ResponseInterface;
 
 class Console extends Router
 {
     /**
-     * Route request
+     * Run action
      * @param Request $request
-     * @param Response $response
-     * @return void
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \Exception
      */
-    public function route(Request $request , Response $response) : void
+    public function route(Request $request, ResponseInterface $response): ResponseInterface
     {
-        $consoleConfig = \Dvelum\Config::storage()->get('console.php');
+        $consoleConfig = $this->container->get(\Dvelum\Config\Storage\StorageInterface::class)->get('console.php');
         $controllerClass = $consoleConfig->get('controller');
-        $this->runController($controllerClass , $request->getPart(0), $request, $response);
+
+        $this->runController($controllerClass, $request->getPart(0), $request, $response);
+        return $response;
     }
 
     /**
@@ -53,7 +59,8 @@ class Console extends Router
      * @param string $module — module name
      * @return string
      */
-    public function findUrl(string $module) : string{
+    public function findUrl(string $module): string
+    {
         return '';
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -116,12 +117,12 @@ class OpenGraph
     /**
      * @return string
      */
-    public function __toString() : string
+    public function __toString(): string
     {
-        $params = ['url','title','image','description'];
+        $params = ['url', 'title', 'image', 'description'];
         $string = '';
-        foreach($params as $key => $value){
-            if(!empty($this->{$value})){
+        foreach ($params as $key => $value) {
+            if (!empty($this->{$value})) {
                 $string .= '<meta property="og:' . $key . '" content="' . $this->{$value} . '"/>';
             }
         }

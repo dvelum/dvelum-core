@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,14 +26,16 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Template\Engine;
 
 use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\ConfigInterface;
-use \Exception;
-use Dvelum\View;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Template\Storage;
+use Exception;
 
 /**
  * View class
@@ -42,9 +45,9 @@ class ActiveTemplate implements EngineInterface
 {
     /**
      * Template data (local variables)
-     * @var array
+     * @var array<string,mixed>
      */
-    private $data = [];
+    private array $data = [];
     /**
      * @var CacheInterface|null $cache
      */
@@ -52,36 +55,28 @@ class ActiveTemplate implements EngineInterface
     /**
      * @var bool $useCache
      */
-    protected $useCache = false;
+    protected bool $useCache = false;
 
     /**
      * @var int|false $cacheLifetime
      */
     protected $cacheLifetime = false;
 
-    /**
-     * @var ConfigInterface $config
-     */
-    protected $config;
+    protected Storage $storage;
 
     /**
-     * Set template configuration
-     * @param ConfigInterface $config
-     * @return void
+     * @var ConfigInterface<string,mixed> $config
      */
-    public function setConfig(ConfigInterface $config) : void
+    protected ConfigInterface $config;
+
+    public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache)
     {
         $this->config = $config;
+        $this->cache = $cache;
+        $this->storage = $storage;
     }
 
-    /**
-     * Set caching adapter
-     * @param CacheInterface|null $cache
-     */
-    public function setCache(?CacheInterface $cache): void
-    {
-        $this->cache = $cache;
-    }
+
     /**
      * Template Render
      * @param string $templatePath — the path to the template file
@@ -90,29 +85,30 @@ class ActiveTemplate implements EngineInterface
     public function render(string $templatePath): string
     {
         $hash = '';
-        $realPath = View::storage()->get($templatePath);
+        $realPath = $this->storage->get($templatePath);
 
-        if(!$realPath){
+        if (!$realPath) {
             return '';
         }
 
-        if($this->cache && $this->useCache)
-        {
-            $hash = md5('tpl_' . $templatePath . '_' . serialize($this->data).filemtime($realPath));
+        if ($this->cache && $this->useCache) {
+            $hash = md5('tpl_' . $templatePath . '_' . serialize($this->data) . filemtime($realPath));
             $html = $this->cache->load($hash);
 
-            if($html !== false)
+            if ($html !== false) {
                 return (string)$html;
+            }
         }
 
         \ob_start();
         include $realPath;
         $result = \ob_get_clean();
 
-        if($this->cache && $this->useCache){
-            $this->cache->save($result , $hash, $this->cacheLifetime);
+        if ($this->cache && $this->useCache) {
+            $this->cache->save($hash, $result, $this->cacheLifetime);
         }
-        return (string) $result;
+
+        return (string)$result;
     }
 
     /**
@@ -121,20 +117,21 @@ class ActiveTemplate implements EngineInterface
      * @param mixed $value
      * @return void
      */
-    public function set(string $name , $value) : void
+    public function set(string $name, $value): void
     {
         $this->data[$name] = $value;
     }
 
     /**
      * Set multiple properties
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
-    public function setProperties(array $data) : void
+    public function setProperties(array $data): void
     {
-        foreach ($data as $name=>$value)
+        foreach ($data as $name => $value) {
             $this->data[$name] = $value;
+        }
     }
 
     /**
@@ -144,13 +141,14 @@ class ActiveTemplate implements EngineInterface
      */
     public function get(string $name)
     {
-        if(!isset($this->data[$name]))
+        if (!isset($this->data[$name])) {
             return null;
+        }
 
         return $this->data[$name];
     }
 
-    public function __set($name , $value)
+    public function __set($name, $value)
     {
         $this->set($name, $value);
     }
@@ -174,7 +172,7 @@ class ActiveTemplate implements EngineInterface
      * Empty template data
      * @return void
      */
-    public function clear() : void
+    public function clear(): void
     {
         $this->data = [];
     }
@@ -183,7 +181,7 @@ class ActiveTemplate implements EngineInterface
      * Disable caching
      * @return void
      */
-    public function disableCache() : void
+    public function disableCache(): void
     {
         $this->useCache = false;
     }
@@ -192,16 +190,16 @@ class ActiveTemplate implements EngineInterface
      * Enable caching
      * @return void
      */
-    public function enableCache() : void
+    public function enableCache(): void
     {
         $this->useCache = true;
     }
 
     /**
      * Get template data
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getData() : array
+    public function getData(): array
     {
         return $this->data;
     }
@@ -209,10 +207,10 @@ class ActiveTemplate implements EngineInterface
     /**
      * Redefine template data using an associative key-value array,
      * old and new data merge
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
-    public function setData(array $data) : void
+    public function setData(array $data): void
     {
         $this->data = $data;
     }
@@ -220,18 +218,19 @@ class ActiveTemplate implements EngineInterface
     /**
      * Render sub template
      * @param string $templatePath
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param bool|true $useCache
-     * @throws Exception
      * @return string
+     * @throws Exception
      */
-    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true) : string
+    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true): string
     {
-        $tpl = View::factory();
+        $tpl = \Dvelum\View::factory();
         $tpl->setData($data);
 
-        if(!$useCache)
+        if (!$useCache) {
             $tpl->disableCache();
+        }
 
         return $tpl->render($templatePath);
     }
@@ -240,7 +239,7 @@ class ActiveTemplate implements EngineInterface
      * Set lifetime for cache data
      * @param int $sec
      */
-    public function setCacheLifetime(int $sec) : void
+    public function setCacheLifetime(int $sec): void
     {
         $this->cacheLifetime = $sec;
     }

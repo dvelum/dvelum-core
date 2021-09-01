@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -41,26 +42,28 @@ use Dvelum\Config\ConfigInterface;
 class Resource
 {
     /**
-     * @var Config\ConfigInterface
+     * @phpstan-var array<string,mixed>
+     * @var array{jsCacheUrl:string,jsCachePath:string,cssCacheUrl:string,cssCachePath:string,wwwRoot:string,wwwPath:string,cache:CacheInterface|null}
      */
-    protected $config;
+    protected array $config;
 
     /**
-     * @var CacheInterface|false
+     * @var CacheInterface|null
      */
-    protected $cache = false;
+    protected ?CacheInterface $cache = null;
     /**
-     * @var array
+     * {file:string,order:int,tag:string|false,minified:bool}
+     * @var array<string,\stdClass>
      */
-    protected $jsFiles = [];
+    protected array $jsFiles = [];
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $rawFiles = [];
+    protected array $rawFiles = [];
     /**
-     * @var array
+     * @var array<int|string,\stdClass>
      */
-    protected $cssFiles = [];
+    protected array $cssFiles = [];
     /**
      * @var string
      */
@@ -75,57 +78,39 @@ class Resource
     protected $inlineJs = '';
 
     /**
-     * @return self
+     * @param array<string,mixed> $config
      */
-    static public function factory() : self
-    {
-        static $instance = null;
-
-        if(empty($instance)){
-            $instance = new static();
-        }
-
-        return $instance;
-    }
-
-    /**
-     * Set configuration options
-     * @param ConfigInterface $config
-     * @return void
-     * @throws \Exception
-     */
-    public function setConfig(ConfigInterface $config) : void
+    public function __construct(array $config)
     {
         $this->config = $config;
-        if($this->config->offsetExists('cache')){
-            $this->cache = $this->config->get('cache');
+        if (isset($config['cache'])) {
+            $this->cache = $this->config['cache'];
         }
     }
-
-    protected function __construct(){}
 
     /**
      * Add javascript file to the contentent
      *
-     * @param string $file- file path relate to document root
-     * @param mixed $order  - include order
-     * @param boolean $minified - file already minified
+     * @param string $file - file path relate to document root
+     * @param mixed $order - include order
+     * @param bool $minified - file already minified
      * @param string|bool $tag
      * @return void
      */
-    public function addJs(string $file, $order = false, $minified = false, $tag = false) : void
+    public function addJs(string $file, $order = false, bool $minified = false, $tag = false): void
     {
-        if ($file[0] === '/')
+        if ($file[0] === '/') {
             $file = substr($file, 1);
+        }
 
         $hash = md5($file);
 
-        if($order === false)
-            $order = sizeof($this->jsFiles);
+        if ($order === false) {
+            $order = count($this->jsFiles);
+        }
 
-        if(!isset($this->jsFiles[$hash]))
-        {
-            $item =  new \stdClass();
+        if (!isset($this->jsFiles[$hash])) {
+            $item = new \stdClass();
             $item->file = $file;
             $item->order = $order;
             $item->tag = $tag;
@@ -140,20 +125,20 @@ class Resource
      * @param mixed $order
      * @return void
      */
-    public function addCss(string $file , $order = false) : void
+    public function addCss(string $file, $order = false): void
     {
-        if($file[0] === '/')
+        if ($file[0] === '/') {
             $file = substr($file, 1);
+        }
 
         $hash = md5($file);
 
-        if($order === false){
-            $order = sizeof($this->cssFiles);
+        if ($order === false) {
+            $order = count($this->cssFiles);
         }
 
-        if(!isset($this->cssFiles[$hash]))
-        {
-            $item =  new \stdClass();
+        if (!isset($this->cssFiles[$hash])) {
+            $item = new \stdClass();
             $item->file = $file;
             $item->order = $order;
             $this->cssFiles[$hash] = $item;
@@ -166,7 +151,7 @@ class Resource
      * @param string $script
      * @return void
      */
-    public function addRawJs(string $script) : void
+    public function addRawJs(string $script): void
     {
         $this->rawJs .= $script;
     }
@@ -176,13 +161,15 @@ class Resource
      * @param string $file - file path relative to the document root directory
      * @return void
      */
-    public function addJsRawFile(string $file) : void
+    public function addJsRawFile(string $file): void
     {
-        if($file[0] === '/')
+        if ($file[0] === '/') {
             $file = substr($file, 1);
+        }
 
-        if(! in_array($file , $this->rawFiles , true))
+        if (!in_array($file, $this->rawFiles, true)) {
             $this->rawFiles[] = $file;
+        }
     }
 
     /**
@@ -190,9 +177,9 @@ class Resource
      * @param string $script
      * @return void
      */
-    public function addInlineJs(string $script) : void
+    public function addInlineJs(string $script): void
     {
-        $this->inlineJs.= $script;
+        $this->inlineJs .= $script;
     }
 
     /**
@@ -200,25 +187,25 @@ class Resource
      * @param string $css
      * @return void
      */
-    public function addRawCss(string $css) : void
+    public function addRawCss(string $css): void
     {
-        $this->rawCss.= $css;
+        $this->rawCss .= $css;
     }
 
     /**
      * Include JS resources by tag
      * @param bool $useMin
-     * @param bool$compile
-     * @param mixed $tag
+     * @param bool $compile
+     * @param string|false $tag
      * @return string
      */
-    public function includeJsByTag($useMin = false , $compile = false , $tag = false) : string
+    public function includeJsByTag(bool $useMin = false, bool $compile = false, $tag = false): string
     {
         $s = '';
         $fileList = $this->jsFiles;
 
-        foreach ($fileList as $k=>$v){
-            if($v->tag != $tag){
+        foreach ($fileList as $k => $v) {
+            if ($v->tag != $tag) {
                 unset($fileList[$k]);
             }
         }
@@ -226,14 +213,23 @@ class Resource
         /*
          * javascript files
          */
-        if(!empty($fileList))
-        {
+        if (!empty($fileList)) {
+            /**
+             * @var array<int,\stdClass> $fileList
+             */
             $fileList = Utils::sortByProperty($fileList, 'order');
-            if($compile)
-                $s .= '<script type="text/javascript" src="' .  $this->config->get('wwwRoot') . $this->compileJsFiles($fileList , $useMin) . '"></script>' . "\n";
-            else
-                foreach($fileList as $file)
-                    $s .= '<script type="text/javascript" src="' .   $this->config->get('wwwRoot') . $file->file . '"></script>' . "\n";
+            if ($compile) {
+                $s .= '<script type="text/javascript" src="' . $this->config['wwwRoot'];
+                $s .= $this->compileJsFiles($fileList, $useMin);
+                $s .= '"></script>' . "\n";
+            } else {
+                foreach ($fileList as $file) {
+                    $s .= '<script type="text/javascript" src="' .
+                        $this->config['wwwRoot'] .
+                        $file->file .
+                        '"></script>' . "\n";
+                }
+            }
         }
 
         return $s;
@@ -241,17 +237,17 @@ class Resource
 
     /**
      * Returns javascript source tags. Include order: Files , Raw , Inline
-     * @param boolean $useMin - use Js minify
-     * @param boolean $compile - compile Files into one
-     * @param mixed $tag
+     * @param bool $useMin - use Js minify
+     * @param bool $compile - compile Files into one
+     * @param string|false $tag
      * @return string
      */
-    public function includeJs($useMin = false , $compile = false , $tag = false) : string
+    public function includeJs(bool $useMin = false, bool $compile = false, $tag = false): string
     {
         $fileList = $this->jsFiles;
 
-        foreach ($fileList as $k=>$v){
-            if($v->tag !== $tag){
+        foreach ($fileList as $k => $v) {
+            if ($v->tag !== $tag) {
                 unset($fileList[$k]);
             }
         }
@@ -260,32 +256,32 @@ class Resource
         /*
          * Raw files
          */
-        if(!empty($this->rawFiles) && empty($tag)){
-            foreach($this->rawFiles as $file){
-                if(strpos($file,'http')===0){
+        if (!empty($this->rawFiles) && empty($tag)) {
+            foreach ($this->rawFiles as $file) {
+                if (strpos($file, 'http') === 0) {
                     $s .= '<script type="text/javascript" src="' . $file . '"></script>' . "\n";
-                }else{
-                    $s .= '<script type="text/javascript" src="' . $this->config->get('wwwRoot') . $file . '"></script>' . "\n";
+                } else {
+                    $s .= '<script type="text/javascript" src="' . $this->config['wwwRoot']
+                        . $file . '"></script>' . "\n";
                 }
             }
         }
 
-        $s .=  $this->includeJsByTag($useMin , $compile , $tag);
+        $s .= $this->includeJsByTag($useMin, $compile, $tag);
         /*
          * Raw javascript
          */
-        if(strlen($this->rawJs))
-        {
+        if (strlen($this->rawJs)) {
             $s .= '<script type="text/javascript" src="' . $this->cacheJs($this->rawJs) . '"></script>' . "\n";
         }
+
         /*
          * Inline javascript
          */
-        if(!empty($this->inlineJs))
-        {
+        if (!empty($this->inlineJs)) {
             // it's too expensive
             //if($useMin)
-            //	$this->inlineJs = Code_Js_Minify::minify($this->inlineJs);
+            //  $this->inlineJs = Code_Js_Minify::minify($this->inlineJs);
             $s .= '<script type="text/javascript">' . "\n" . $this->inlineJs . "\n" . ' </script>' . "\n";
         }
         return $s;
@@ -294,90 +290,94 @@ class Resource
     /**
      * Create cache file for JS code
      * @param string $code
-     * @param bool $minify, optional default false
+     * @param bool $minify , optional default false
      * @return string - file url
      */
-    public function cacheJs(string $code , bool $minify = false) : string
+    public function cacheJs(string $code, bool $minify = false): string
     {
         $hash = md5($code);
         $cacheFile = $hash . '.js';
-        $cacheFile = Utils::createCachePath( $this->config->get('jsCachePath') , $cacheFile);
+        $cacheFile = Utils::createCachePath($this->config['jsCachePath'], $cacheFile);
 
-        if(!file_exists($cacheFile))
-        {
-            if($minify)
+        if (!file_exists($cacheFile)) {
+            if ($minify) {
                 $code = \Dvelum\App\Code\Minify\Minify::factory()->minifyJs($code);
+            }
 
             file_put_contents($cacheFile, $code);
         }
 
-        return str_replace($this->config->get('jsCachePath'), $this->config->get('wwwRoot'). $this->config->get('jsCacheUrl'), $cacheFile);
+        return str_replace(
+            $this->config['jsCachePath'],
+            $this->config['wwwRoot'] . $this->config['jsCacheUrl'],
+            $cacheFile
+        );
     }
 
     /**
      * Compile JS files cache
-     * @param array $files - file paths relative to the document root directory
-     * @param boolean $minify - minify scripts
+     * @param array<int,\stdClass> $files - file paths relative to the document root directory
+     * @param bool $minify - minify scripts
      * @return string  - cached file path
      */
-    protected function compileJsFiles(array $files , bool $minify /*deprecated*/) : string
+    protected function compileJsFiles(array $files, bool $minify): string
     {
-        $validHash = $this->getFileHash(Utils::fetchCol('file' , $files));
+        $validHash = $this->getFileHash(Utils::fetchCol('file', $files));
 
-        $cacheFile = Utils::createCachePath($this->config->get('jsCachePath'), $validHash . '.js');
-        $cachedUrl = \str_replace($this->config->get('jsCachePath'), $this->config->get('jsCacheUrl') , $cacheFile);
+        $cacheFile = Utils::createCachePath($this->config['jsCachePath'], $validHash . '.js');
+        $cachedUrl = \str_replace($this->config['jsCachePath'], $this->config['jsCacheUrl'], $cacheFile);
 
-        if(!file_exists($cacheFile)){
+        if (!file_exists($cacheFile)) {
             $src = '';
-            $minify =  \Dvelum\App\Code\Minify\Minify::factory();
-            foreach($files as $v){
-                if($v->minified){
-                    $src.="\n/**/\n".file_get_contents($this->config->get('wwwPath') . $v->file);
-                }else{
-                    $file =  $v->file;
-                    $paramsPos = strpos($file , '?');
-                    if($paramsPos!==false) {
-                        $file = substr($file, 0 , $paramsPos);
+            $minify = \Dvelum\App\Code\Minify\Minify::factory();
+            foreach ($files as $v) {
+                if ($v->minified) {
+                    $src .= "\n/**/\n" . file_get_contents($this->config['wwwPath'] . $v->file);
+                } else {
+                    $file = $v->file;
+                    $paramsPos = strpos($file, '?');
+                    if ($paramsPos !== false) {
+                        $file = substr($file, 0, $paramsPos);
                     }
-                    $src.="\n/**/\n".$minify->minifyJs($this->config->get('wwwPath') . $file);
+                    $src .= "\n/**/\n" . $minify->minifyJs($this->config['wwwPath'] . $file);
                 }
             }
-            file_put_contents($cacheFile,$src);
+            file_put_contents($cacheFile, $src);
         }
         return $cachedUrl;
     }
 
     /**
      * Get a hash for the file list. Used to check for changes in files.
-     * @param array $files - File paths relative to the document root directory
+     * @param array<int,string> $files - File paths relative to the document root directory
      * @return string
      */
-    public function getFileHash(array $files)
+    public function getFileHash(array $files): string
     {
         $listHash = \md5(\serialize($files));
         /**
          * Checking if hash is cached
          * (IO operations is too expensive)
          */
-        if(!empty($this->cache))
-        {
+        if (!empty($this->cache)) {
             $dataHash = $this->cache->load($listHash);
-            if($dataHash)
+            if ($dataHash) {
                 return $dataHash;
+            }
         }
 
         $dataHash = '';
-        foreach($files as $file)
-        {
-            $paramsPos = strpos($file , '?');
-            if($paramsPos!==false) {
-                $file = substr($file, 0 , $paramsPos);
+        foreach ($files as $file) {
+            $paramsPos = strpos($file, '?');
+            if ($paramsPos !== false) {
+                $file = substr($file, 0, $paramsPos);
             }
-            $dataHash .= $file . ':' . filemtime( $this->config->get('wwwPath') . $file);
+            $dataHash .= $file . ':' . filemtime($this->config['wwwPath'] . $file);
         }
 
-        if($this->cache)
-            $this->cache->save(\md5($dataHash), $listHash, 60);
+        if ($this->cache) {
+            $this->cache->save($listHash, \md5($dataHash), 60);
+        }
 
         return \md5($dataHash);
     }
@@ -387,58 +387,67 @@ class Resource
      * @param bool $combine
      * @return string
      */
-    public function includeCss($combine = false) : string
+    public function includeCss(bool $combine = false): string
     {
         $s = '';
 
-        if(!empty($this->cssFiles))
-        {
-            $this->cssFiles = Utils::sortByProperty($this->cssFiles, 'order');
+        if (!empty($this->cssFiles)) {
+            /**
+             * @var array<int,\stdClass> $sorted
+             */
+            $sorted = Utils::sortByProperty($this->cssFiles, 'order');
+            $this->cssFiles = $sorted;
 
-            if($combine)
-            {
+            if ($combine) {
                 $fileList = [];
-                foreach($this->cssFiles as $k => $v){
+                foreach ($this->cssFiles as $k => $v) {
                     $fileList[] = $v->file;
                 }
                 $validHash = $this->getFileHash($fileList);
-                $cacheFile = Utils::createCachePath($this->config->get('cssCachePath'), $validHash . '.css');
-                $cachedUrl = \str_replace($this->config->get('cssCachePath'), $this->config->get('cssCacheUrl') , $cacheFile);
+                $cacheFile = Utils::createCachePath($this->config['cssCachePath'], $validHash . '.css');
+                $cachedUrl = \str_replace(
+                    $this->config['cssCachePath'],
+                    $this->config['cssCacheUrl'],
+                    $cacheFile
+                );
 
-                if(!file_exists($cacheFile)){
-                    foreach($fileList as &$v){
-                        $paramsPos = strpos($v , '?');
-                        if($paramsPos!==false) {
-                            $v = substr($v, 0 , $paramsPos);
+                if (!file_exists($cacheFile)) {
+                    foreach ($fileList as &$v) {
+                        $paramsPos = strpos($v, '?');
+                        if ($paramsPos !== false) {
+                            $v = substr($v, 0, $paramsPos);
                         }
-                        $v = $this->config->get('wwwPath') . $v;
-                    }unset($v);
+                        $v = $this->config['wwwPath'] . $v;
+                    }
+                    unset($v);
                     \Dvelum\App\Code\Minify\Minify::factory()->minifyCssFiles($fileList, $cacheFile);
                 }
-                $s .= '<link rel="stylesheet" type="text/css" href="' . $this->config->get('wwwRoot') . $cachedUrl . '" />' . "\n";
-            }else{
-                foreach($this->cssFiles as $k => $v){
-
-                    if($v->file[0] === '/'){
-                        $fPath = substr($v->file,1);
-                    }else{
+                $s .= '<link rel="stylesheet" type="text/css" href="' . $this->config['wwwRoot']
+                    . $cachedUrl . '" />' . "\n";
+            } else {
+                foreach ($this->cssFiles as $k => $v) {
+                    if ($v->file[0] === '/') {
+                        $fPath = substr($v->file, 1);
+                    } else {
                         $fPath = $v->file;
                     }
 
-                    $paramsPos = strpos($v->file , '?');
-                    if($paramsPos === false) {
-                        $mTimeParam = '?m='.filemtime($this->config->get('wwwPath') . $v->file);
-                    }else{
-                        $mTimeParam='';
+                    $paramsPos = strpos($v->file, '?');
+                    if ($paramsPos === false) {
+                        $mTimeParam = '?m=' . filemtime($this->config['wwwPath'] . $v->file);
+                    } else {
+                        $mTimeParam = '';
                     }
 
-                    $s .= '<link rel="stylesheet" type="text/css" href="' . $this->config->get('wwwRoot') . $fPath . $mTimeParam.'" />' . "\n";
+                    $s .= '<link rel="stylesheet" type="text/css" href="' . $this->config['wwwRoot']
+                        . $fPath . $mTimeParam . '" />' . "\n";
                 }
             }
         }
 
-        if(strlen($this->rawCss))
+        if (strlen($this->rawCss)) {
             $s .= '<style type="text/css">' . "\n" . $this->rawCss . "\n" . '</style>' . "\n";
+        }
 
         return $s;
     }
@@ -447,7 +456,7 @@ class Resource
      * Get raw JS code
      * @return string
      */
-    public function getInlineJs() : string
+    public function getInlineJs(): string
     {
         return $this->rawJs;
     }
@@ -456,15 +465,15 @@ class Resource
      * Clean raw js
      * @return void
      */
-    public function cleanInlineJs() : void
+    public function cleanInlineJs(): void
     {
         $this->rawJs = '';
     }
 
     /**
-     * @return ConfigInterface|null
+     * @return array<string,mixed>
      */
-    public function getConfig() : ?ConfigInterface
+    public function getConfig(): array
     {
         return $this->config;
     }

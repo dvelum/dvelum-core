@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Log;
@@ -33,18 +35,20 @@ namespace Dvelum\Log;
  * Interface LogInterface
  * @package Dvelum\Log
  */
-interface LogInterface{
+interface LogInterface
+{
     /**
-     * @param mixed $level
+     * @param int|string $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-	public function log($level, string $message, array $context = []) : bool;
+    public function log($level, $message, array $context = []): bool;
+
     /**
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-	public function logError(string $message, array $context = []) : bool;
+    public function logError($message, array $context = []): bool;
 }

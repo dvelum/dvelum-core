@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,9 +26,11 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config;
+
 /**
  * The Config_Abstract abstract class, which is used for implementing configuration adapters
  *  + backward compatibility with Config_Abstract
@@ -44,15 +47,15 @@ class Adapter implements ConfigInterface
     protected $applyTo = null;
     /**
      * Config Data
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Config name
      * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Constructor
@@ -67,24 +70,25 @@ class Adapter implements ConfigInterface
      * Set configuration identifier
      * @param string $name
      */
-    public function setName(string $name) : void
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
 
     /**
      * Convert into an array
-     * @return array
+     * @return array<string,mixed>
      */
-    public function __toArray() : array
+    public function __toArray(): array
     {
         return $this->data;
     }
+
     /**
      * Get the number of elements
      * @return integer
      */
-    public function getCount() : int
+    public function getCount(): int
     {
         return count($this->data);
     }
@@ -92,13 +96,13 @@ class Adapter implements ConfigInterface
     /**
      * Get the configuration parameter
      * @param string $key — parameter name
-     * @throws \Exception
      * @return mixed
+     * @throws \Exception
      */
     public function get(string $key)
     {
-        if(!isset($this->data[$key])){
-            throw new \Exception('Config::get Invalid key '.$key);
+        if (!isset($this->data[$key])) {
+            throw new \Exception('Config::get Invalid key ' . $key);
         }
 
         return $this->data[$key];
@@ -109,37 +113,36 @@ class Adapter implements ConfigInterface
      * @param string $key
      * @param mixed $value
      */
-    public function set(string $key , $value) : void
+    public function set(string $key, $value): void
     {
         $this->data[$key] = $value;
     }
 
     /**
      * Set property values using an array
-     * @param array $data
+     * @param array<string,mixed> $data
      */
-    public function setData(array $data) : void
+    public function setData(array $data): void
     {
-        if(empty($data)){
+        if (empty($data)) {
             return;
         }
 
-        foreach ($data as $k=>$v){
-            $this->data[$k]=$v;
+        foreach ($data as $k => $v) {
+            $this->data[$k] = $v;
         }
     }
 
     /**
      * Remove a parameter
      * @param string $key
-     * @return true
+     * @return void
      */
-    public function remove(string $key)
+    public function remove(string $key): void
     {
-        if(isset($this->data[$key])){
+        if (isset($this->data[$key])) {
             unset($this->data[$key]);
         }
-        return true;
     }
 
     /*
@@ -151,7 +154,7 @@ class Adapter implements ConfigInterface
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value) : void
+    public function offsetSet($offset, $value): void
     {
         $this->data[$offset] = $value;
     }
@@ -160,7 +163,7 @@ class Adapter implements ConfigInterface
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }
@@ -192,7 +195,7 @@ class Adapter implements ConfigInterface
     /**
      * @return void
      */
-    public function rewind() : void
+    public function rewind(): void
     {
         reset($this->data);
     }
@@ -216,7 +219,7 @@ class Adapter implements ConfigInterface
     /**
      * @return void
      */
-    public function next() : void
+    public function next(): void
     {
         next($this->data);
     }
@@ -236,9 +239,9 @@ class Adapter implements ConfigInterface
      * Get data handle
      * Hack method. Do not use it without understanding.
      * Get a direct link to the stored data array
-     * @return array
+     * @return array<string,mixed>
      */
-    public function & dataLink() : array
+    public function & dataLink(): array
     {
         return $this->data;
     }
@@ -246,17 +249,18 @@ class Adapter implements ConfigInterface
     /**
      * Remove all parameters
      */
-    public function removeAll() : void
+    public function removeAll(): void
     {
         $this->data = [];
     }
+
     /**
      * Get config name
      * @return string
      */
-    public function getName() : string
+    public function getName(): string
     {
-        return (string) $this->name;
+        return (string)$this->name;
     }
 
     /**
@@ -272,7 +276,7 @@ class Adapter implements ConfigInterface
      * Set parent configuration identifier
      * @param string|null $id
      */
-    public function setParentId(?string $id) : void
+    public function setParentId(?string $id): void
     {
         $this->applyTo = $id;
     }

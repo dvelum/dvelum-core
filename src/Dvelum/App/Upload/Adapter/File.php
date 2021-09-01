@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Upload\Adapter;
@@ -36,71 +38,73 @@ class File extends AbstractAdapter
 {
     /**
      * Upload file
-     * @param array $data- $_FILES array item
-     * @param bool $formUpload  - optional, default true
-     * @return array|false on error
+     * @param array<string,mixed> $data $_FILES array item
+     * @param bool $formUpload - optional, default true
+     * @phpstan-return array<string,mixed>|false on error
+     * @return array{name:string,path:string,type:string,size:int}
      */
-    public function upload(array $data , string $path , bool $formUpload = true)
+    public function upload(array $data, string $path, bool $formUpload = true)
     {
         $this->error = '';
 
-        if($data['error']){
+        if ($data['error']) {
             $this->error = 'Server upload error';
             return false;
         }
 
-        if(isset($this->config['max_file_size']) && ($this->config['max_file_size'])){
-            if($data['size'] > $this->config['max_file_size']){
+        if (isset($this->config['max_file_size']) && ($this->config['max_file_size'])) {
+            if ($data['size'] > $this->config['max_file_size']) {
                 $this->error = 'File too large. Check max_file_size option';
                 return false;
             }
         }
 
         $result = array(
-            'name' => '' ,
-            'path' => '' ,
-            'size' => '' ,
+            'name' => '',
+            'path' => '',
+            'size' => '',
             'type' => ''
         );
 
         $name = $this->createUploadedName($data);
 
-        if(empty($name)){
+        if (empty($name)) {
             return false;
         }
 
-        $ext = \Dvelum\File::getExt((string) $name);
+        $ext = \Dvelum\File::getExt((string)$name);
 
-        if(!in_array($ext , $this->config['extensions'])){
-            $this->error='File extension is not allowed';
+        if (!in_array($ext, $this->config['extensions'])) {
+            $this->error = 'File extension is not allowed';
             return false;
         }
 
 
-        $namePart = str_replace($ext , '' , (string) $name);
+        $namePart = str_replace($ext, '', (string)$name);
 
-        if(isset($this->config['rewrite']) && $this->config['rewrite']){
-            if(file_exists($path . $namePart . $ext))
+        if (isset($this->config['rewrite']) && $this->config['rewrite']) {
+            if (file_exists($path . $namePart . $ext)) {
                 @unlink($path . $namePart . $ext);
+            }
         }
 
-        if(file_exists($path . $namePart . $ext))
+        if (file_exists($path . $namePart . $ext)) {
             $namePart .= '-0';
+        }
 
         $renameCount = 0;
 
-        while(file_exists($path . $namePart . $ext))
-        {
-            $parts = explode('-' , $namePart);
+        while (file_exists($path . $namePart . $ext)) {
+            $parts = explode('-', $namePart);
             $el = array_pop($parts);
-            $el = intval($el);
+            $el = (int)($el);
             $el++;
             $parts[] = $el;
-            $namePart = implode('-' , $parts);
+            $namePart = implode('-', $parts);
             $renameCount++;
             // limit iterations
-            if($renameCount == 100){
-                $this->error='Cannot rename file. Iterations limit';
+            if ($renameCount == 100) {
+                $this->error = 'Cannot rename file. Iterations limit';
                 return false;
             }
         }
@@ -109,18 +113,14 @@ class File extends AbstractAdapter
         $result['path'] = $path . $namePart . $ext;
         $result['ext'] = $ext;
 
-        if($formUpload)
-        {
-            if(!move_uploaded_file($data['tmp_name'] , $result['path'])){
-                $this->error='move_uploaded_file error';
+        if ($formUpload) {
+            if (!move_uploaded_file($data['tmp_name'], $result['path'])) {
+                $this->error = 'move_uploaded_file error';
                 return false;
             }
-
-        }
-        else
-        {
-            if(!copy($data['tmp_name'] , $result['path'])){
-                $this->error='copy error';
+        } else {
+            if (!copy($data['tmp_name'], $result['path'])) {
+                $this->error = 'copy error';
                 return false;
             }
         }
@@ -128,21 +128,21 @@ class File extends AbstractAdapter
         $result['size'] = $data['size'];
         $result['type'] = $data['type'];
 
-        @chmod($result['path'] , 0644);
+        @chmod($result['path'], 0644);
 
         return $result;
     }
 
     /**
      * Create filename for uploaded file
-     * @param array $fileData
+     * @param array<string,mixed> $fileData
      * @return string|null
      */
-    protected function createUploadedName(array $fileData) : ?string
+    protected function createUploadedName(array $fileData): ?string
     {
-        $name = str_replace(' ' , '_' , $fileData['name']);
-        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i" , '' , $name);
-        if(!is_string($name)){
+        $name = str_replace(' ', '_', $fileData['name']);
+        $name = preg_replace("/[^A-Za-z0-9_\-\.]/i", '', $name);
+        if (!is_string($name)) {
             $name = null;
         }
         return $name;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Store;
@@ -39,17 +41,18 @@ class Session extends Local
     /**
      * @var string
      */
-    protected $prefix = 'sc_';
+    protected string $prefix = 'sc_';
 
     /**
      * @inheritDoc
      */
-    protected function storageConnect()
+    protected function storageConnect(): void
     {
         @session_start();
 
-        if(!isset($_SESSION[$this->prefix][$this->name]))
+        if (!isset($_SESSION[$this->prefix][$this->name])) {
             $_SESSION[$this->prefix][$this->name] = [];
+        }
 
         $this->storage = &$_SESSION[$this->prefix][$this->name];
     }

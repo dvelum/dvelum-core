@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -37,13 +38,13 @@ interface AdapterInterface
      * @param string $source
      * @return string
      */
-    public function minify(string $source) : string;
+    public function minify(string $source): string;
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */
-    public function minifyFiles(array $files, string $toFile) : bool;
+    public function minifyFiles(array $files, string $toFile): bool;
 }

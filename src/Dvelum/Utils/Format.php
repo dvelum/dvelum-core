@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,20 +26,21 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Utils;
 
-use \Dvelum\Tree\ArrayTree as Tree;
+use Dvelum\Tree\ArrayTree as Tree;
 
 class Format
 {
     /**
      * Convert files list into Tree structure
-     * @param array $data
+     * @param array<mixed,mixed> $data
      * @return Tree
      */
-    static public function fileListToTree(array $data): Tree
+    public static function fileListToTree(array $data): Tree
     {
         $tree = new Tree();
         foreach ($data as $k => $v) {
@@ -62,7 +64,7 @@ class Format
      * @param int $difference
      * @return string
      */
-    static public function formatTime(int $difference) : string
+    public static function formatTime(int $difference): string
     {
         $days = floor($difference / 86400);
         $difference = $difference % 86400;
@@ -81,11 +83,11 @@ class Format
             $s .= $days . ' days ';
         }
 
-        $s .= str_pad((string) $hours, 2, '0', STR_PAD_LEFT) .
+        $s .= str_pad((string)$hours, 2, '0', STR_PAD_LEFT) .
             ':' .
-            str_pad((string) $minutes, 2, '0', STR_PAD_LEFT) .
+            str_pad((string)$minutes, 2, '0', STR_PAD_LEFT) .
             ':' .
-            str_pad((string) $seconds, 2, '0', STR_PAD_LEFT);
+            str_pad((string)$seconds, 2, '0', STR_PAD_LEFT);
         return $s;
     }
 
@@ -94,7 +96,7 @@ class Format
      * @param int $size
      * @return string
      */
-    static public function formatFileSize(int $size) : string
+    public static function formatFileSize(int $size): string
     {
         /*
          * 1024 * 1024 * 1024  - Gb

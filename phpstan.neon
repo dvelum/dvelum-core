@@ -5,25 +5,17 @@ parameters:
 	    -  %currentWorkingDirectory%/application/templates
 	    -  %currentWorkingDirectory%/vendor
 	    -  %currentWorkingDirectory%/src/Dvelum/Cache/Memcached.php
-	    -  %currentWorkingDirectory%/src/Dvelum/Image/Resize.php
+	    -  %currentWorkingDirectory%/src/Dvelum/Response/PsrResponse.php
 	scanDirectories:
 	    -  %currentWorkingDirectory%/application
 	    -  %currentWorkingDirectory%/src
-	    -  %currentWorkingDirectory%/tests/unit/dvelum/library
-	    -  %currentWorkingDirectory%/tests/unit/dvelum2
+	    -  %currentWorkingDirectory%/extensions
+	    -  %currentWorkingDirectory%/tests/unit/dvelum/
 	autoload_files: []
 	polluteCatchScopeWithTryAssignments: true
-	reportUnmatchedIgnoredErrors: false
-	checkGenericClassInNonGenericObjectType: false
-	checkMissingIterableValueType: false
 	ignoreErrors:
-		- '#Function pinba_[a-zA-Z0-9\\_]#'
-		- '#Function finfo_[a-zA-Z0-9\\_]#'
-		- '#Function ldap_[a-zA-Z0-9\\_]#'
-		- '#Constant LDAP_OPT_PROTOCOL_VERSION [a-zA-Z0-9\\_]#'
-		- '#class KRB5CCache [a-zA-Z0-9\\_]#'
-		- '#call_user_func_array expects callable#'
-		- '#Unsafe usage of new static#'
-		- '#spl_autoload_register expects#'
+	    - '#Unsafe usage of new static#'
+	    - '#call_user_func_array expects callable#'
+	    - '#spl_autoload_register expects callable#'
 	level: max
 

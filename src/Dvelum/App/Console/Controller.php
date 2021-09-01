@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console;
@@ -34,9 +36,8 @@ use Dvelum\Config;
 use Dvelum\Log\LogInterface;
 use Dvelum\App\Router;
 use Dvelum\Request;
-use Dvelum\Response;
-use Dvelum\Service;
-use Psr\Log\LogLevel;
+use Dvelum\Response\ResponseInterface;
+use Psr\Container\ContainerInterface;
 
 class Controller extends App\Controller implements Router\RouterInterface
 {
@@ -48,34 +49,35 @@ class Controller extends App\Controller implements Router\RouterInterface
 
     /**
      * Launcher configuration
-     * @var Config\ConfigInterface
+     * @var Config\ConfigInterface<string,mixed>
      */
-    protected $consoleConfig;
+    protected Config\ConfigInterface $consoleConfig;
     /**
      * Action routes
-     * @var array $actions
+     * @var array<string,array> $actions
      */
-    protected $actions;
+    protected array $actions;
 
     /**
      * Controller constructor.
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      * @throws \Exception
      */
-    public function __construct(Request $request, Response $response)
+    public function __construct(Request $request, ResponseInterface $response, ContainerInterface $container)
     {
         if (!defined('DVELUM_CONSOLE')) {
-            $this->response->redirect('/');
+            $response->redirect('/');
             exit;
         }
 
-        parent::__construct($request, $response);
+        parent::__construct($request, $response, $container);
 
-        $this->consoleConfig = Config::storage()->get('console.php');
+        $storage = $container->get(Config\Storage\StorageInterface::class);
+        $this->consoleConfig = $storage->get('console.php');
         // Prepare action routes
-        $data = Config::storage()->get('console_actions.php')->__toArray();
-        foreach ($data as $action => $config){
+        $data = $storage->get('console_actions.php')->__toArray();
+        foreach ($data as $action => $config) {
             $this->actions[strtolower($action)] = $config;
         }
     }
@@ -84,19 +86,20 @@ class Controller extends App\Controller implements Router\RouterInterface
     /**
      * Run action
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      */
-    public function route(Request $request, Response $response): void
+    public function route(Request $request, ResponseInterface $response): ResponseInterface
     {
-        $this->response = $response;
         $this->request = $request;
+        $this->response = $response;
         $this->indexAction();
+        return $this->response;
     }
 
     /**
      * @return void
      */
-    public function indexAction() : void
+    public function indexAction(): void
     {
         $action = strtolower((string)$this->request->getPart(0));
 
@@ -112,7 +115,7 @@ class Controller extends App\Controller implements Router\RouterInterface
             trigger_error('Undefined Action Adapter ' . $adapterCls);
         }
 
-        $adapter = new $adapterCls($actionConfig);
+        $adapter = new $adapterCls();
 
         if (!$adapter instanceof \Dvelum\App\Console\ActionInterface) {
             trigger_error($adapterCls . ' is not instance of ActionInterface');
@@ -121,20 +124,20 @@ class Controller extends App\Controller implements Router\RouterInterface
         $params = $this->request->getPathParts(1);
         $config = [];
 
-        if(isset($actionConfig['config'])){
+        if (isset($actionConfig['config'])) {
             $config = $actionConfig['config'];
         }
 
-        $adapter->init($this->appConfig, $params , $config);
+        $adapter->init($this->container, $this->appConfig, $params, $config);
         $result = $adapter->run();
 
         echo '[' . $action . ' : ' . $adapter->getInfo() . ']' . PHP_EOL;
 
         if ($result) {
             exit(0);
-        } else {
-            exit(1);
         }
+
+        exit(1);
     }
 
     /**

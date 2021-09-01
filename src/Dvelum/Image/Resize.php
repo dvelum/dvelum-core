@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 namespace Dvelum\Image;
 
 use Dvelum\File;
@@ -34,13 +36,13 @@ use Dvelum\File;
  */
 class Resize
 {
-    const L_TYPE_H = 1;
-    const L_TYPE_V = 2;
-    const L_TYPE_S = 3;
+    public const L_TYPE_H = 1;
+    public const L_TYPE_V = 2;
+    public const L_TYPE_S = 3;
 
     /**
      * Crop image
-     * @param string  $src - source image path
+     * @param string $src - source image path
      * @param string $dest - destination image path
      * @param int $x - x coord
      * @param int $y - y coord
@@ -48,60 +50,56 @@ class Resize
      * @param int $h - height
      * @return bool
      */
-    static public function cropImage($src , $dest , $x , $y , $w , $h)
+    public static function cropImage($src, $dest, $x, $y, $w, $h)
     {
         $imgInfo = getimagesize($src);
 
-        if(empty($imgInfo)){
+        if (empty($imgInfo)) {
             return false;
         }
 
-        $img = self::createImg($src , $imgInfo[2]);
-        /**
-         * @var \GdImage $destImg
-         */
-        $destImg = self::_createDuplicateLayer($imgInfo[2] , $w , $h);
+        $img = self::createImg($src, $imgInfo[2]);
+        $destImg = self::createDuplicateLayer($imgInfo[2], $w, $h);
 
         /**
-         * @var \GdImage $img
+         * @var resource $img
          */
-        if(empty($img) || empty($destImg)){
+        if (empty($img) || empty($destImg)) {
             return false;
         }
 
 
-        imagecopyresampled($destImg , $img , 0 , 0 , $x , $y , $w , $h , $w , $h);
+        imagecopyresampled($destImg, $img, 0, 0, $x, $y, $w, $h, $w, $h);
         imagedestroy($img);
 
-        return self::saveImage($destImg , $dest , $imgInfo[2]);
+        return self::saveImage($destImg, $dest, $imgInfo[2]);
     }
 
     /**
      * Create image from file
      * @param string $path - file path
      * @param int $type - image type constant, source file type
-     * @return \GdImage | false
+     * @return resource | bool
      */
-    static public function createImg($path , $type)
+    public static function createImg($path, $type)
     {
-        switch($type)
-        {
-            case IMAGETYPE_GIF :
+        switch ($type) {
+            case IMAGETYPE_GIF:
                 $im = imagecreatefromgif($path);
                 break;
-            case IMAGETYPE_JPEG :
+            case IMAGETYPE_JPEG:
                 $im = imagecreatefromjpeg($path);
                 break;
-            case IMAGETYPE_PNG :
+            case IMAGETYPE_PNG:
                 $im = imagecreatefrompng($path);
-                if(!$im){
+                if (!$im) {
                     return false;
                 }
                 imageAlphaBlending($im, true);
                 imageSaveAlpha($im, true);
                 break;
-            default :
-                trigger_error('Unsupported file type!' , E_USER_WARNING);
+            default:
+                trigger_error('Unsupported file type!', E_USER_WARNING);
                 return false;
         }
         return $im;
@@ -113,48 +111,46 @@ class Resize
      * @param int $width
      * @param int $height
      * @param string $newImgPath
-     * @param bool $fit, optional default false
-     * @param bool $crop, optional default false
+     * @param bool $fit , optional default false
+     * @param bool $crop , optional default false
      * @return bool
      */
-    static public function resize($imgPath , $width , $height , $newImgPath , $fit = false , $crop = true) : bool
+    public static function resize($imgPath, $width, $height, $newImgPath, $fit = false, $crop = true): bool
     {
         /*
          * Check if GD extension is loaded
          */
-        if(!extension_loaded('gd') && !extension_loaded('gd2'))
-        {
-            trigger_error("GD is not loaded" , E_USER_WARNING);
+        if (!extension_loaded('gd') && !extension_loaded('gd2')) {
+            trigger_error("GD is not loaded", E_USER_WARNING);
             return false;
         }
 
-        if($crop){
-            return self::cropResize($imgPath , $width , $height , $newImgPath);
+        if ($crop) {
+            return self::cropResize($imgPath, $width, $height, $newImgPath);
         }
 
         /*
          * Get Image size info
          */
         $imgInfo = getimagesize($imgPath);
-        if(empty($imgInfo)){
+        if (empty($imgInfo)) {
             return false;
         }
 
-        $im = self::createImg($imgPath , $imgInfo[2]);
+        $im = self::createImg($imgPath, $imgInfo[2]);
 
         /**
-         * @var \GdImage $im
+         * @var resource $im
          */
-        if(empty($im)){
+        if (empty($im)) {
             return false;
         }
 
         /*
          * If image sizes less then need just save image into the new location
          */
-        if($imgInfo[0] < $width && $imgInfo[1] < $height)
-        {
-            $result = self::saveImage($im , $newImgPath , $imgInfo[2]);
+        if ($imgInfo[0] < $width && $imgInfo[1] < $height) {
+            $result = self::saveImage($im, $newImgPath, $imgInfo[2]);
             imagedestroy($im);
             return $result;
         }
@@ -162,13 +158,10 @@ class Resize
         /*
          * Resize it, but keep it proportional
          */
-        if($width / $imgInfo[0] > $height / $imgInfo[1])
-        {
+        if ($width / $imgInfo[0] > $height / $imgInfo[1]) {
             $nWidth = $width;
             $nHeight = $imgInfo[1] * ($width / $imgInfo[0]);
-        }
-        else
-        {
+        } else {
             $nWidth = $imgInfo[0] * ($height / $imgInfo[1]);
             $nHeight = $height;
         }
@@ -176,18 +169,14 @@ class Resize
         $nWidth = round($nWidth);
         $nHeight = round($nHeight);
 
-        if($fit)
-        {
-
-            if($nWidth > $width)
-            {
+        if ($fit) {
+            if ($nWidth > $width) {
                 $k = $width / $nWidth;
                 $nWidth = $width;
                 $nHeight = $nHeight * $k;
             }
 
-            if($nHeight > $height)
-            {
+            if ($nHeight > $height) {
                 $k = $height / $nHeight;
                 $nHeight = $height;
                 $nWidth = $nWidth * $k;
@@ -196,15 +185,15 @@ class Resize
             $nHeight = round($nHeight);
         }
 
-        $newImg = self::_createDuplicateLayer($imgInfo[2] , (int) $nWidth , (int) $nHeight);
-        if(empty($newImg)){
+        $newImg = self::createDuplicateLayer($imgInfo[2], (int)$nWidth, (int)$nHeight);
+        if (empty($newImg)) {
             return false;
         }
 
-        imagecopyresampled($newImg , $im , 0 , 0 , 0 , 0 , (int) $nWidth ,(int) $nHeight , $imgInfo[0] , $imgInfo[1]);
+        imagecopyresampled($newImg, $im, 0, 0, 0, 0, (int)$nWidth, (int)$nHeight, $imgInfo[0], $imgInfo[1]);
         imagedestroy($im);
 
-        return self::saveImage($newImg , $newImgPath , $imgInfo[2]);
+        return self::saveImage($newImg, $newImgPath, $imgInfo[2]);
     }
 
     /**
@@ -214,14 +203,13 @@ class Resize
      * @param string $newImgPath
      * @return bool
      */
-    static public function resizeToFrame(string $imgPath , int $width , int $height , string $newImgPath) : bool
+    public static function resizeToFrame(string $imgPath, int $width, int $height, string $newImgPath): bool
     {
         /*
         * Check if GD extension is loaded
         */
-        if(!extension_loaded('gd') && !extension_loaded('gd2'))
-        {
-            trigger_error("GD is not loaded" , E_USER_WARNING);
+        if (!extension_loaded('gd') && !extension_loaded('gd2')) {
+            trigger_error("GD is not loaded", E_USER_WARNING);
             return false;
         }
 
@@ -230,60 +218,72 @@ class Resize
          */
         $imgInfo = getimagesize($imgPath);
 
-        if(empty($imgInfo)){
+        if (empty($imgInfo)) {
             return false;
         }
 
-        $im = self::createImg($imgPath , $imgInfo[2]);
+        $im = self::createImg($imgPath, $imgInfo[2]);
 
-        if(empty($im)){
+        /**
+         * @var resource $im
+         */
+        if (empty($im)) {
             return false;
         }
 
         /*
         * If image sizes less then need just save image into the new location
         */
-        if($imgInfo[0] < $width && $imgInfo[1] < $height) {
+        if ($imgInfo[0] < $width && $imgInfo[1] < $height) {
             $nWidth = $width;
             $nHeight = $height;
-        }else{
-
-
+        } else {
             $nWidth = $imgInfo[0];
             $nHeight = $imgInfo[1];
 
-            if($width < $nWidth){
+            if ($width < $nWidth) {
                 $scale = $width / $nWidth;
                 $nWidth = $width;
                 $nHeight = $nHeight * $scale;
             }
 
-            if($height < $nHeight){
+            if ($height < $nHeight) {
                 $scale = $height / $nHeight;
                 $nHeight = $height;
-                $nWidth = $nWidth*$scale;
+                $nWidth = $nWidth * $scale;
             }
         }
 
         $nWidth = round($nWidth);
         $nHeight = round($nHeight);
 
-        $newImg = self::_createDuplicateLayer($imgInfo[2] , $width , $height);
+        $newImg = self::createDuplicateLayer($imgInfo[2], $width, $height);
 
-        if(empty($newImg) || empty($im)){
+        if (empty($newImg) || empty($im)) {
             return false;
         }
 
-        $whiteBackground = imagecolorallocatealpha($newImg , 255 , 255 , 255 , 0);
-        imagefilledrectangle($newImg , 0 , 0 , $width , $height , (int) $whiteBackground);
+        $whiteBackground = imagecolorallocatealpha($newImg, 255, 255, 255, 0);
+        imagefilledrectangle($newImg, 0, 0, $width, $height, (int)$whiteBackground);
 
         $posX = ($width - $nWidth) / 2;
         $posY = ($height - $nHeight) / 2;
 
-        imagecopyresampled($newImg , $im , (int) $posX, (int) $posY, 0 , 0 , (int)$nWidth , (int)$nHeight , $imgInfo[0] , $imgInfo[1]);
+        imagecopyresampled(
+            $newImg,
+            $im,
+            (int)$posX,
+            (int)$posY,
+            0,
+            0,
+            (int)$nWidth,
+            (int)$nHeight,
+            $imgInfo[0],
+            $imgInfo[1]
+        );
         imagedestroy($im);
 
-        return self::saveImage($newImg , $newImgPath , $imgInfo[2]);
+        return self::saveImage($newImg, $newImgPath, $imgInfo[2]);
     }
 
     /**
@@ -292,35 +292,34 @@ class Resize
      * @param integer $type image type
      * @param integer $width
      * @param integer $height
-     * @return \GdImage|false
+     * @return resource|false
      */
-    static protected function _createDuplicateLayer($type , $width , $height)
+    protected static function createDuplicateLayer($type, $width, $height)
     {
-        $img = imagecreatetruecolor($width , $height);
-        if(empty($img)){
+        $img = imagecreatetruecolor($width, $height);
+        if (empty($img)) {
             return false;
         }
-        if(in_array($type, array(IMG_GIF, IMG_PNG, IMAGETYPE_GIF, IMAGETYPE_PNG), true))
-        {
-            imagealphablending($img , false);
-            imagesavealpha($img , true);
-            $transparent = imagecolorallocatealpha($img , 255 , 255 , 255 , 127);
-            imagefilledrectangle($img , 0 , 0 , $width , $height , (int) $transparent);
+        if (in_array($type, array(IMG_GIF, IMG_PNG, IMAGETYPE_GIF, IMAGETYPE_PNG), true)) {
+            imagealphablending($img, false);
+            imagesavealpha($img, true);
+            $transparent = imagecolorallocatealpha($img, 255, 255, 255, 127);
+            imagefilledrectangle($img, 0, 0, $width, $height, (int)$transparent);
         }
         return $img;
     }
 
     /**
      * Save image to file
-     * @param \GdImage $resource - image resource
+     * @param resource $resource - image resource
      * @param string $path - path to file
      * @param mixed $imgType - image type constant deprecated
      * @return boolean
      */
-    static protected function saveImage($resource , $path , $imgType = false)
+    protected static function saveImage($resource, $path, $imgType = false)
     {
         $ext = File::getExt(strtolower($path));
-        switch ($ext){
+        switch ($ext) {
             case '.jpg':
             case '.jpeg':
                 $imgType = IMAGETYPE_JPEG;
@@ -333,18 +332,17 @@ class Resize
                 break;
         }
 
-        switch($imgType)
-        {
-            case IMAGETYPE_GIF :
-                $result = imagegif($resource , $path);
+        switch ($imgType) {
+            case IMAGETYPE_GIF:
+                $result = imagegif($resource, $path);
                 break;
-            case IMAGETYPE_JPEG :
-                $result = imagejpeg($resource , $path , 100);
+            case IMAGETYPE_JPEG:
+                $result = imagejpeg($resource, $path, 100);
                 break;
-            case IMAGETYPE_PNG :
-                $result = imagepng($resource , $path);
+            case IMAGETYPE_PNG:
+                $result = imagepng($resource, $path);
                 break;
-            default :
+            default:
                 $result = false;
         }
         imagedestroy($resource);
@@ -353,18 +351,19 @@ class Resize
 
     /**
      * Detect layout orientation
-     * @param integer $width
-     * @param integer $height
-     * @return integer - orientation constant Image_Resize::L_TYPE_S , Image_Resize::L_TYPE_H , Image_Resize::L_TYPE_V
+     * @param int $width
+     * @param int $height
+     * @return int - orientation constant Image_Resize::L_TYPE_S , Image_Resize::L_TYPE_H , Image_Resize::L_TYPE_V
      */
-    static public function detectLayout($width , $height)
+    public static function detectLayout(int $width, int $height): int
     {
-        if($width == $height)
+        if ($width == $height) {
             return self::L_TYPE_S;
-        elseif($width > $height)
+        } elseif ($width > $height) {
             return self::L_TYPE_H;
-        else
+        } else {
             return self::L_TYPE_V;
+        }
     }
 
     /**
@@ -375,39 +374,30 @@ class Resize
      * @param string $newImgPath
      * @return bool
      */
-    static public function cropResize($imgPath , $width , $height , $newImgPath) : bool
+    public static function cropResize(string $imgPath, int $width, int $height, string $newImgPath): bool
     {
         /*
          * Get Image size info
          */
         $imgInfo = getimagesize($imgPath);
-        if(empty($imgInfo)){
+        if (empty($imgInfo)) {
             return false;
         }
         $sourceWidth = $imgInfo[0];
         $sourceHeight = $imgInfo[1];
 
-        $sourceLayout = self::detectLayout($sourceWidth , $sourceHeight);
-        $resultLayout = self::detectLayout($width , $height);
+        $sourceLayout = self::detectLayout($sourceWidth, $sourceHeight);
+        $resultLayout = self::detectLayout($width, $height);
 
-        if($sourceLayout == self::L_TYPE_H && $resultLayout == self::L_TYPE_H)
-        {
-            $newSizes = self::_calcHorizontalToHorizontal($sourceWidth , $sourceHeight , $width , $height);
-        }
-        elseif($sourceLayout == self::L_TYPE_H && $resultLayout == self::L_TYPE_V)
-        {
-            $newSizes = self::_calcHorizontalToVertical($sourceHeight , $width , $height);
-        }
-        elseif($sourceLayout == self::L_TYPE_V && $resultLayout == self::L_TYPE_H)
-        {
-            $newSizes = self::_calcVerticalToHorizontal($sourceWidth , $width , $height);
-        }
-        elseif($sourceLayout == self::L_TYPE_S && $resultLayout == self::L_TYPE_S)
-        {
-            $newSizes = self::_calcSquareToSquare($sourceWidth , $sourceHeight);
-        }
-        else
-        {
+        if ($sourceLayout == self::L_TYPE_H && $resultLayout == self::L_TYPE_H) {
+            $newSizes = self::calcHorizontalToHorizontal($sourceWidth, $sourceHeight, $width, $height);
+        } elseif ($sourceLayout == self::L_TYPE_H && $resultLayout == self::L_TYPE_V) {
+            $newSizes = self::calcHorizontalToVertical($sourceHeight, $width, $height);
+        } elseif ($sourceLayout == self::L_TYPE_V && $resultLayout == self::L_TYPE_H) {
+            $newSizes = self::calcVerticalToHorizontal($sourceWidth, $width, $height);
+        } elseif ($sourceLayout == self::L_TYPE_S && $resultLayout == self::L_TYPE_S) {
+            $newSizes = self::calcSquareToSquare($sourceWidth, $sourceHeight);
+        } else {
             /*
              * Vertical to vertical
              * sqrt to sqrt
@@ -416,33 +406,44 @@ class Resize
              * sqrt to vertical
              * sqrt to horizontal
              */
-            $newSizes = self::_calcHorizontalToHorizontal($sourceWidth , $sourceHeight , $width , $height);
+            $newSizes = self::calcHorizontalToHorizontal($sourceWidth, $sourceHeight, $width, $height);
         }
 
         $x = 0;
         $y = 0;
 
-        if($newSizes[0] < $sourceWidth)
-        {
+        if ($newSizes[0] < $sourceWidth) {
             $x = ($sourceWidth - $newSizes[0]) / 2;
         }
 
-        if($newSizes[1] < $sourceHeight)
-        {
+        if ($newSizes[1] < $sourceHeight) {
             $difference = $sourceHeight - $newSizes[1];
             $y = $difference / 2 - $difference / 4;
         }
 
-        $im = self::createImg($imgPath , $imgInfo[2]);
-        $dest = self::_createDuplicateLayer($imgInfo[2] , (int) $width , (int) $height);
-
-        if(empty($im) || empty($dest)){
+        $im = self::createImg($imgPath, $imgInfo[2]);
+        $dest = self::createDuplicateLayer($imgInfo[2], (int)$width, (int)$height);
+        /**
+         * @var resource $im
+         */
+        if (empty($im) || empty($dest)) {
             return false;
         }
 
-        imagecopyresampled($dest , $im , 0 , 0 , (int) $x , (int) $y , (int) $width , (int) $height , (int) $newSizes[0] , (int) $newSizes[1]);
+        imagecopyresampled(
+            $dest,
+            $im,
+            0,
+            0,
+            (int)$x,
+            (int)$y,
+            (int)$width,
+            (int)$height,
+            (int)$newSizes[0],
+            (int)$newSizes[1]
+        );
         imagedestroy($im);
-        self::saveImage($dest , $newImgPath , $imgInfo[2]);
+        self::saveImage($dest, $newImgPath, $imgInfo[2]);
         return true;
     }
 
@@ -451,26 +452,31 @@ class Resize
      * @param int $sourceHeight
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
-    static protected function _calcHorizontalToHorizontal($sourceWidth , $sourceHeight , $width , $height) : array
-    {
+    protected static function calcHorizontalToHorizontal(
+        int $sourceWidth,
+        int $sourceHeight,
+        int $width,
+        int $height
+    ): array {
         $sourceProportion = $sourceWidth / $sourceHeight;
         $proportion = $width / $height;
 
-        if($sourceProportion > $proportion)
-            return self::_calcHorizontalToVertical($sourceHeight , $width , $height);
-        else
-            return self::_calcVerticalToHorizontal($sourceWidth , $width , $height);
+        if ($sourceProportion > $proportion) {
+            return self::calcHorizontalToVertical($sourceHeight, $width, $height);
+        } else {
+            return self::calcVerticalToHorizontal($sourceWidth, $width, $height);
+        }
     }
 
     /**
      * @param int $sourceHeight
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
-    static protected function _calcHorizontalToVertical(int $sourceHeight , int $width , int $height) : array
+    protected static function calcHorizontalToVertical(int $sourceHeight, int $width, int $height): array
     {
         $proportion = $width / $height;
 
@@ -487,26 +493,26 @@ class Resize
      * @param int $sourceWidth
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
-    static protected function _calcVerticalToHorizontal($sourceWidth , $width , $height) : array
+    protected static function calcVerticalToHorizontal($sourceWidth, $width, $height): array
     {
         $proportion = $width / $height;
         $newWidth = $sourceWidth;
         $newHeight = $newWidth / $proportion;
 
         return [
-            intval($newWidth),
-            intval($newHeight)
+            (int)($newWidth),
+            (int)($newHeight)
         ];
     }
 
     /**
      * @param int $sourceWidth
      * @param int $sourceHeight
-     * @return array
+     * @return array<int,int>
      */
-    static protected function _calcSquareToSquare(int $sourceWidth , int $sourceHeight) : array
+    protected static function calcSquareToSquare(int $sourceWidth, int $sourceHeight): array
     {
         return [
             $sourceWidth,

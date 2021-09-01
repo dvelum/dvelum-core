@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,44 +26,55 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Container\ContainerInterface;
 
 abstract class Action implements ActionInterface
 {
     /**
      * Main application config
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $config;
+    protected array $config;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $stat = [];
+    protected array $stat = [];
     /**
      * Action params
-     * @var array
+     * @var array<int,mixed>
      */
-    protected $params = [];
+    protected array $params = [];
+    /**
+     * @var ContainerInterface
+     */
+    protected ContainerInterface $diContainer;
 
     /**
-     * @param ConfigInterface $appConfig
-     * @param array $params
-     * @param array $config
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param array<int,mixed> $params
+     * @param array<string,mixed> $config
      * @return void
      */
-    public function init(ConfigInterface $appConfig, array $params = [], array $config = []): void
-    {
+    public function init(
+        ContainerInterface $diContainer,
+        ConfigInterface $appConfig,
+        array $params = [],
+        array $config = []
+    ): void {
         $this->appConfig = $appConfig;
         $this->params = $params;
         $this->config = $config;
+        $this->diContainer = $diContainer;
     }
 
     /**
@@ -80,11 +92,11 @@ abstract class Action implements ActionInterface
         return $s;
     }
 
-    public function run() : bool
+    public function run(): bool
     {
         $t = microtime(true);
         $result = $this->action();
-        $this->stat['time'] = number_format(microtime(true) - $t, 5).'s.';
+        $this->stat['time'] = number_format(microtime(true) - $t, 5) . 's.';
         return $result;
     }
 

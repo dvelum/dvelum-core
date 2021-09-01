@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -27,6 +28,7 @@
  */
 
 declare(strict_types=1);
+
 /*
  * DVelum project https://github.com/dvelum/dvelum , https://github.com/k-samuel/dvelum , http://dvelum.net
  * Copyright (C) 2011-2016  Kirill A Egorov
@@ -44,9 +46,11 @@ declare(strict_types=1);
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 namespace Dvelum\Config\File;
 
 use Dvelum\Config;
+
 /**
  * Config\File abstract class - an adapter implementing
  * configurations, which use a file as a storage
@@ -61,22 +65,23 @@ abstract class AbstractAdapter extends Config\Adapter
      * @param string $name
      * @param bool $autoRead
      */
-    public function __construct(string $name , bool $autoRead = true)
+    public function __construct(string $name, bool $autoRead = true)
     {
         parent::__construct($name);
         /*
          * Read config from file
          */
-        if($autoRead)
+        if ($autoRead) {
             $this->data = $this->readFile($name);
-        else
+        } else {
             $this->data = [];
+        }
     }
 
     /**
      * File Read method, which is to be invoked within a certain adapter
      * @param string $name - configuration identifier, file path
-     * @return array
+     * @return array<string,mixed>
      */
-    abstract protected function readFile(string $name) : array;
+    abstract protected function readFile(string $name): array;
 }

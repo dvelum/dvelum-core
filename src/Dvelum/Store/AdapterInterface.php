@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Store;
@@ -34,56 +36,65 @@ namespace Dvelum\Store;
  * @package Store
  * @author Kirill Egorov 2011
  */
-interface AdapterInterface{
+interface AdapterInterface
+{
     /**
      * Store value
      * @param string $key
      * @param mixed $val
      * @return void
      */
-    public function set($key,$val);
+    public function set(string $key, $val): void;
+
     /**
      * Set values from array
-     * @param array $array
-     * @return mixed
+     * @param array<string,mixed> $array
+     * @return void
      */
-    public function setValues(array $array);
+    public function setValues(array $array): void;
+
     /**
      * Replace store data
-     * @param array $data
-     * @return mixed
+     * @param array<string,mixed> $data
+     * @return void
      */
-    public function setData(array $data);
+    public function setData(array $data): void;
+
     /**
      * Get stored value by key
      * @param string $key
      * @return mixed
      */
-    public function get($key);
+    public function get(string $key);
+
     /**
      * Check if key exists
      * @param string $key
      * @return bool
      */
-    public function keyExists($key) : bool ;
+    public function keyExists(string $key): bool;
+
     /**
      * Remove data from storage
      * @param string $key
      * @return void
      */
-    public function remove($key): void;
+    public function remove(string $key): void;
+
     /**
      * Clear storage.(Remove data)
      */
-    public function clear() : void;
+    public function clear(): void;
+
     /**
      * Get all storage data
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getData() : array;
+    public function getData(): array;
+
     /**
      * Get records count
-     * @return integer
+     * @return int
      */
-    public function getCount() : int;
+    public function getCount(): int;
 }

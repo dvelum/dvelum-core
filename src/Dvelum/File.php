@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,10 +26,10 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
-
 
 /**
  * Filesystem wrapper
@@ -39,23 +40,23 @@ namespace Dvelum;
  */
 class File
 {
-    const FILES_DIRS = 0;
-    const FILES_ONLY = 1;
-    const DIRS_ONLY = 2;
+    public const FILES_DIRS = 0;
+    public const FILES_ONLY = 1;
+    public const DIRS_ONLY = 2;
 
     /**
      * Default Separator in file paths
      * Can be disabled by  setDirectorySeparator (false)
      * @var mixed string | false
      */
-    static protected $directorySeparator = '/';
+    protected static $directorySeparator = '/';
 
     /**
      * Set directory separator for output data
      * @param mixed $sep string or false
      * @return void
      */
-    static public function setDirectorySeparator($sep) : void
+    public static function setDirectorySeparator($sep): void
     {
         self::$directorySeparator = $sep;
     }
@@ -65,10 +66,10 @@ class File
      * @param string $name
      * @return string
      */
-    static public function getExt(string $name) : string
+    public static function getExt(string $name): string
     {
         $ext = strrchr(strtolower($name), '.');
-        if(empty($ext)){
+        if (empty($ext)) {
             $ext = '';
         }
         return $ext;
@@ -79,11 +80,12 @@ class File
      * @param string $path
      * @return string
      */
-    static public function fillEndSep(string $path) : string
+    public static function fillEndSep(string $path): string
     {
         $length = strlen($path);
-        if(!$length || $path[$length - 1] !== self::$directorySeparator)
+        if (!$length || $path[$length - 1] !== self::$directorySeparator) {
             $path .= self::$directorySeparator;
+        }
 
         return $path;
     }
@@ -91,68 +93,76 @@ class File
     /**
      * Get file list
      * @param string $path
-     * @param array|false $filter - optional  aray of file extensions to search for
-     * @param bool $recursive - optional	use recursion (default true)
+     * @param array<int,string>|false $filter - optional  array of file extensions to search for
+     * @param bool $recursive - optional    use recursion (default true)
      * @param int $type - optional File::Dirs_Only | File::Files_Dirs | File::Files_Only (default File::Files_Dirs)
-     * @param int $mode - optional RecursiveIteratorIterator::SELF_FIRST | RecursiveIteratorIterator::CHILD_FIRST (default RecursiveIteratorIterator::SELF_FIRST)
+     * @param int $mode - optional RecursiveIteratorIterator::SELF_FIRST | RecursiveIteratorIterator::CHILD_FIRST
+     * (default RecursiveIteratorIterator::SELF_FIRST)
+     * @return array<int,string>
      * @throws \Exception
-     * @return array
      */
-    static public function scanFiles($path , $filter = false , $recursive = true , $type = File::FILES_DIRS , $mode = \RecursiveIteratorIterator::SELF_FIRST)
-    {
+    public static function scanFiles(
+        $path,
+        $filter = false,
+        $recursive = true,
+        $type = File::FILES_DIRS,
+        $mode = \RecursiveIteratorIterator::SELF_FIRST
+    ) {
         $path = self::fillEndSep($path);
         $files = array();
         $collectDirs = false;
         $collectFiles = false;
 
-        switch($type)
-        {
-            case self::FILES_ONLY :
+        switch ($type) {
+            case self::FILES_ONLY:
                 $mode = \RecursiveIteratorIterator::LEAVES_ONLY;
                 $collectFiles = true;
                 break;
-            case self::DIRS_ONLY :
+            case self::DIRS_ONLY:
                 $collectDirs = true;
                 break;
-            case self::FILES_DIRS :
+            case self::FILES_DIRS:
                 $collectDirs = true;
                 $collectFiles = true;
                 break;
         }
-        try
-        {
-            if($recursive)
-                $dirIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path , \RecursiveDirectoryIterator::SKIP_DOTS) , $mode);
-            else
-                $dirIterator = new \FilesystemIterator($path , \FilesystemIterator::SKIP_DOTS);
-        }
-        catch(\Exception $e)
-        {
-            throw new \Exception('You tried to read nonexistent dir: ' . $path );
+        try {
+            if ($recursive) {
+                $dirIterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS),
+                    $mode
+                );
+            } else {
+                $dirIterator = new \FilesystemIterator($path, \FilesystemIterator::SKIP_DOTS);
+            }
+        } catch (\Exception $e) {
+            throw new \Exception('You tried to read nonexistent dir: ' . $path);
         }
 
         $changeSep = false;
 
-        if(self::$directorySeparator && self::$directorySeparator!==DIRECTORY_SEPARATOR){
+        if (self::$directorySeparator && self::$directorySeparator !== DIRECTORY_SEPARATOR) {
             $changeSep = self::$directorySeparator;
         }
 
-        foreach($dirIterator as $name => $object)
-        {
+        foreach ($dirIterator as $name => $object) {
             $add = false;
             $isDir = $object->isDir();
 
-            if(($isDir && $collectDirs) || (!$isDir && $collectFiles))
+            if (($isDir && $collectDirs) || (!$isDir && $collectFiles)) {
                 $add = true;
+            }
 
-            if(!empty($filter))
-                if(! $isDir && ! in_array(self::getExt($name) , $filter , true))
+            if (!empty($filter)) {
+                if (!$isDir && !in_array(self::getExt($name), $filter, true)) {
                     $add = false;
+                }
+            }
 
-            if($add){
-                if($changeSep){
-                    $name = str_replace(DIRECTORY_SEPARATOR , $changeSep ,$name);
-                    $name = str_replace($changeSep.$changeSep , $changeSep, $name);
+            if ($add) {
+                if ($changeSep) {
+                    $name = str_replace(DIRECTORY_SEPARATOR, $changeSep, $name);
+                    $name = str_replace($changeSep . $changeSep, $changeSep, $name);
                 }
                 $files[] = $name;
             }
@@ -168,13 +178,14 @@ class File
      * @param string $localRoot optional
      * @return bool
      */
-    static public function zipFiles($fileName , $files , $localRoot = '')
+    public static function zipFiles($fileName, $files, $localRoot = '')
     {
-        if(substr($fileName, -4)!=='.zip')
-            $fileName.='.zip';
+        if (substr($fileName, -4) !== '.zip') {
+            $fileName .= '.zip';
+        }
 
         // delete existing file
-        if(file_exists($fileName)){
+        if (file_exists($fileName)) {
             unlink($fileName);
         }
 
@@ -184,20 +195,20 @@ class File
          * ZIPARCHIVE::CREATE (integer)
          * Create the archive if it does not exist.
          */
-        if($zip->open($fileName , \ZipArchive::CREATE) !== true)
+        if ($zip->open($fileName, \ZipArchive::CREATE) !== true) {
             return false;
+        }
 
-        if(is_string($files))
+        if (is_string($files)) {
             $files = array($files);
+        }
 
-        if(!empty($files))
-        {
-            foreach ($files as $file)
-            {
-                if (is_dir($file)){
-                    if($localRoot!==''){
+        if (!empty($files)) {
+            foreach ($files as $file) {
+                if (is_dir($file)) {
+                    if ($localRoot !== '') {
                         $zip->addEmptyDir(str_replace($localRoot, '', $file));
-                    }else{
+                    } else {
                         $zip->addEmptyDir($file);
                     }
                     continue;
@@ -217,23 +228,24 @@ class File
      * Extract all files
      * @param string $source
      * @param string $destination
-     * @param array<string>|string|false $fileEntries - optional - The entries to extract. It accepts either a single entry name or an array of names.
+     * @param array<string>|string|false $fileEntries - optional - The entries to extract.
+     * It accepts either a single entry name or an array of names.
      * @return bool
      */
-    static public function unzipFiles(string $source , string $destination , $fileEntries = false)
+    public static function unzipFiles(string $source, string $destination, $fileEntries = false)
     {
         $zip = new \ZipArchive();
 
-        if($zip->open($source) !== true){
+        if ($zip->open($source) !== true) {
             return false;
         }
 
         $result = true;
-        if(!empty($fileEntries)) {
+        if (!empty($fileEntries)) {
             if (!$zip->extractTo($destination, $fileEntries)) {
                 $result = false;
             }
-        }else {
+        } else {
             if (!$zip->extractTo($destination)) {
                 $result = false;
             }
@@ -245,24 +257,28 @@ class File
     /**
      * Get Archive items list
      * @param string $source
-     * @return array
+     * @return array<int,string>
      */
-    static public function getZipItemsList(string $source) : array
+    public static function getZipItemsList(string $source): array
     {
         $zip = new \ZipArchive();
 
-        if($zip->open($source) !== true)
+        if ($zip->open($source) !== true) {
             return [];
+        }
 
         $zipSize = $zip->numFiles - 1;
 
         $itemsList = [];
 
-        while ($zipSize >= 0){
-            $itemsList[] = $zip->getNameIndex((int)$zipSize);
+        while ($zipSize >= 0) {
+            $item = $zip->getNameIndex((int)$zipSize);
+            if ($item !== false) {
+                $itemsList[] = $item;
+            }
             --$zipSize;
         }
-        return  $itemsList;
+        return $itemsList;
     }
 
     /**
@@ -271,31 +287,29 @@ class File
      * @param bool $removeParentDir
      * @return bool
      */
-    static public function rmdirRecursive(string $pathname ,bool $removeParentDir = false) : bool
+    public static function rmdirRecursive(string $pathname, bool $removeParentDir = false): bool
     {
-        $filesDirs = self::scanFiles($pathname , false , true , File::FILES_DIRS , \RecursiveIteratorIterator::CHILD_FIRST);
+        $filesDirs = self::scanFiles($pathname, false, true, File::FILES_DIRS, \RecursiveIteratorIterator::CHILD_FIRST);
 
-        foreach($filesDirs as $v)
-        {
-            if(is_dir($v))
-            {
-                if(!rmdir($v))
+        foreach ($filesDirs as $v) {
+            if (is_dir($v)) {
+                if (!rmdir($v)) {
                     return false;
-            }
-            elseif (is_file($v) || is_link($v))
-            {
-                if(!unlink($v))
+                }
+            } elseif (is_file($v) || is_link($v)) {
+                if (!unlink($v)) {
                     return false;
-            }
-            else
-            {
+                }
+            } else {
                 return false;
             }
         }
 
-        if($removeParentDir)
-            if(!rmdir($pathname))
+        if ($removeParentDir) {
+            if (!rmdir($pathname)) {
                 return false;
+            }
+        }
 
         return true;
     }
@@ -306,10 +320,10 @@ class File
      * @param string $dest
      * @return bool
      */
-    static public function copyDir(string $source, string $dest) : bool
+    public static function copyDir(string $source, string $dest): bool
     {
-        if(!is_dir($dest)){
-            if(!@mkdir($dest, 0755, true)){
+        if (!is_dir($dest)) {
+            if (!@mkdir($dest, 0755, true)) {
                 return false;
             }
         }
@@ -320,27 +334,28 @@ class File
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator(
                 $source,
-                \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveDirectoryIterator::SKIP_DOTS
+            ),
             \RecursiveIteratorIterator::SELF_FIRST
         );
 
-        try{
+        try {
             foreach ($iterator as $item) {
                 /**
                  * @var \SplFileInfo $item
                  */
                 if ($item->isDir()) {
-                    $subDir =  $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
-                    if(!is_dir($subDir) && !mkdir($subDir, 0755)){
+                    $subDir = $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName();
+                    if (!is_dir($subDir) && !mkdir($subDir, 0755)) {
                         return false;
                     }
                 } else {
-                    if(!copy($item->__toString(), $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName())){
+                    if (!copy($item->__toString(), $dest . DIRECTORY_SEPARATOR . $iterator->getSubPathName())) {
                         return false;
                     }
                 }
             }
-        }catch (\Error $e){
+        } catch (\Error $e) {
             return false;
         }
 
@@ -354,35 +369,40 @@ class File
      * @param string $localRoot - optional
      * @return bool
      */
-    static public function copyFiles(string $destPath , $files , $localRoot = '') : bool
+    public static function copyFiles(string $destPath, $files, $localRoot = ''): bool
     {
-        if(!file_exists($destPath))
-            if(!mkdir($destPath, 0775))
+        if (!file_exists($destPath)) {
+            if (!mkdir($destPath, 0775)) {
                 return false;
-
-        if(is_string($files))
-            $files = array($files);
-
-        if(empty($files))
-            return false;
-
-        foreach ($files as $path)
-        {
-            $dest = $destPath . str_replace($localRoot , '' , $path);
-            if(is_dir($path))
-            {
-                if(!file_exists($dest))
-                    if(!mkdir($dest, 0775, true))
-                        return false;
             }
-            else
-            {
-                $dir = dirname($dest);
-                if(!file_exists($dir))
-                    if(!mkdir($dir, 0775, true))
+        }
+
+        if (is_string($files)) {
+            $files = array($files);
+        }
+
+        if (empty($files)) {
+            return false;
+        }
+
+        foreach ($files as $path) {
+            $dest = $destPath . str_replace($localRoot, '', $path);
+            if (is_dir($path)) {
+                if (!file_exists($dest)) {
+                    if (!mkdir($dest, 0775, true)) {
                         return false;
-                if(!copy($path, $dest))
+                    }
+                }
+            } else {
+                $dir = dirname($dest);
+                if (!file_exists($dir)) {
+                    if (!mkdir($dir, 0775, true)) {
+                        return false;
+                    }
+                }
+                if (!copy($path, $dest)) {
                     return false;
+                }
             }
         }
         return true;
@@ -393,23 +413,25 @@ class File
      * @param string $path
      * @return string | bool
      */
-    static public function getExistingDirByPath($path)
+    public static function getExistingDirByPath($path)
     {
-        if(is_file($path))
+        if (is_file($path)) {
             return dirname($path);
+        }
 
-        if(is_dir($path))
+        if (is_dir($path)) {
             return $path;
+        }
 
         $pathArr = explode('/', $path);
-        for ($i = sizeof($pathArr) - 1; $i > 0; $i--)
-        {
+        for ($i = sizeof($pathArr) - 1; $i > 0; $i--) {
             unset($pathArr[$i]);
 
             $cur = implode('/', $pathArr);
 
-            if(is_dir($cur))
+            if (is_dir($cur)) {
                 return $cur;
+            }
         }
         return false;
     }
@@ -417,31 +439,31 @@ class File
     /**
      * Checks writing permissions for files.
      * Returns array with paths (wich is not writable) or true on success
-     * @param array $files
-     * @return mixed
+     * @param array<string> $files
+     * @return true|array<string>
      */
-    static public function checkWritePermission(array $files)
+    public static function checkWritePermission(array $files)
     {
         $cantWrite = array();
-        foreach ($files as $path)
-        {
-            $path = (string) $path;
-            if(is_file($path)) {
-                if(!is_writable($path)){
+        foreach ($files as $path) {
+            $path = (string)$path;
+            if (is_file($path)) {
+                if (!is_writable($path)) {
                     $cantWrite[] = $path;
                 }
                 continue;
             }
 
             $dir = self::getExistingDirByPath($path);
-            if(is_string($dir) && !is_writable($dir)){
+            if (is_string($dir) && !is_writable($dir)) {
                 $cantWrite[] = $path;
             }
         }
 
-        if(empty($cantWrite))
+        if (empty($cantWrite)) {
             return true;
-        else
-            return $cantWrite;
+        }
+
+        return $cantWrite;
     }
 }

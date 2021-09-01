@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -42,9 +43,9 @@ class AsArray extends Config\File\AbstractAdapter
 {
     /**
      * @param string $name
-     * @return array
+     * @return array<string,mixed>
      */
-    protected function readFile(string $name) : array
+    protected function readFile(string $name): array
     {
         return require $name;
     }

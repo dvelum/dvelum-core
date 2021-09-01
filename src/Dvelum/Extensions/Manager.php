@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum
  *
@@ -31,11 +32,16 @@ namespace Dvelum\Extensions;
 
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
+use Dvelum\DependencyContainer;
 use Dvelum\Orm;
 use Dvelum\Autoload;
 use Dvelum\File;
 use Dvelum\Lang;
-use \Exception;
+use Dvelum\Template\Storage;
+use Exception;
+use Psr\Container\ContainerInterface;
 
 /**
  * Class Manager
@@ -45,46 +51,53 @@ use \Exception;
 class Manager
 {
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $extensionsConfig;
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $config;
+    protected ConfigInterface $config;
     /**
      * @var Autoload
      */
-    protected $autoloader;
+    protected Autoload $autoloader;
     /**
      * Loaded modules index
-     * @var array
+     * @var array<string,array>
      */
-    protected $loadedExtensions = [];
+    protected array $loadedExtensions = [];
+
+    /**
+     * @var ContainerInterface
+     */
+    protected ContainerInterface $di;
 
     /**
      * Manager constructor.
-     * @param ConfigInterface $appConfig
-     * @param Autoload $autoloader
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param ContainerInterface $di
      * @throws Exception
      */
-    public function __construct(ConfigInterface $appConfig, Autoload $autoloader)
+    public function __construct(ConfigInterface $appConfig, ContainerInterface $di)
     {
-        $this->config = Config\Factory::storage()->get('extensions.php');
-        $this->autoloader = $autoloader;
+        $configStorage = $di->get(ConfigStorageInterface::class);
+        $this->config = $configStorage->get('extensions.php');
+        $this->autoloader = $di->get(Autoload::class);
         $this->appConfig = $appConfig;
         $this->extensionsConfig = $this->appConfig->get('extensions');
+        $this->di = $di;
     }
 
     /**
      * @param string $moduleId
      * @return bool
      */
-    public function extensionRegistered(string $moduleId) : bool
+    public function extensionRegistered(string $moduleId): bool
     {
         return $this->config->offsetExists($moduleId);
     }
@@ -92,20 +105,25 @@ class Manager
     /**
      * Add extension to registry
      * @param string $extensionId
-     * @param array $config
+     * @param array<string,mixed> $config
      * @return bool
      */
-    public function add(string $extensionId, array $config) : bool
+    public function add(string $extensionId, array $config): bool
     {
         $this->config->set($extensionId, $config);
-        return Config::storage()->save($this->config);
+        return $this->di->get(ConfigStorageInterface::class)->save($this->config);
     }
+
     /**
      * Load external modules configuration
      * @return void
      */
-    public function loadExtensions() : void
+    public function loadExtensions(): void
     {
+        /**
+         * @var ConfigStorageInterface $configStorage
+         */
+        $configStorage = $this->di->get(ConfigStorageInterface::class);
         $modules = $this->config->__toArray();
 
         if (empty($modules)) {
@@ -116,26 +134,31 @@ class Manager
         $autoLoadPathsPsr4 = [];
         $configPaths = [];
 
+        $dependencyPaths = [];
+
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
-
             if (!$config['enabled'] || isset($this->loadedExtensions[$index]['loaded'])) {
                 continue;
             }
 
-            $path = $extensionsDir  . File::fillEndSep($config['dir']);
+            $path = $extensionsDir . File::fillEndSep($config['dir']);
 
-            if(!empty($config['paths']['src'])){
-                $autoLoadPaths[] =  $path . $config['paths']['src'];
+            if (!empty($config['paths']['src'])) {
+                $autoLoadPaths[] = $path . $config['paths']['src'];
             }
 
             if (!empty($config['paths']['configs'])) {
-                $configPaths[] =  $path . $config['paths']['configs'] . '/';
+                $configPaths[] = $path . $config['paths']['configs'] . '/';
+            }
+
+            if (!empty($config['paths']['dependency'])) {
+                $dependencyPaths[] = $path . $config['paths']['dependency'];
             }
 
             /*
-             * @todo implement extension locales an templates
+             * @todo implement extension locales and templates
 
             if (!empty($modCfg['autoloader-psr-4'])) {
                 foreach ($modCfg['autoloader-psr-4'] as $ns =>$classPath) {
@@ -143,15 +166,13 @@ class Manager
                 }
             }
 
-
-
             */
             $this->loadedExtensions[$index]['load'] = true;
         }
 
         // Add autoloader paths
         if (!empty($autoLoadPaths)) {
-            $autoloaderConfig = Config::storage()->get('autoloader.php');
+            $autoloaderConfig = $configStorage->get('autoloader.php');
             $autoloaderCfg = $autoloaderConfig->__toArray();
             $newChain = $autoloaderCfg['priority'];
 
@@ -169,39 +190,45 @@ class Manager
             $autoloaderCfg['paths'] = $newChain;
 
             // update autoloader paths
-            $this->autoloader->setConfig(['paths' => $autoloaderCfg['paths'], 'psr-4'=>$autoloaderCfg['psr-4']]);
+            $this->autoloader->setConfig(['paths' => $autoloaderCfg['paths'], 'psr-4' => $autoloaderCfg['psr-4']]);
             // update main configuration
             $autoloaderConfig->setData($autoloaderCfg);
         }
         // Add Config paths
         if (!empty($configPaths)) {
-            $storage = Config::storage();
+            $writePath = $configStorage->getWrite();
+            $applyPath = $configStorage->getApplyTo();
 
-            $writePath = $storage->getWrite();
-            $applyPath = $storage->getApplyTo();
-
-            $paths = $storage->getPaths();
+            $paths = $configStorage->getPaths();
             $resultPaths = [];
 
-            foreach ($paths as $path){
-                if($path!==$writePath && $path!==$applyPath){
+            foreach ($paths as $path) {
+                if ($path !== $writePath && $path !== $applyPath) {
                     $resultPaths[] = $path;
                 }
             }
             foreach ($configPaths as $path) {
-                \array_unshift($resultPaths , $path);
+                \array_unshift($resultPaths, $path);
             }
 
-            \array_unshift($resultPaths , $applyPath);
+            \array_unshift($resultPaths, $applyPath);
             $resultPaths[] = $writePath;
-            $storage->replacePaths($resultPaths);
+            $configStorage->replacePaths($resultPaths);
+        }
+        // register dependencies
+        if (!empty($dependencyPaths)) {
+            foreach ($dependencyPaths as $file) {
+                if ($this->di instanceof DependencyContainer || method_exists($this->di, 'bindArray')) {
+                    $this->di->bindArray(include $file);
+                }
+            }
         }
     }
 
     /**
      * Initialize core and service dependent extensions
      */
-    public function initExtensions() : void
+    public function initExtensions(): void
     {
         $modules = $this->config->__toArray();
 
@@ -215,12 +242,11 @@ class Manager
         $extensionsDir = $this->extensionsConfig['path'];
 
         foreach ($modules as $index => $config) {
-
             if (!$config['enabled'] || isset($this->loadedExtensions[$index]['init'])) {
                 continue;
             }
 
-            $path = $extensionsDir  . File::fillEndSep($config['dir']);
+            $path = $extensionsDir . File::fillEndSep($config['dir']);
 
 
             if (!empty($config['paths']['locales'])) {
@@ -236,7 +262,10 @@ class Manager
 
         // Add localization paths
         if (!empty($langPaths)) {
-            $langStorage = Lang::storage();
+            /**
+             * @var StorageInterface $langStorage
+             */
+            $langStorage = $this->di->get(Lang::class)->getStorage();
             foreach ($langPaths as $path) {
                 $langStorage->addPath($path);
             }
@@ -244,7 +273,7 @@ class Manager
 
         // Add Templates paths
         if (!empty($templatesPaths)) {
-            $templateStorage = \Dvelum\View::storage();
+            $templateStorage = $this->di->get(Storage::class);
             $paths = $templateStorage->getPaths();
             $mainPath = array_shift($paths);
             // main path

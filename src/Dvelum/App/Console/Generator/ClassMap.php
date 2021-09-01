@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,13 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Console\Generator;
 
 use Dvelum\App\Console;
-use Dvelum\Config;
-use Dvelum\Db\Manager;
 
 /**
  * Class ClassMap
@@ -42,7 +42,7 @@ class ClassMap extends Console\Action
 {
     public function action(): bool
     {
-        $mapBuilder = new \Dvelum\App\Classmap($this->appConfig);
+        $mapBuilder = new \Dvelum\App\Classmap($this->diContainer->get('config.main'));
         $mapBuilder->update();
         return $mapBuilder->save();
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
-use \Dvelum\Tree\ArrayTree as Tree;
+use Dvelum\Tree\ArrayTree as Tree;
 
 /**
  * System Utils class Do not include into packages!
@@ -42,11 +44,11 @@ class Utils
      * Create an array from another array using field as key
      *
      * @param string $key
-     * @param array $data
+     * @param array<int|string,mixed> $data
+     * @return array<int|string,mixed>
      * @throws \Exception
-     * @return array
      */
-    static public function rekey(string $key, array $data): array
+    public static function rekey(string $key, array $data): array
     {
         $result = array();
 
@@ -64,11 +66,11 @@ class Utils
      * Collect data from result set
      * @param string $keyField
      * @param string $valueField
-     * @param array $data
+     * @param array<int|string,mixed> $data
+     * @return array<int|string,mixed>
      * @throws \Exception
-     * @return array
      */
-    static public function collectData(string $keyField, string $valueField, array $data): array
+    public static function collectData(string $keyField, string $valueField, array $data): array
     {
         $result = [];
         foreach ($data as $v) {
@@ -83,11 +85,11 @@ class Utils
     /**
      * Fetch array column
      * @param string $key
-     * @param array $data
+     * @param array<int|string,mixed> $data
+     * @return array<int,mixed>
      * @throws \Exception
-     * @return array
      */
-    static public function fetchCol(string $key, array $data): array
+    public static function fetchCol(string $key, array $data): array
     {
         $result = [];
 
@@ -96,7 +98,7 @@ class Utils
         }
 
         foreach ($data as $v) {
-            if(!is_object($v) || $v instanceof \ArrayAccess){
+            if (!is_object($v) || $v instanceof \ArrayAccess) {
                 $result[] = $v[$key];
             } else {
                 $result[] = $v->{$key};
@@ -108,11 +110,11 @@ class Utils
     /**
      * Group array by column, used for db results sorting
      * @param string $key
-     * @param array $data
+     * @param array<int|string,mixed> $data
+     * @return array<int|string,mixed>
      * @throws \Exception
-     * @return array
      */
-    static public function groupByKey(string $key, array $data): array
+    public static function groupByKey(string $key, array $data): array
     {
         $result = [];
 
@@ -129,12 +131,13 @@ class Utils
         }
         return $result;
     }
+
     /**
      * Format file size in user friendly
      * @param int $size
      * @return string
      */
-    static public function formatFileSize(int $size): string
+    public static function formatFileSize(int $size): string
     {
         return Utils\Format::formatFileSize($size);
     }
@@ -144,7 +147,7 @@ class Utils
      * @param int $difference
      * @return string
      */
-    static public function formatTime(int $difference): string
+    public static function formatTime(int $difference): string
     {
         return Utils\Format::formatTime($difference);
     }
@@ -158,10 +161,10 @@ class Utils
      * Use the === operator for testing the return value of this function.
      *
      * @param string $file
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @return bool
      */
-    static public function exportArray(string $file, array $data): bool
+    public static function exportArray(string $file, array $data): bool
     {
         try {
             file_put_contents($file, '<?php return ' . var_export($data, true) . '; ');
@@ -184,7 +187,7 @@ class Utils
      * @param string $string
      * @return bool
      */
-    static public function exportCode(string $file, string $string): bool
+    public static function exportCode(string $file, string $string): bool
     {
         try {
             file_put_contents($file, '<?php ' . $string);
@@ -200,7 +203,7 @@ class Utils
      * @param bool $check
      * @return null|string
      */
-    static public function classFromPath(string $path, bool $check = false): ?string
+    public static function classFromPath(string $path, bool $check = false): ?string
     {
         return Utils\Fs::classFromPath($path, $check);
     }
@@ -211,36 +214,36 @@ class Utils
      * @param string $fileName
      * @return string
      */
-    static public function createCachePath(string $basePath, string $fileName): string
+    public static function createCachePath(string $basePath, string $fileName): string
     {
         return Utils\Fs::createCachePath($basePath, $fileName);
     }
 
     /**
      * Convert files list into Tree structure
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @return Tree
      */
-    static public function fileListToTree(array $data): Tree
+    public static function fileListToTree(array $data): Tree
     {
         return Utils\Format::fileListToTree($data);
     }
 
     /**
      * Get random string
-     * @param integer $length - string length
+     * @param int $length - string length
      * @return string
      */
-    static function getRandomString($length): string
+    public static function getRandomString(int $length): string
     {
         return Utils\Strings::getRandomString($length);
     }
 
     /**
      * Check if operation system is windows
-     * @return boolean
+     * @return bool
      */
-    static function isWindows(): bool
+    public static function isWindows(): bool
     {
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             return true;
@@ -253,7 +256,7 @@ class Utils
      * Get user IP address
      * @return string
      */
-    static public function getClientIp(): string
+    public static function getClientIp(): string
     {
         $ip = 'Unknown';
 
@@ -265,8 +268,9 @@ class Utils
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         } elseif (isset($_ENV['HTTP_X_FORWARDED_FOR']) && strcasecmp($_ENV['HTTP_X_FORWARDED_FOR'], 'unknown') !== 0) {
             $ip = $_ENV['HTTP_X_FORWARDED_FOR'];
-        } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'],
-                'unknown') !== 0
+        } elseif (
+            isset($_SERVER['HTTP_X_FORWARDED_FOR']) &&
+            strcasecmp($_SERVER['HTTP_X_FORWARDED_FOR'], 'unknown') !== 0
         ) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } elseif (isset($_ENV['REMOTE_ADDR']) && strcasecmp($_ENV['REMOTE_ADDR'], 'unknown') !== 0) {
@@ -274,9 +278,9 @@ class Utils
         } elseif (isset($_SERVER['REMOTE_ADDR']) && strcasecmp($_SERVER['REMOTE_ADDR'], 'unknown') !== 0) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }
-        if (stristr($ip, ",")) {
-            $ip_arr = explode(",", $ip);
-            $ip = $ip_arr[0];
+        if (stristr($ip, ",") !== false) {
+            $ipArray = explode(",", $ip);
+            $ip = $ipArray[0];
         }
         return $ip;
     }
@@ -284,12 +288,12 @@ class Utils
     /**
      * Sort array list by sub array field
      * Faster then uasort
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @param string $field
      * @param bool $reverse
-     * @return array
+     * @return array<int|string,mixed>
      */
-    static public function sortByField(array $data, string $field, bool $reverse = false): array
+    public static function sortByField(array $data, string $field, bool $reverse = false): array
     {
         $index = [];
 
@@ -297,9 +301,9 @@ class Utils
             $index[$id] = $item[$field];
         }
 
-        if($reverse){
+        if ($reverse) {
             arsort($index);
-        }else{
+        } else {
             asort($index);
         }
 
@@ -314,11 +318,11 @@ class Utils
 
     /**
      * Sort an array of objects by object property
-     * @param array $list
+     * @param array<int|string,mixed> $list
      * @param string $property
-     * @return  array
+     * @return array<int|string,mixed>
      */
-    static public function sortByProperty(array $list, string $property): array
+    public static function sortByProperty(array $list, string $property): array
     {
         $index = [];
 
@@ -340,10 +344,10 @@ class Utils
      * Transfer an array to a list of integers for inserting into an SQL-query form,
      * is used to improve the performance of Zend_Select queries setup
      * join values by ","
-     * @param array $ids
+     * @param array<int|string,mixed> $ids
      * @return string
      */
-    static public function listIntegers(array $ids): string
+    public static function listIntegers(array $ids): string
     {
         return implode(',', array_map('intval', array_unique($ids)));
     }
@@ -354,43 +358,33 @@ class Utils
      * @param int $precision - expected precision
      * @return float|int
      */
-    static public function roundUp($number, int $precision)
+    public static function roundUp($number, int $precision)
     {
         $precision++;
-        $fig = (int) str_pad('1', $precision, '0');
+        $fig = (int)str_pad('1', $precision, '0');
         return (ceil($number * $fig) / $fig);
     }
 
     /**
-     * @param array $array1
-     * @param array $array2
-     * @return array
+     * @param array<int|string,mixed> $array1
+     * @param array<int|string,mixed> $array2
+     * @return array<int|string,mixed>
      */
-    static public function array_diff_assoc_recursive($array1, $array2) : array
+    public static function arrayDiffAssocRecursive($array1, $array2): array
     {
-        foreach($array1 as $key => $value)
-        {
-            if(is_array($value))
-            {
-                if(!isset($array2[$key]))
-                {
+        foreach ($array1 as $key => $value) {
+            if (is_array($value)) {
+                if (!isset($array2[$key])) {
                     $difference[$key] = $value;
-                }
-                elseif(!is_array($array2[$key]))
-                {
+                } elseif (!is_array($array2[$key])) {
                     $difference[$key] = $value;
-                }
-                else
-                {
-                    $new_diff = self::array_diff_assoc_recursive($value, $array2[$key]);
-                    if($new_diff != FALSE)
-                    {
-                        $difference[$key] = $new_diff;
+                } else {
+                    $newDiff = self::arrayDiffAssocRecursive($value, $array2[$key]);
+                    if (!empty($newDiff)) {
+                        $difference[$key] = $newDiff;
                     }
                 }
-            }
-            elseif(!isset($array2[$key]) || $array2[$key] != $value)
-            {
+            } elseif (!isset($array2[$key]) || $array2[$key] != $value) {
                 $difference[$key] = $value;
             }
         }

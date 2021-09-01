@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 namespace Dvelum\Log;
 
 use Psr\Log\LogLevel;
@@ -34,39 +36,40 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
     /**
      * @var File
      */
-    protected $logFile;
+    protected File $logFile;
     /**
      * @var Db
      */
-    protected $logDb;
+    protected Db $logDb;
 
-    public function __construct(File $logFile , Db $logDb)
+    public function __construct(File $logFile, Db $logDb)
     {
         $this->logFile = $logFile;
         $this->logDb = $logDb;
     }
 
     /**
-     * @param mixed $level
+     * @param int|string $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function log($level, $message, array $context = array()) : bool
+    public function log($level, $message, array $context = []): bool
     {
-        if(!$this->logDb->log($level, $message, $context)){
+        if (!$this->logDb->log($level, $message, $context)) {
             $this->logFile->log($level, $message, $context);
             $this->logFile->log(\Psr\Log\LogLevel::ERROR, $this->logDb->getLastError());
             return false;
         }
         return true;
     }
+
     /**
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function logError(string $message, array $context = []): bool
+    public function logError($message, array $context = []): bool
     {
         return $this->log(LogLevel::ERROR, $message, $context);
     }

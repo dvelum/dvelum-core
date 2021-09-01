@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Template;
@@ -34,7 +36,6 @@ use Dvelum\Config\Factory as ConfigFactory;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\Template\Engine\EngineInterface;
 
-
 class Service
 {
     /**
@@ -43,39 +44,40 @@ class Service
     protected $adapterClass;
 
     /**
-     * @var ConfigInterface $engineConfig
+     * @var ConfigInterface<string,mixed> $engineConfig
      */
-    protected $engineConfig;
+    protected ConfigInterface $engineConfig;
 
     /**
      * @var CacheInterface|null
      */
-    protected $cache = null;
+    protected ?CacheInterface $cache = null;
+
+    protected Storage $storage;
 
     /**
      * Service constructor.
-     * @param ConfigInterface $config
+     * @param ConfigInterface<string,mixed> $config
      * @param CacheInterface|null $cache
      * @throws \Exception
      */
-    public function __construct(ConfigInterface $config, ?CacheInterface $cache)
+    public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache)
     {
         $this->adapterClass = $config->get('template_engine');
         $this->engineConfig = ConfigFactory::create($config->get('engine_config'));
         $this->cache = $cache;
+        $this->storage = $storage;
     }
 
     /**
      * @return EngineInterface
      */
-    public function getTemplate() : EngineInterface
+    public function getTemplate(): EngineInterface
     {
         /**
          * @var EngineInterface $adapter
          */
-        $adapter = new $this->adapterClass();
-        $adapter->setConfig($this->engineConfig);
-        $adapter->setCache($this->cache);
+        $adapter = new $this->adapterClass($this->engineConfig, $this->storage, $this->cache);
 
         return $adapter;
     }

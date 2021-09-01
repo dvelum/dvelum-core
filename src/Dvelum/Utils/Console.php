@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,33 +26,34 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Utils;
 
 class Console
 {
-    const COLOR_BLACK = 'black';
-    const COLOR_DARK_GRAY = 'dark_gray';
-    const COLOR_BLUE = 'blue';
-    const COLOR_LIGHT_BLUE = 'light_blue';
-    const COLOR_GREEN = 'green';
-    const COLOR_LIGHT_GREEN = 'light_green';
-    const COLOR_CYAN = 'cyan';
-    const COLOR_LIGHT_CYAN = 'light_cyan';
-    const COLOR_RED = 'red';
-    const COLOR_LIGHT_RED = 'light_red';
-    const COLOR_PURPLE = 'purple';
-    const COLOR_LIGHT_PURPULE = 'light_purple';
-    const COLOR_BROWN = 'brown';
-    const COLOR_YELLOW = 'yellow';
-    const COLOR_LIGHT_GRAY = 'light_gray';
-    const COLOR_WHITE = 'white';
+    public const COLOR_BLACK = 'black';
+    public const COLOR_DARK_GRAY = 'dark_gray';
+    public const COLOR_BLUE = 'blue';
+    public const COLOR_LIGHT_BLUE = 'light_blue';
+    public const COLOR_GREEN = 'green';
+    public const COLOR_LIGHT_GREEN = 'light_green';
+    public const COLOR_CYAN = 'cyan';
+    public const COLOR_LIGHT_CYAN = 'light_cyan';
+    public const COLOR_RED = 'red';
+    public const COLOR_LIGHT_RED = 'light_red';
+    public const COLOR_PURPLE = 'purple';
+    public const COLOR_LIGHT_PURPULE = 'light_purple';
+    public const COLOR_BROWN = 'brown';
+    public const COLOR_YELLOW = 'yellow';
+    public const COLOR_LIGHT_GRAY = 'light_gray';
+    public const COLOR_WHITE = 'white';
 
     /**
-     * @var array
+     * @var array<string,string>
      */
-    static protected $fgColors = [
+    protected static $fgColors = [
         'black' => '0;30',
         'dark_gray' => '1;30',
         'blue' => '0;34',
@@ -70,9 +72,9 @@ class Console
         'white' => '1;37'
     ];
     /**
-     * @var array
+     * @var array<string,string>
      */
-    static protected $bgColors = [
+    protected static $bgColors = [
         'black' => '40',
         'red' => '41',
         'green' => '42',
@@ -90,7 +92,7 @@ class Console
      * @param null|string $background
      * @return string
      */
-    static public function getColored(string $string, ?string $foreground = null, ?string $background = null): string
+    public static function getColored(string $string, ?string $foreground = null, ?string $background = null): string
     {
         $result = "";
         // Check if given foreground color found

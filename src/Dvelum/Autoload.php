@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
@@ -39,32 +41,32 @@ class Autoload
     /**
      * @var bool
      */
-    protected $debug = false;
+    protected bool $debug = false;
     /**
-     * @var array
+     * @var array<int|string,mixed>
      */
-    protected $debugData = [];
+    protected array $debugData = [];
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $classMap = [];
+    protected array $classMap = [];
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $paths = [];
+    protected array $paths = [];
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $psr4Paths = [];
+    protected array $psr4Paths = [];
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $loaders = ['psr0', 'psr4'];
+    protected array $loaders = ['psr0', 'psr4'];
 
     /**
      * Set autoload config
      *
-     * @param array $config
+     * @param array{debug:bool,paths:array<int,string>,map:array<int,string>,psr-4:array<string,string>} $config
      *          Example:
      *          array(
      *          // Debug mode
@@ -84,7 +86,7 @@ class Autoload
 
     /**
      * Reload configuration options
-     * @param array $config
+     * @param array<string,mixed> $config
      * @return void
      */
     public function setConfig(array $config): void
@@ -93,7 +95,7 @@ class Autoload
             $this->paths = array_values($config['paths']);
         }
 
-        if (isset($config['map']) && !empty($config['map'])) {
+        if (isset($config['map']) && !empty($config['map']) && is_array($config['map'])) {
             $this->classMap = $config['map'];
         }
 
@@ -123,7 +125,7 @@ class Autoload
 
     /**
      * Register library paths
-     * @param array $paths
+     * @param array<int,string> $paths
      * @return void
      */
     public function registerPaths(array $paths): void
@@ -218,7 +220,7 @@ class Autoload
 
     /**
      * Load class map
-     * @param array $data
+     * @param array<string> $data
      * @return void
      */
     public function setMap(array $data): void
@@ -228,7 +230,7 @@ class Autoload
 
     /**
      * Add class map
-     * @param array $data
+     * @param array<string> $data
      * @return void
      */
     public function addMap(array $data): void
@@ -241,7 +243,7 @@ class Autoload
     /**
      * Debug function.
      * Shows loaded class files
-     * @return array
+     * @return array<string>
      */
     public function getLoadedClasses(): array
     {
@@ -250,7 +252,7 @@ class Autoload
 
     /**
      * Get list of registered autoload paths
-     * @return array
+     * @return array<string>
      */
     public function getRegisteredPaths(): array
     {

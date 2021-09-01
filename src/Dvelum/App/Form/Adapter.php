@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -38,28 +39,28 @@ abstract class Adapter
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
     /**
-     * @var array
+     * @var Form\Error[] $errors
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
-     * @var ConfigInterface $config
+     * @var ConfigInterface<int|string,mixed> $config
      */
-    protected $config;
+    protected ConfigInterface $config;
     /**
      * @var Lang\Dictionary
      */
-    protected $lang;
+    protected Lang\Dictionary $lang;
 
     /**
      * Adapter constructor.
      * @param Request $request
      * @param Lang\Dictionary $lang
-     * @param ConfigInterface $config
+     * @param ConfigInterface<int|string,mixed> $config
      */
-    public function __construct(Request $request , Lang\Dictionary $lang,  ConfigInterface $config)
+    public function __construct(Request $request, Lang\Dictionary $lang, ConfigInterface $config)
     {
         $this->lang = $lang;
         $this->request = $request;
@@ -69,7 +70,7 @@ abstract class Adapter
     /**
      * @return bool
      */
-    abstract public function validateRequest() : bool;
+    abstract public function validateRequest(): bool;
 
     /**
      * @return mixed
@@ -80,7 +81,7 @@ abstract class Adapter
      * Get list of errors
      * @return Form\Error[]
      */
-    public function getErrors() :array
+    public function getErrors(): array
     {
         return $this->errors;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,35 +26,37 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config;
 
 /**
  * Interface ConfigInterface
- * @package Dvelum\Config
+ * @extends  \ArrayAccess<string,mixed>
+ * @extends \Iterator<string,mixed>
  */
-interface ConfigInterface extends \ArrayAccess , \Iterator
+interface ConfigInterface extends \ArrayAccess, \Iterator
 {
     public function __construct(string $name);
 
     /**
      * Convert into an array
-     * @return array
+     * @return array<int|string,mixed>
      */
-    public function __toArray() : array;
+    public function __toArray(): array;
 
     /**
      * Get the number of elements
-     * @return integer
+     * @return int
      */
-    public function getCount() : int;
+    public function getCount(): int;
 
     /**
      * Get the configuration parameter
      * @param string $key — parameter name
-     * @throws \Exception
      * @return mixed
+     * @throws \Exception
      */
     public function get(string $key);
 
@@ -62,48 +65,49 @@ interface ConfigInterface extends \ArrayAccess , \Iterator
      * @param string $key
      * @param mixed $value
      */
-    public function set(string $key , $value) : void;
+    public function set(string $key, $value): void;
 
     /**
      * Set property values using an array
-     * @param array $data
+     * @param array<int|string,mixed> $data
      */
-    public function setData(array $data) : void;
+    public function setData(array $data): void;
 
     /**
      * Remove a parameter
      * @param string $key
-     * @return true
+     * @return void
      */
-    public function remove(string $key);
+    public function remove(string $key): void;
 
     /**
      * Get data handle
      * Hack method. Do not use it without understanding.
      * Get a direct link to the stored data array
-     * @return array
+     * @return array<int|string,mixed>
      */
-    public function & dataLink() : array;
+    public function & dataLink(): array;
 
     /**
      * Remove all parameters
      */
-    public function removeAll() : void;
+    public function removeAll(): void;
+
     /**
      * Get config name
      * @return string
      */
-    public function getName() : string;
+    public function getName(): string;
 
     /**
      * Get parent config identifier
      * @return string|null
      */
-    public function getParentId() : ?string;
+    public function getParentId(): ?string;
 
     /**
      * Set parent configuration identifier
      * @param string|null $id
      */
-    public function setParentId(?string $id) :void;
+    public function setParentId(?string $id): void;
 }

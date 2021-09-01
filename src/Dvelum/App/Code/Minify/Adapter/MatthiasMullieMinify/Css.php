@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -44,14 +45,14 @@ class Css implements AdapterInterface
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */
     public function minifyFiles(array $files, string $toFile): bool
     {
         $minifier = new Minify\CSS();
-        foreach ($files as $file){
+        foreach ($files as $file) {
             $minifier->add($file);
         }
         $minifier->minify($toFile);

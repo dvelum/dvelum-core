@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,26 +26,27 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
 class Filter
 {
-    const FILTER_ARRAY = 'array';
-    const FILTER_BOOLEAN = 'bool';
-    const FILTER_INTEGER = 'int';
-    const FILTER_FLOAT = 'float';
-    const FILTER_STRING = 'str';
-    const FILTER_CLEANED_STR = 'cleaned_string';
-    const FILTER_EMAIL = 'email';
-    const FILTER_ALPHANUM = 'alphanum';
-    const FILTER_NUM = 'num';
-    const FILTER_ALPHA = 'alpha';
-    const FILTER_LOGIN = 'login';
-    const FILTER_PAGECODE = 'pagecode';
-    const FILTER_RAW = 'raw';
-    const FILTER_URL = 'url';
+    public const FILTER_ARRAY = 'array';
+    public const FILTER_BOOLEAN = 'bool';
+    public const FILTER_INTEGER = 'int';
+    public const FILTER_FLOAT = 'float';
+    public const FILTER_STRING = 'str';
+    public const FILTER_CLEANED_STR = 'cleaned_string';
+    public const FILTER_EMAIL = 'email';
+    public const FILTER_ALPHANUM = 'alphanum';
+    public const FILTER_NUM = 'num';
+    public const FILTER_ALPHA = 'alpha';
+    public const FILTER_LOGIN = 'login';
+    public const FILTER_PAGECODE = 'pagecode';
+    public const FILTER_RAW = 'raw';
+    public const FILTER_URL = 'url';
     /**
      * @var bool
      */
@@ -55,7 +57,7 @@ class Filter
      * @param string $string
      * @return string
      */
-    static public function filterString(string $string) : string
+    public static function filterString(string $string): string
     {
         return trim(strip_tags($string));
     }
@@ -66,79 +68,81 @@ class Filter
      * @param mixed $value
      * @return mixed
      */
-    static public function filterValue(string $filter, $value)
+    public static function filterValue(string $filter, $value)
     {
         $filter = strtolower($filter);
         switch ($filter) {
-            case 'array' :
+            case 'array':
                 if (!is_array($value)) {
-                    if(!empty($value)){
+                    if (!empty($value)) {
                         $value = [$value];
-                    }else{
+                    } else {
                         $value = [];
                     }
                 }
                 break;
-            case 'bool' :
-            case 'boolean' :
+            case 'bool':
+            case 'boolean':
                 $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
                 break;
-            case 'int' :
-            case 'integer' :
+            case 'int':
+            case 'integer':
                 $value = intval($value);
                 break;
-            case 'float' :
-            case 'decimal' :
-            case 'number' :
-                $value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT,
-                    FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
+            case 'float':
+            case 'decimal':
+            case 'number':
+                $value = filter_var(
+                    $value,
+                    FILTER_SANITIZE_NUMBER_FLOAT,
+                    FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND
+                );
                 if (is_string($value) && self::$autoConvertFloatSeparator) {
                     $value = str_replace(',', '.', $value);
                 }
                 $value = floatval($value);
                 break;
-            case 'str' :
-            case 'string' :
-            case 'text' :
+            case 'str':
+            case 'string':
+            case 'text':
                 $value = trim((string)filter_var($value, FILTER_SANITIZE_STRING));
                 break;
 
-            case 'cleaned_string' :
+            case 'cleaned_string':
                 $value = trim((string)filter_var($value, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
                 break;
 
-            case 'email' :
+            case 'email':
                 $value = filter_var($value, FILTER_SANITIZE_EMAIL);
                 break;
 
-            case 'url' :
+            case 'url':
                 $value = filter_var($value, FILTER_SANITIZE_URL);
                 break;
 
-            case 'raw' :
+            case 'raw':
                 break;
-            case 'alphanum' :
+            case 'alphanum':
                 $value = preg_replace("/[^A-Za-z0-9_]/i", '', $value);
                 break;
-            case 'num'    :
+            case 'num':
                 $value = preg_replace("/[^0-9]/i", '', $value);
                 break;
-            case 'login' :
+            case 'login':
                 $value = preg_replace("/[^A-Za-z0-9_@\.\-]/i", '', $value);
                 break;
-            case 'pagecode' :
-                $value = preg_replace("/[^a-z0-9_-]/i", '', strtolower((string) $value));
-                $value = str_replace(' ', "-", (string) $value);
+            case 'pagecode':
+                $value = preg_replace("/[^a-z0-9_-]/i", '', strtolower((string)$value));
+                $value = str_replace(' ', "-", (string)$value);
                 break;
 
-            case 'alpha' :
+            case 'alpha':
                 $value = preg_replace("/[^A-Za-z]/i", '', $value);
                 break;
 
-            default :
+            default:
                 $value = intval($value);
                 break;
-
         }
         return $value;
     }

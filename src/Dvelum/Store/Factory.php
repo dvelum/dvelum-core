@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -30,19 +31,19 @@ declare(strict_types=1);
 
 namespace Dvelum\Store;
 
-
 /**
  * Store Factory
  * @author Kirill Egorov 2010
  */
 class Factory
 {
-    const LOCAL = 1;
-    const SESSION = 2;
+    public const LOCAL = 1;
+    public const SESSION = 2;
+
     /**
-     * @var array
+     * @var array<int,array<string,AdapterInterface>>
      */
-    static protected $instances = [];
+    protected static array $instances = [];
 
     /**
      * Store factory
@@ -51,15 +52,15 @@ class Factory
      * @return AdapterInterface
      * @throws \Exception
      */
-    static public function get($type = self::LOCAL, $name = 'default'): AdapterInterface
+    public static function get(int $type = self::LOCAL, string $name = 'default'): AdapterInterface
     {
         switch ($type) {
-            case self::LOCAL :
+            case self::LOCAL:
                 if (!isset(self::$instances[$type][$name])) {
                     self::$instances[$type][$name] = new \Dvelum\Store\Local($name);
                 }
                 return self::$instances[$type][$name];
-            case self::SESSION :
+            case self::SESSION:
                 if (!isset(self::$instances[$type][$name])) {
                     self::$instances[$type][$name] = new \Dvelum\Store\Session($name);
                 }

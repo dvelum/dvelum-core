@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,31 +26,54 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
 use Dvelum\Config\Storage\File\AsArray;
 use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Lang\Dictionary;
+use http\Exception\RuntimeException;
+use Psr\Container\ContainerInterface;
 
 class Lang
 {
     /**
      * @var string
      */
-    protected $defaultDictionary = '';
+    protected string $defaultDictionary = '';
+
+    protected StorageInterface $storage;
     /**
-     * @var AsArray
+     * @var array<string, Lang\Dictionary>
      */
-    protected $storage;
+    protected array $dictionaries = [];
     /**
-     * @var array
+     * @var array<string,array{src:string,type:int}>
      */
-    protected $dictionaries = [];
+    protected array $loaders = [];
+
     /**
-     * @var array
+     * @param StorageInterface $storage
+     * @param string|null $defaultDictionary
+     * @param array<int,array{name:string,src:string,type:int}> $loaders
+     * @throws \Exception
      */
-    protected $loaders = [];
+    public function __construct(StorageInterface $storage, ?string $defaultDictionary = null, array $loaders = [])
+    {
+        $this->storage = $storage;
+
+        if (!empty($loaders)) {
+            foreach ($loaders as $item) {
+                $this->addLoader($item['name'], $item['src'], $item['type']);
+            }
+        }
+
+        if ($defaultDictionary !== null) {
+            $this->setDefaultDictionary($defaultDictionary);
+        }
+    }
 
     /**
      * Set default localization
@@ -87,36 +111,20 @@ class Lang
 
     /**
      * Add localization loader
-     * Backward compatibility
      * @param string $name - dictionary name
      * @param mixed $src - dictionary source
      * @param int $type - Config constant
      */
-    static public function addDictionaryLoader(string $name, $src, int $type = Config\Factory::File_Array): void
-    {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        $langService->addLoader($name, $src, $type);
-    }
-
-    /**
-     * Add localization loader
-     * @param string $name - dictionary name
-     * @param mixed $src - dictionary source
-     * @param int $type - Config constant
-     */
-    public function addLoader(string $name, $src, int $type = Config\Factory::File_Array): void
+    public function addLoader(string $name, $src, int $type = Config\Factory::FILE_ARRAY): void
     {
         $this->loaders[$name] = array('src' => $src, 'type' => $type);
     }
 
     /**
      * Get localization dictionary by localization name or get default dictionary
-     * @param string $name optional,
-     * @throws \Exception
+     * @param string|null $name optional,
      * @return Lang\Dictionary
+     * @throws \Exception
      */
     public function getDictionary(?string $name = null): Lang\Dictionary
     {
@@ -132,25 +140,9 @@ class Lang
             throw new \Exception('Lang::lang Dictionary "' . $name . '" is not found');
         }
 
-        $this->dictionaries[$name] = new Lang\Dictionary($name, $this->loaders[$name]);
+        $this->dictionaries[$name] = new Lang\Dictionary($name, $this->loaders[$name], $this->getStorage());
 
         return $this->dictionaries[$name];
-    }
-
-    /**
-     * Get link to localization dictionary by localization name or
-     * get default dictionary
-     * @param string $name optional,
-     * @throws \Exception
-     * @return Lang\Dictionary
-     */
-    static public function lang(?string $name = null): Lang\Dictionary
-    {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        return $langService->getDictionary($name);
     }
 
     /**
@@ -159,22 +151,31 @@ class Lang
      */
     public function getStorage(): StorageInterface
     {
-        if (!isset($this->storage)) {
-            $this->storage = new Config\Storage\File\AsArray();
-        }
         return $this->storage;
     }
 
     /**
-     * Get configuration storage
-     * @return StorageInterface
+     * @param ContainerInterface $di
+     * @deprecated
      */
-    static public function storage(): StorageInterface
+    private static ContainerInterface $di;
+
+    /**
+     * @param ContainerInterface $di
+     * @deprecated
+     */
+    public static function setContainer(ContainerInterface $di): void
     {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        return $langService->getStorage();
+        self::$di = $di;
+    }
+
+    /**
+     * @param string|null $lang
+     * @return Dictionary
+     * @deprecated
+     */
+    public static function lang(?string $lang = null): Dictionary
+    {
+        return self::$di->get(\Dvelum\Lang::class)->getDictionary($lang);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Localization;
@@ -33,7 +35,7 @@ use Dvelum\Config\ConfigInterface;
 use Dvelum\Config\Factory;
 use Dvelum\Service;
 use Dvelum\Lang;
-use \Exception;
+use Exception;
 
 /**
  * Class Manager
@@ -42,51 +44,57 @@ use \Exception;
 class Manager
 {
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
      * Message language
      * @var Lang\Dictionary
      */
-    protected $lang;
+    protected Lang\Dictionary $lang;
     /**
      * @var string
      */
-    protected $indexLanguage = 'en';
+    protected string $indexLanguage = 'en';
 
     /**
      * Localizations file path
-     * @var array
+     * @var array<int,string>
      */
-    protected $langsPaths;
+    protected array $langsPaths;
+
+    protected Lang $langService;
 
     /**
-     * @param ConfigInterface $appConfig
+     * @param ConfigInterface<string,mixed> $appConfig
      */
-    public function __construct(ConfigInterface $appConfig)
+    public function __construct(ConfigInterface $appConfig, Lang $lang)
     {
+        $this->langService = $lang;
         $this->appConfig = $appConfig;
-        $this->langsPaths = Lang::storage()->getPaths();
-        $this->lang = Lang::lang();
+        $this->langsPaths = $lang->getStorage()->getPaths();
+        $this->lang = $lang->getDictionary();
     }
 
     /**
      * Get list of system languages
      * @param bool $onlyMain - optional. Get only global locales without subpackages
-     * @return array
+     * @return array<int,string>
      */
-    public function getLangs($onlyMain = true) : array
+    public function getLangs(bool $onlyMain = true): array
     {
-        $langStorage = Lang::storage();
+        $langStorage = $this->langService->getStorage();
         $langs = $langStorage->getList(false, !$onlyMain);
         $paths = $langStorage->getPaths();
 
         $data = [];
         foreach ($langs as $file) {
             $file = str_replace($paths, '', $file);
-            if (strpos($file, 'index') === false && basename($file) !== 'objects.php' && strpos($file,
-                    '/objects/') == false) {
+            if (
+                strpos($file, 'index') === false &&
+                basename($file) !== 'objects.php' &&
+                strpos($file, '/objects/') == false
+            ) {
                 $data[] = substr($file, 0, -4);
             }
         }
@@ -97,7 +105,7 @@ class Manager
      * Rebuild all localization indexes
      * @return void
      */
-    public function rebuildAllIndexes() : void
+    public function rebuildAllIndexes(): void
     {
         $this->rebuildIndex(false);
         $sub = $this->getSubPackages();
@@ -109,9 +117,9 @@ class Manager
     /**
      * Get language subpackages
      * @param string|bool $lang - optional
-     * @return array
+     * @return array<int,string>
      */
-    public function getSubPackages($lang = false)
+    public function getSubPackages($lang = false): array
     {
         $data = [];
 
@@ -125,7 +133,7 @@ class Manager
             $lang = false;
         }
 
-        $langs = Lang::storage()->getList($lang, false);
+        $langs = $this->langService->getStorage()->getList($lang, false);
 
         foreach ($langs as $file) {
             if (basename($file) !== 'objects.php') {
@@ -137,15 +145,11 @@ class Manager
 
     /**
      * Get list of sub dictionaries (names only)
-     * @return array
+     * @return array<int,string>
      */
-    public function getSubDictionaries() : array
+    public function getSubDictionaries(): array
     {
-        /**
-         * @var Lang $langService
-         */
-        $langService = Service::get('lang');
-        $language = $langService->getDefaultDictionary();
+        $language = $this->langService->getDefaultDictionary();
 
         $result = $this->getSubPackages($language);
 
@@ -162,10 +166,10 @@ class Manager
     /**
      * Rebuild language index
      * @param string | bool $subPackage - optional
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
-    public function rebuildIndex($subPackage = false) : void
+    public function rebuildIndex($subPackage = false): void
     {
         $indexFile = '';
 
@@ -177,25 +181,25 @@ class Manager
             $indexBaseName = $this->indexLanguage . '/' . $subPackage . '.php';
         }
 
-        try{
-            $indexBase = Lang::storage()->get($indexBaseName);
-        }catch (\Throwable $e){
+        try {
+            $indexBase = $this->langService->getStorage()->get($indexBaseName);
+        } catch (\Throwable $e) {
             throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $indexBaseName);
         }
 
         $baseKeys = array_keys($indexBase->__toArray());
-
-        $indexPath = Lang::storage()->getPath($indexName);
-        $writePath = Lang::storage()->getWrite();
+        $storage = $this->langService->getStorage();
+        $indexPath = $storage->getPath($indexName);
+        $writePath = $storage->getWrite();
         if (!file_exists((string)$indexPath) && !file_exists($writePath . $indexName)) {
             if (!\Dvelum\Utils::exportArray($writePath . $indexFile, [])) {
                 throw new Exception($this->lang->get('CANT_WRITE_FS') . ' ' . $writePath . $indexName);
             }
         }
-        $storage = Lang::storage();
-        try{
+
+        try {
             $indexConfig = $storage->get($indexName);
-        }catch (\Throwable $e){
+        } catch (\Throwable $e) {
             throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $indexName);
         }
 
@@ -211,7 +215,7 @@ class Manager
      * @param string $dictionary
      * @return string
      */
-    public function getIndexName($dictionary = '') : string
+    public function getIndexName($dictionary = ''): string
     {
         return str_replace('/', '_', $dictionary) . '_index.php';
     }
@@ -219,14 +223,14 @@ class Manager
     /**
      * Get dictionary_index
      * @param string $dictionary
-     * @return bool|array
+     * @return array<int|string,mixed>|false
      */
-    public function getIndex($dictionary = '')
+    public function getIndex(string $dictionary = '')
     {
         $subPackage = basename($dictionary);
         $indexName = $this->getIndexName($subPackage);
 
-        $indexFile = Lang::storage()->getPath($indexName);
+        $indexFile = $this->langService->getStorage()->getPath($indexName);
 
         if (!file_exists((string)$indexFile)) {
             return false;
@@ -243,24 +247,24 @@ class Manager
 
     /**
      * Update index content
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @param string $dictionary - optional
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
-    public function updateIndex($data, $dictionary) : void
+    public function updateIndex(array $data, string $dictionary): void
     {
         $subPackage = basename($dictionary);
         $indexName = $this->getIndexName($subPackage);
 
-        $writePath = Lang::storage()->getWrite();
+        $writePath = $this->langService->getStorage()->getWrite();
 
         if (!file_exists($writePath . $indexName)) {
             if (!\Dvelum\Utils::exportArray($writePath . $indexName, [])) {
                 throw new Exception($this->lang->get('CANT_WRITE_FS') . ' ' . $writePath . $indexName);
             }
         }
-        $storage = Lang::storage();
+        $storage = $this->langService->getStorage();
         $indexConfig = $storage->get($indexName);
         $indexConfig->removeAll();
         $indexConfig->setData($data);
@@ -272,11 +276,12 @@ class Manager
     /**
      * Get localization config
      * @param string $dictionary
-     * @return array
+     * @return array{id:int|string,key:string,title:string,sync:bool}[]
+     * @phpstan-return array<int,array>
      */
-    public function getLocalization($dictionary) : array
+    public function getLocalization(string $dictionary): array
     {
-        $dictionaryData = Lang::storage()->get($dictionary . '.php')->__toArray();
+        $dictionaryData = $this->langService->getStorage()->get($dictionary . '.php')->__toArray();
 
         if (strpos($dictionary, '/') !== false) {
             $index = $this->getIndex($dictionary);
@@ -316,16 +321,16 @@ class Manager
      * Add key to localization index
      * @param string $key
      * @param string $dictionary
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
-    public function addToIndex($key, $dictionary = '') : void
+    public function addToIndex(string $key, string $dictionary = ''): void
     {
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
         $index = $this->getIndex($dictionary);
-        if(empty($index)){
+        if (empty($index)) {
             $index = [];
         }
 
@@ -340,16 +345,16 @@ class Manager
      * Remove key from localization index
      * @param string $key
      * @param string $dictionary
-     * @throws \Exception
      * @return void
+     * @throws \Exception
      */
-    public function removeFromIndex($key, $dictionary = '') : void
+    public function removeFromIndex($key, $dictionary = ''): void
     {
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
         $index = $this->getIndex($dictionary);
-        if(empty($index)){
+        if (empty($index)) {
             $index = [];
         }
 
@@ -368,11 +373,11 @@ class Manager
      * Add dictionary record
      * @param string $dictionary
      * @param string $key
-     * @param array $langs
-     * @throws Exception
+     * @param string[] $langs
      * @return void
+     * @throws Exception
      */
-    public function addRecord($dictionary, $key, array $langs) : void
+    public function addRecord($dictionary, $key, array $langs): void
     {
         $isSub = false;
         $dictionaryName = $dictionary;
@@ -390,9 +395,9 @@ class Manager
         }
 
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
-        if(empty($index)){
+        if (empty($index)) {
             $index = [];
         }
 
@@ -405,14 +410,14 @@ class Manager
             }
         }
 
-        $writePath = Lang::storage()->getWrite();
-        $storage = Lang::storage();
+        $writePath = $this->langService->getStorage()->getWrite();
+        $storage = $this->langService->getStorage();
         if (!$isSub) {
             foreach ($langs as $langName => $value) {
                 $langFile = $writePath . $langName . '.php';
-                try{
+                try {
                     $langConfig = $storage->get($langName . '.php');
-                }catch (\Throwable $e){
+                } catch (\Throwable $e) {
                     throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $langName);
                 }
                 $langConfig->set($key, $value);
@@ -420,13 +425,12 @@ class Manager
                     throw new Exception($this->lang->get('CANT_WRITE_FS') . ' ' . $langFile);
                 }
             }
-
         } else {
             foreach ($langs as $langName => $value) {
                 $langFile = $writePath . $langName . '/' . $dictionaryName . '.php';
-                try{
-                    $langConfig = Lang::storage()->get($langName . '/' . $dictionaryName . '.php');
-                }catch (\Throwable $e){
+                try {
+                    $langConfig = $this->langService->getStorage()->get($langName . '/' . $dictionaryName . '.php');
+                } catch (\Throwable $e) {
                     throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $langName . '/' . $dictionaryName);
                 }
                 $langConfig->set($key, $value);
@@ -442,23 +446,22 @@ class Manager
      * @param string $file
      * @return bool
      */
-    protected function checkCanEdit($file) : bool
+    protected function checkCanEdit(string $file): bool
     {
         if (file_exists($file) && is_writable($file)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
      * Remove key from localizations
      * @param string $dictionary
      * @param string $key
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
-    public function removeRecord($dictionary, $key) : void
+    public function removeRecord(string $dictionary, string $key): void
     {
         $isSub = false;
 
@@ -466,7 +469,7 @@ class Manager
             $tmp = explode('/', $dictionary);
             $dictionaryName = $tmp[1];
             $isSub = true;
-        }else{
+        } else {
             $dictionaryName = $dictionary;
         }
 
@@ -478,14 +481,15 @@ class Manager
 
         $mainLangs = $this->getLangs(true);
 
-        $writePath = Lang::storage()->getWrite();
-        $storage = Lang::storage();
+        $storage = $this->langService->getStorage();
+        $writePath = $storage->getWrite();
+
         if (!$isSub) {
             foreach ($mainLangs as $langName) {
                 $langFile = $writePath . $langName . '.php';
-                try{
-                    $langConfig = Lang::storage()->get($langName . '.php');
-                }catch (\Throwable $e){
+                try {
+                    $langConfig = $storage->get($langName . '.php');
+                } catch (\Throwable $e) {
                     throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $langName);
                 }
 
@@ -497,9 +501,9 @@ class Manager
         } else {
             foreach ($mainLangs as $langName) {
                 $langFile = $writePath . $langName . '/' . $dictionaryName . '.php';
-                try{
-                    $langConfig = Lang::storage()->get($langName . '/' . $dictionaryName . '.php');
-                }catch (\Throwable $e){
+                try {
+                    $langConfig = $storage->get($langName . '/' . $dictionaryName . '.php');
+                } catch (\Throwable $e) {
                     throw new Exception($this->lang->get('CANT_LOAD') . ' ' . $langName . '/' . $dictionaryName);
                 }
 
@@ -514,32 +518,31 @@ class Manager
     /**
      * Update localization records
      * @param string $dictionary
-     * @param array $data
-     * @throws Exception
+     * @param array<int|string,mixed> $data
      * @return void
+     * @throws Exception
      */
-    public function updateRecords($dictionary, $data) : void
+    public function updateRecords(string $dictionary, array $data): void
     {
-        $writePath = Lang::storage()->getWrite() . $dictionary . '.php';
+        $writePath = $this->langService->getStorage()->getWrite() . $dictionary . '.php';
 
-        $langConfig = Lang::storage()->get($dictionary . '.php');
+        $langConfig = $this->langService->getStorage()->get($dictionary . '.php');
 
         foreach ($data as $rec) {
             $langConfig->set($rec['id'], $rec['title']);
         }
 
-        $storage = Lang::storage();
-        if (!$storage->save($langConfig)) {
+        if (!$this->langService->getStorage()->save($langConfig)) {
             throw new Exception($this->lang->get('CANT_WRITE_FS') . ' ' . $writePath);
         }
     }
 
     /**
-     * Check if dictionary exists (only sub dictionaies not languages)
+     * Check if dictionary exists (only sub dictionaries not languages)
      * @param string $name
      * @return bool
      */
-    public function dictionaryExists($name) : bool
+    public function dictionaryExists(string $name): bool
     {
         $list = $this->getSubDictionaries();
 
@@ -553,12 +556,12 @@ class Manager
     /**
      * Create sub dictionary
      * @param string $name
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
-    public function createDictionary($name) : void
+    public function createDictionary(string $name): void
     {
-        $writePath = Lang::storage()->getWrite();
+        $writePath = $this->langService->getStorage()->getWrite();
         $indexPath = $writePath . $this->getIndexName($name);
 
         $indexLocation = dirname($indexPath);
@@ -593,22 +596,22 @@ class Manager
      * @return void
      * @throw Exception
      */
-    public function compileLangFiles() : void
+    public function compileLangFiles(): void
     {
-        $jsPath = $this->appConfig->get('js_lang_path');;
+        $jsPath = $this->appConfig->get('js_lang_path');
         $langs = $this->getLangs(false);
 
         /**
          * @var Lang $langService
          */
-        $langService = Service::get('lang');
+        $langService = $this->langService;
 
         $exceptDirs = ['objects', 'modules'];
 
         foreach ($langs as $lang) {
             $name = $lang;
 
-            $langService->addLoader($name, $lang . '.php', Factory::File_Array);
+            $langService->addLoader($name, $lang . '.php', Factory::FILE_ARRAY);
 
             $filePath = $jsPath . $lang . '.js';
 

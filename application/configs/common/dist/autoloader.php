@@ -19,16 +19,8 @@ return [
     // PSR-4 autoload paths
     'psr-4' =>[
         'Psr\\Log'=>'./vendor/psr/log/Psr/Log',
-
-        'Laminas\\Stdlib' => './vendor/laminas/zend-stdlib/src',
-        'Laminas\\Db' => './vendor/laminas/zend-db/src',
-        'Laminas\\Mail' => './vendor/laminas/zend-mail/src',
-        'Laminas\\Mime' => './vendor/laminas/zend-mime/src',
-        'Laminas\\Validator' => './vendor/laminas/zend-validator/src',
-        'Laminas\\Loader' => './vendor/laminas/zend-loader/src',
-
-        'MatthiasMullie\\Minify' => './vendor/matthiasmullie/minify/src',
-        'MatthiasMullie\\PathConverter' => './vendor/matthiasmullie/path-converter/src'
+        'Dvelum\\Db' => './vendor/dvelum/db/src',
+        'Dvelum\\Cache' => './vendor/dvelum/cache/src',
     ],
     // Paths to be excluded from class map
     'noMap' =>[

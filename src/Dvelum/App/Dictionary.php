@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,22 +26,32 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App;
 
 use Dvelum\App\Dictionary\DictionaryInterface;
-use Dvelum\Service;
+use Dvelum\App\Dictionary\Service;
+use Psr\Container\ContainerInterface;
 
 class Dictionary
 {
+    private static ContainerInterface $container;
+
+    public static function setContainer(ContainerInterface $container): void
+    {
+        self::$container = $container;
+    }
+
     /**
      * @param string $name
      * @return DictionaryInterface
      * @throws \Exception
+     * @deprecated
      */
-    static public function factory(string $name): DictionaryInterface
+    public static function factory(string $name): DictionaryInterface
     {
-        return Service::get('dictionary')->get($name);
+        return self::$container->get(Service::class)->get($name);
     }
 }

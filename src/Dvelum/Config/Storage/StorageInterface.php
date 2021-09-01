@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config\Storage;
@@ -33,14 +35,20 @@ use Dvelum\Config\ConfigInterface;
 
 interface StorageInterface
 {
-    public function get(string $localPath , bool $useCache = true , bool $merge = true) : ConfigInterface;
+    /**
+     * @param string $localPath
+     * @param bool $useCache
+     * @param bool $merge
+     * @return ConfigInterface<int|string,mixed>
+     */
+    public function get(string $localPath, bool $useCache = true, bool $merge = true): ConfigInterface;
 
     /**
      * Create new config file
      * @param string $id
-     * @return boolean
+     * @return bool
      */
-    public function create(string $id) : bool;
+    public function create(string $id): bool;
 
     /**
      * Find path for config file (no merge)
@@ -53,77 +61,77 @@ interface StorageInterface
      * Get list of available configs
      * @param string|bool $path - optional, default false
      * @param bool $recursive - optional, default false
-     * @return array
+     * @return array<int|string|int,mixed>
      */
-    public function getList($path = false, $recursive = false) : array;
+    public function getList($path = false, bool $recursive = false): array;
 
     /**
      * Check if config file exists
      * @param string $localPath
      * @return bool
      */
-    public function exists(string $localPath) : bool;
+    public function exists(string $localPath): bool;
 
     /**
      * Get storage paths
-     * @return array
+     * @return array<int,string>
      */
-    public function getPaths() : array;
+    public function getPaths(): array;
 
     /**
      * Add config path
      * @param string $path
      * @return void
      */
-    public function addPath(string $path) : void;
+    public function addPath(string $path): void;
 
     /**
      * Prepend config path
      * @param string $path
      * @return void
      */
-    public function prependPath(string $path) : void;
+    public function prependPath(string $path): void;
 
     /**
      * Get write path
      * @return string
      */
-    public function getWrite() : string;
+    public function getWrite(): string;
 
     /**
      * Get src file path (to apply)
      * @return string
      */
-    public function getApplyTo() : string;
+    public function getApplyTo(): string;
 
     /**
      * Get debug information. (loaded configs)
-     * @return array
+     * @return array<int,string>
      */
-    public function getDebugInfo() : array;
+    public function getDebugInfo(): array;
 
     /**
      * Set configuration options
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
-    public function setConfig(array $options) : void;
+    public function setConfig(array $options): void;
 
     /**
      * Save configuration data
-     * @param ConfigInterface $config
+     * @param ConfigInterface<int|string,mixed> $config
      * @return bool
      */
-    public function save(ConfigInterface $config) : bool;
+    public function save(ConfigInterface $config): bool;
 
     /**
      * Reset cached configs
      */
-    public function resetConfigCache() : void;
+    public function resetConfigCache(): void;
 
     /**
      * Replace paths data
-     * @param array $paths
+     * @param array<int,string> $paths
      */
     public function replacePaths(array $paths): void;
 }

@@ -1,71 +1,49 @@
 <?php
+
 /**
- * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
+ *  DVelum project https://github.com/dvelum/dvelum , https://github.com/k-samuel/dvelum , http://dvelum.net
+ *  Copyright (C) 2011-2019  Kirill Yegorov
  *
- * MIT License
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
 use Dvelum\Template\Engine\EngineInterface;
-use Dvelum\Template\Storage;
+use Dvelum\Template\Service;
+use Psr\Container\ContainerInterface;
 
 /**
- * View class
- * @author Kirill A Egorov 2011
+ * Class View
+ * Backward compatibility
+ * @package Dvelum
+ * @deprecated
  */
 class View
 {
-    /**
-     * @return EngineInterface
-     * @throws \Exception
-     */
-    static public function factory() : EngineInterface
+    private static ContainerInterface $di;
+
+    public static function setContainer(ContainerInterface $di): void
     {
-        /**
-         * Runtime call optimization
-         * @var Template\Service $service
-         */
-        static $service = false;
-        if(empty($service)){
-            $service = Service::get('template');
-        }
-        return $service->getTemplate();
+        self::$di = $di;
     }
 
-    /**
-     * Get Templates storage
-     * @return Storage
-     */
-    static public function storage() : Storage
+    public static function factory(): EngineInterface
     {
-        static $store = false;
-
-        if(!$store){
-            $store = new Storage();
-        }
-        return $store;
+        return self::$di->get(Service::class)->getTemplate();
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,10 +26,14 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Tree;
 
+/**
+ * @implements \ArrayAccess<string,mixed>
+ */
 class Item implements \ArrayAccess
 {
     /**
@@ -40,13 +45,13 @@ class Item implements \ArrayAccess
      */
     protected $parent;
     /**
-     * @var array
+     * @var mixed $data
      */
     protected $data;
     /**
      * @var int|null
      */
-    protected $order;
+    protected ?int $order;
 
     /**
      * Item constructor.
@@ -128,9 +133,10 @@ class Item implements \ArrayAccess
     }
 
     /**
-     * @return array
+     * @phpstan-return  array{id:int|string,parent:int|string,data:array,order:int|null}
+     * @return array<string,mixed>
      */
-    public function __toArray() : array
+    public function __toArray(): array
     {
         return [
             'id' => $this->id,
@@ -141,6 +147,7 @@ class Item implements \ArrayAccess
     }
 
     // ====== Start of ArrayAccess implementation =========
+
     /**
      * @param mixed $offset
      * @return bool
@@ -164,7 +171,7 @@ class Item implements \ArrayAccess
      * @param mixed $value
      * @return void
      */
-    public function offsetSet($offset, $value) : void
+    public function offsetSet($offset, $value): void
     {
         $this->$offset = $value;
     }
@@ -173,7 +180,7 @@ class Item implements \ArrayAccess
      * @param mixed $offset
      * @return void
      */
-    public function offsetUnset($offset) : void
+    public function offsetUnset($offset): void
     {
         $this->$offset = null;
     }

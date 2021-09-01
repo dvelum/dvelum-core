@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Cache;
@@ -34,9 +36,9 @@ use Dvelum\Cache\CacheInterface;
 class Manager
 {
     /**
-     * @var array
+     * @var array<string,CacheInterface> $connections
      */
-    static protected $connections = [];
+    protected static array $connections = [];
 
     /**
      * Register cache adapter
@@ -44,42 +46,44 @@ class Manager
      * @param CacheInterface $cache
      * @return void
      */
-    public function register($name , CacheInterface $cache) : void
+    public function register(string $name, CacheInterface $cache): void
     {
         self::$connections[$name] = $cache;
     }
-    
+
     /**
      * Get cache adapter
      * @param string $name
-     * @return CacheInterface|bool
+     * @return ?CacheInterface
      */
     public function get(string $name)
     {
-        if(!isset(self::$connections[$name]))
-            return false;
-        else
+        if (!isset(self::$connections[$name])) {
+            return null;
+        } else {
             return self::$connections[$name];
+        }
     }
-    
+
     /**
      * Remove cache adapter
      * @param string $name
      * @return void
      */
-    public function remove(string $name) : void
+    public function remove(string $name): void
     {
-        if(!isset(self::$connections[$name]))
+        if (!isset(self::$connections[$name])) {
             return;
+        }
 
         unset(self::$connections[$name]);
     }
-    
+
     /**
      * Get list of registered adapters
-     * @return array
+     * @return CacheInterface[]<string,CacheInterface>
      */
-    public function getRegistered() : array
+    public function getRegistered(): array
     {
         return self::$connections;
     }
@@ -87,15 +91,12 @@ class Manager
     /**
      * Init Cache adapter by config
      * @param string $name
-     * @param array $config
-     * @return bool|CacheInterface
+     * @param array<string,mixed> $config
+     * @return CacheInterface
      */
-    public function connect(string $name, array $config)
+    public function connect(string $name, array $config): CacheInterface
     {
-        $cache = false;
-
-        if(isset($config['enabled']) && $config['enabled'])
-            $cache = new $config['backend']['name']($config['backend']['options']);
+        $cache = new $config['adapter']($config['options']);
 
         self::$connections[$name] = $cache;
 

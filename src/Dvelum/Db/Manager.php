@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -28,33 +29,35 @@
 
 declare(strict_types=1);
 
-namespace  Dvelum\Db;
+namespace Dvelum\Db;
 
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Application;
+use Exception;
 
 class Manager implements ManagerInterface
 {
     /**
-     * @var array
+     * @var array<string,array>
      */
-    protected $dbConnections = [];
+    protected array $dbConnections = [];
     /**
-     * @var array
+     * @var array<string,array>
      */
-    protected $dbConfigs = [];
+    protected array $dbConfigs = [];
     /**
      * @var callable $connectionErrorHandler
      */
     protected $connectionErrorHandler;
 
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
 
     /**
-     * @param ConfigInterface $appConfig - Application config (main)
+     * @param ConfigInterface<string,mixed> $appConfig - Application config (main)
      */
     public function __construct(ConfigInterface $appConfig)
     {
@@ -68,106 +71,111 @@ class Manager implements ManagerInterface
      * @param null|string $shard
      * @return Adapter
      */
-    public function getDbConnection(string $name, ?string $workMode = null, ?string $shard = null) : Adapter
+    public function getDbConnection(string $name, ?string $workMode = null, ?string $shard = null): Adapter
     {
-        if(empty($workMode)){
+        if (empty($workMode)) {
             $workMode = $this->appConfig->get('development');
         }
 
-        if(empty($shard)){
+        if (empty($shard)) {
             $shardKey = '1';
-        }else{
+        } else {
             $shardKey = $shard;
         }
 
-        if(!isset($this->dbConnections[$workMode][$name][$shardKey]))
-        {
+        if (!isset($this->dbConnections[$workMode][$name][$shardKey])) {
             $cfg = $this->getDbConfig($name);
 
-            $cfg->set('driver', $cfg->get('adapter'));
+            $cfg['driver'] = $cfg['adapter'];
             /*
              * Enable Db profiler for development mode Attention! Db Profiler causes
              * memory leaks at background tasks. (Dev mode)
              */
-            if($this->appConfig->get('development') && $this->appConfig->offsetExists('use_db_profiler') && $this->appConfig->get('use_db_profiler')){
-                $cfg->set('profiler' , true);
+            if (
+                $this->appConfig->get('development') &&
+                $this->appConfig->offsetExists('use_db_profiler') && $this->appConfig->get('use_db_profiler')
+            ) {
+                $cfg['profiler'] = true;
             }
 
-            if(!empty($shard)) {
-               throw new \Exception('Orm Db manager is not installed');
+            if (!empty($shard)) {
+                throw new \Exception('Orm Db manager is not installed');
             }
 
-            $db = $this->initConnection($cfg->__toArray());
+            $db = $this->initConnection($cfg);
             $this->dbConnections[$workMode][$name][$shardKey] = $db;
         }
         return $this->dbConnections[$workMode][$name][$shardKey];
     }
 
     /**
-     * @param array $cfg
+     * @param array<string,mixed> $cfg
      * @return Adapter
      * @throws \Exception
      */
-    public function initConnection(array $cfg) : Adapter
+    public function initConnection(array $cfg): Adapter
     {
         $db = new Adapter($cfg);
         $isDevMode = $this->appConfig->get('development');
 
-        $initFunction = function(\Dvelum\Db\Adapter\Event $e) use ($db, $isDevMode, $cfg){
-            if($isDevMode){
+        $initFunction = function (\Dvelum\Db\Adapter\Event $e) use ($db, $isDevMode, $cfg) {
+            if ($isDevMode) {
                 $profiler = $db->getProfiler();
-                if(!empty($profiler)){
-                    \Dvelum\Debug::addDbProfiler($profiler);
+                if (!empty($profiler)) {
+                    \Dvelum\Debug::instance()->addDbProfiler($profiler);
                 }
             }
 
             /*
              * Set transaction isolation level
              */
-            if(isset($cfg['transactionIsolationLevel'])){
+            if (isset($cfg['transactionIsolationLevel'])) {
                 $level = $cfg['transactionIsolationLevel'];
-                if(!empty($level) && $level!=='default'){
-                    $db->query('SET TRANSACTION ISOLATION LEVEL '.$level);
+                if (!empty($level) && $level !== 'default') {
+                    $db->query('SET TRANSACTION ISOLATION LEVEL ' . $level);
                 }
             }
         };
 
-        $db->on(Adapter::EVENT_INIT , $initFunction);
-        if(is_callable($this->connectionErrorHandler)){
+        $db->on(Adapter::EVENT_INIT, $initFunction);
+        if (is_callable($this->connectionErrorHandler)) {
             $db->on(Adapter::EVENT_CONNECTION_ERROR, $this->connectionErrorHandler);
         }
         return $db;
     }
+
     /**
      * Get Db Connection config
      * @param string $name
      * @param string|null $workMode
+     * @return array{host:string,username:string,password:string,dbname:string,driver:string,adapter:string,transactionIsolationLevel:string,port:int,prefix:string,charset:string}
      * @throws \Exception
-     * @return ConfigInterface
+     * @phpstan-return array<string,string|int>
      */
-    public function getDbConfig(string $name, ?string $workMode = null) : ConfigInterface
+    public function getDbConfig(string $name, ?string $workMode = null): array
     {
-        if(empty($workMode)){
+        if (empty($workMode)) {
             $workMode = $this->appConfig->get('development');
         }
 
-        if($workMode == \Dvelum\Application::MODE_INSTALL)
-            $workMode = \Dvelum\Application::MODE_DEVELOPMENT;
+        if ($workMode === Application::MODE_INSTALL) {
+            $workMode = Application::MODE_DEVELOPMENT;
+        }
 
-        if(!isset($this->dbConfigs[$workMode][$name]))
-        {
+        if (!isset($this->dbConfigs[$workMode][$name])) {
             $dbConfigPaths = $this->appConfig->get('db_configs');
 
-            if(!isset($dbConfigPaths[$workMode]))
-                throw new \Exception('Invalid application work mode ' . $workMode);
+            if (!isset($dbConfigPaths[$workMode])) {
+                throw new Exception('Invalid application work mode ' . $workMode);
+            }
 
-            $configPath = $dbConfigPaths[$workMode]['dir'].$name.'.php';
+            $configPath = $dbConfigPaths[$workMode]['dir'] . $name . '.php';
             $configData = include $configPath;
             $config = Config\Factory::create($configData, $configPath);
             $this->dbConfigs[$workMode][$name] = $config;
         }
 
-        return $this->dbConfigs[$workMode][$name];
+        return $this->dbConfigs[$workMode][$name]->__toArray();
     }
 
     /**
@@ -175,7 +183,7 @@ class Manager implements ManagerInterface
      * @param callable $handler
      * @return void
      */
-    public function setConnectionErrorHandler(callable $handler) : void
+    public function setConnectionErrorHandler(callable $handler): void
     {
         $this->connectionErrorHandler = $handler;
     }

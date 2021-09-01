@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,33 +26,30 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Template\Engine;
 
 use Dvelum\Cache\CacheInterface;
 use Dvelum\Config\ConfigInterface;
+use Dvelum\Config\Storage\StorageInterface;
+use Dvelum\Template\Storage;
 
 interface EngineInterface
 {
     /**
-     * Set template engine configuration options
-     * @param ConfigInterface $config
-     * @return void
-     */
-    public function setConfig(ConfigInterface $config) : void;
-
-    /**
-     * Set caching adapter
+     * @param ConfigInterface<string,mixed> $config
+     * @param Storage $storage
      * @param CacheInterface|null $cache
      */
-    public function setCache(?CacheInterface $cache): void;
+    public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache);
 
     /**
      * Set lifetime for cache data
      * @param int $sec
      */
-    public function setCacheLifetime(int $sec) : void;
+    public function setCacheLifetime(int $sec): void;
 
     /**
      * Get property
@@ -59,26 +57,29 @@ interface EngineInterface
      * @return mixed
      */
     public function get(string $name);
+
     /**
      * Get property
      * @param string $name
      * @return mixed
      */
     public function __get($name);
+
     /**
      * Set property
      * @param string $name
      * @param mixed $value
      * @return void
      */
-    public function set(string $name , $value) : void;
+    public function set(string $name, $value): void;
+
     /**
      * Set property
      * @param string $name
      * @param mixed $value
      * @return void
      */
-    public function __set($name , $value);
+    public function __set($name, $value);
 
     /**
      * @param string $name
@@ -96,46 +97,47 @@ interface EngineInterface
      * Empty template data
      * @return void
      */
-    public function clear() : void;
+    public function clear(): void;
 
     /**
      * Disable caching
      * @return void
      */
-    public function disableCache() : void;
+    public function disableCache(): void;
 
     /**
      * Enable caching
      * @return void
      */
-    public function enableCache() : void;
+    public function enableCache(): void;
 
     /**
      * Get template data
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getData() : array;
+    public function getData(): array;
 
     /**
      * Redefine template data using an associative key-value array,
      * old and new data merge
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
-    public function setData(array $data) : void;
+    public function setData(array $data): void;
 
     /**
      * Render current template
      * @param string $templatePath — the path to the template file
      * @return string
      */
-    public function render(string $templatePath) : string;
+    public function render(string $templatePath): string;
+
     /**
      * Render sub template
      * @param string $templatePath
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param bool|true $useCache
      * @return string
      */
-    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true) : string;
+    public function renderTemplate(string $templatePath, array $data = [], bool $useCache = true): string;
 }

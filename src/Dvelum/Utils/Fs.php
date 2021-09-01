@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Utils;
@@ -39,29 +41,31 @@ class Fs
      * @param bool $check
      * @return null|string
      */
-    static public function classFromPath(string $path, bool $check = false) : ?string
+    public static function classFromPath(string $path, bool $check = false): ?string
     {
         // windows path hack
-        $path = str_replace('\\','/', $path);
-        $path = str_replace('//','/', $path);
+        $path = str_replace('\\', '/', $path);
+        $path = str_replace('//', '/', $path);
 
-        if(File::getExt($path)!=='.php')
+        if (File::getExt($path) !== '.php') {
             return null;
+        }
 
         $path = substr($path, 0, -4);
 
-        if(strpos($path , ('../')) === 0)
+        if (strpos($path, ('../')) === 0) {
             $path = substr($path, 3);
-        elseif(strpos($path , ('./')) === 0)
+        } elseif (strpos($path, ('./')) === 0) {
             $path = substr($path, 2);
-        elseif(strpos($path , '/') === 0)
+        } elseif (strpos($path, '/') === 0) {
             $path = substr($path, 1);
+        }
 
-        $result = implode('_' , array_map('ucfirst',explode('/', $path)));
+        $result = implode('_', array_map('ucfirst', explode('/', $path)));
 
-        if($check && !class_exists($result)){
-            $result = '\\' . str_replace('_','\\', $result);
-            if(!class_exists($result)){
+        if ($check && !class_exists($result)) {
+            $result = '\\' . str_replace('_', '\\', $result);
+            if (!class_exists($result)) {
                 return null;
             }
         }
@@ -75,7 +79,7 @@ class Fs
      * @param string $fileName
      * @return string
      */
-    static public function createCachePath(string $basePath, string $fileName): string
+    public static function createCachePath(string $basePath, string $fileName): string
     {
         $extension = File::getExt($fileName);
 

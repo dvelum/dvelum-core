@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Utils;
@@ -36,17 +38,72 @@ class Strings
      * @param int $length - string length
      * @return string
      */
-    static function getRandomString(int $length) : string
+    public static function getRandomString(int $length): string
     {
         $string = '';
         $symbols = array(
-            'q','w','e','r','t','y','u','i','o','p',
-            'a','s','d','f','g','h','j','k','l',
-            'z','x','c','v','b','n','m',
-            1,2,3,4,5,6,7,8,9,0,
-            'Q','W','E','R','T','Y','U','I','O','P',
-            'A','S','D','F','G','H','J','K','L','Z',
-            'X','C','V','B','N','M'
+            'q',
+            'w',
+            'e',
+            'r',
+            't',
+            'y',
+            'u',
+            'i',
+            'o',
+            'p',
+            'a',
+            's',
+            'd',
+            'f',
+            'g',
+            'h',
+            'j',
+            'k',
+            'l',
+            'z',
+            'x',
+            'c',
+            'v',
+            'b',
+            'n',
+            'm',
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            0,
+            'Q',
+            'W',
+            'E',
+            'R',
+            'T',
+            'Y',
+            'U',
+            'I',
+            'O',
+            'P',
+            'A',
+            'S',
+            'D',
+            'F',
+            'G',
+            'H',
+            'J',
+            'K',
+            'L',
+            'Z',
+            'X',
+            'C',
+            'V',
+            'B',
+            'N',
+            'M'
         );
         $size = sizeof($symbols) - 1;
         while ($length) {
@@ -57,9 +114,39 @@ class Strings
         return $string;
     }
 
-    static public function alphabetEn() : array
+    /**
+     * @return string[]
+     */
+    public static function alphabetEn(): array
     {
-        return ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
+        return [
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
+            'f',
+            'g',
+            'h',
+            'i',
+            'j',
+            'k',
+            'l',
+            'm',
+            'n',
+            'o',
+            'p',
+            'q',
+            'r',
+            's',
+            't',
+            'u',
+            'v',
+            'w',
+            'x',
+            'y',
+            'z'
+        ];
     }
 
     /**
@@ -68,15 +155,15 @@ class Strings
      * @param bool $useNamespace
      * @return string
      */
-    static public function classFromString(string $str, bool $useNamespace = false) : string
+    public static function classFromString(string $str, bool $useNamespace = false): string
     {
-        if($useNamespace){
+        if ($useNamespace) {
             $sep = '\\';
-        }else{
+        } else {
             $sep = '_';
         }
         $parts = explode($sep, $str);
-        $parts = array_map('ucfirst' , $parts);
+        $parts = array_map('ucfirst', $parts);
         return implode($sep, $parts);
     }
 
@@ -86,15 +173,15 @@ class Strings
      * @param bool $useNamespace
      * @return string
      */
-    static public function formatClassName($name, bool $useNamespace = false) : string
+    public static function formatClassName($name, bool $useNamespace = false): string
     {
-        if($useNamespace){
+        if ($useNamespace) {
             $sep = '\\';
-        }else{
+        } else {
             $sep = '_';
         }
 
-        $nameParts = explode('\\',str_replace('_','\\', $name));
+        $nameParts = explode('\\', str_replace('_', '\\', $name));
         $nameParts = array_map('ucfirst', $nameParts);
         return implode($sep, $nameParts);
     }
@@ -107,13 +194,18 @@ class Strings
      * @param bool $ignoreFirstLine
      * @return string
      */
-    static public function addIndent(string $string , int $tabsCount = 1 , string $indent="\t" , bool $ignoreFirstLine = false) : string
-    {
+    public static function addIndent(
+        string $string,
+        int $tabsCount = 1,
+        string $indent = "\t",
+        bool $ignoreFirstLine = false
+    ): string {
         $indent = str_repeat("\t", $tabsCount);
-        if($ignoreFirstLine)
-            return str_replace("\n", "\n".$indent, $string);
-        else
-            return $indent . str_replace("\n", "\n".$indent, $string);
+        if ($ignoreFirstLine) {
+            return str_replace("\n", "\n" . $indent, $string);
+        } else {
+            return $indent . str_replace("\n", "\n" . $indent, $string);
+        }
     }
 
     /**
@@ -122,19 +214,21 @@ class Strings
      * @param int $maxLength
      * @return  string
      */
-    static public function limitText(string $string , int $maxLength) : string
+    public static function limitText(string $string, int $maxLength): string
     {
         $strlen = strlen($string);
-        if($strlen <= $maxLength)
+        if ($strlen <= $maxLength) {
             return $string;
+        }
 
-        $string = substr($string, 0 , $maxLength);
+        $string = substr($string, 0, $maxLength);
         $wordStart = strrpos($string, ' ');
 
-        if($wordStart)
-            $string = substr($string, 0 , $wordStart);
+        if ($wordStart) {
+            $string = substr($string, 0, $wordStart);
+        }
 
-        $string.='...';
+        $string .= '...';
         return $string;
     }
 }

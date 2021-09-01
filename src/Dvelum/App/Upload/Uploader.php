@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -41,21 +42,21 @@ use Dvelum\App\Upload\Adapter\Image;
 class Uploader
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $config;
+    protected array $config;
     /**
-     * @var array
+     * @var AbstractAdapter[] $uploaders
      */
-    protected $uploaders;
+    protected array $uploaders;
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
      * Uploader constructor.
-     * @param array $config
+     * @param array<string,mixed> $config
      */
     public function __construct(array $config)
     {
@@ -69,7 +70,7 @@ class Uploader
      * @param string $path
      * @return bool
      */
-    public function createDirs(string $root, string $path) : bool
+    public function createDirs(string $root, string $path): bool
     {
         $path = str_replace('//', '/', $root . '/' . $path);
 
@@ -87,13 +88,15 @@ class Uploader
     /**
      * Identify file type
      * @param string $extension
-     * @return mixed string | false
+     * @return string|false
      */
-    protected function identifyType($extension)
+    protected function identifyType(string $extension)
     {
-        foreach ($this->config as $k => $v)
-            if (in_array($extension, $v['extensions'], true))
+        foreach ($this->config as $k => $v) {
+            if (in_array($extension, $v['extensions'], true)) {
                 return $k;
+            }
+        }
 
         return false;
     }
@@ -101,12 +104,12 @@ class Uploader
     /**
      * Multiple upload files
      *
-     * @property array $data - array of Request::files() items
+     * @param array<string,mixed> $files - array of Request::files() items
      * @param string $path
      * @param bool $formUpload - optional, default true
-     * @return array|false - uploaded files Info on error
+     * @return array<int,array> - uploaded files Info on error
      */
-    public function start(array $files, string $path, $formUpload = true)
+    public function start(array $files, string $path, bool $formUpload = true): array
     {
         $this->errors = [];
 
@@ -118,17 +121,18 @@ class Uploader
             }
 
             $item['name'] = str_replace(' ', '_', $item['name']);
-            $item['name'] = strtolower((string) preg_replace("/[^A-Za-z0-9_\-\.]/i", '', (string) $item['name']));
+            $item['name'] = strtolower((string)preg_replace("/[^A-Za-z0-9_\-\.]/i", '', (string)$item['name']));
 
             $item['ext'] = \Dvelum\File::getExt($item['name']);
             $item['title'] = str_replace($item['ext'], '', $item['name']);
             $type = $this->identifyType($item['ext']);
 
-            if (!$type)
+            if (!$type) {
                 continue;
+            }
 
             switch ($type) {
-                case 'image' :
+                case 'image':
                     if (!isset($this->uploaders['image'])) {
                         $this->uploaders['image'] = new Image($this->config['image']);
                     }
@@ -155,9 +159,9 @@ class Uploader
                     }
                     break;
 
-                case 'audio' :
-                case 'video' :
-                case 'file' :
+                case 'audio':
+                case 'video':
+                case 'file':
                     if (!isset($this->uploaders['file'])) {
                         $this->uploaders['file'] = new File($this->config[$type]);
                     }
@@ -191,9 +195,9 @@ class Uploader
 
     /**
      * Get upload errors
-     * @return array
+     * @return array<int,string>
      */
-    public function getErrors() : array
+    public function getErrors(): array
     {
         return $this->errors;
     }

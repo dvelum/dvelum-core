@@ -1,4 +1,4 @@
 <?php
 return array(
-  'core'=>'3.2.2',
+  'core'=>'4.0.0',
 );

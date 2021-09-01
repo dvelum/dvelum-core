@@ -11,7 +11,7 @@ return array(
      * 'Path' — the router based on the file structure of client controllers.
      * 'Config' - using frontend modules configuration
      */
-    'router' => 'Config', // 'Path','Config'
+    'router' => \Dvelum\App\Router\Config::class, // 'Config', 'Console', 'Path'
     // Default Frontend Controller
-    'default_controller' => '\\Dvelum\\App\\Frontend\\Index\\Controller',
+    'default_controller' => \Dvelum\App\Frontend\Index\Controller::class,
 );

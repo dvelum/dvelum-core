@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Code\Minify\Adapter\MatthiasMullieMinify;
@@ -43,14 +45,14 @@ class Js implements AdapterInterface
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */
     public function minifyFiles(array $files, string $toFile): bool
     {
         $minifier = new Minify\JS();
-        foreach ($files as $file){
+        foreach ($files as $file) {
             $minifier->add($file);
         }
         $minifier->minify($toFile);

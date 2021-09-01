@@ -105,11 +105,11 @@ return array(
     /*
      * Application class
      */
-    'application' => '\\Dvelum\\App\\Application\\WebService',
+    'application' => \Dvelum\App\Application\WebService::class,
     /*
      * DB Manager
      */
-    'db_manager' => '\\Dvelum\\Db\\Manager',
+    'db_manager' => \Dvelum\Db\Manager::class,
     /*
      * Vendor library path
      */

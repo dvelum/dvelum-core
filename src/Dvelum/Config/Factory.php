@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Config;
@@ -33,7 +35,6 @@ use Dvelum\Cache\CacheInterface;
 use Dvelum\Config;
 use Dvelum\Store\AdapterInterface;
 
-
 /**
  * Configuration Object Factory
  * @author Kirill Yegorov 2010
@@ -41,8 +42,8 @@ use Dvelum\Store\AdapterInterface;
  */
 class Factory
 {
-    const Simple = 0;
-    const File_Array = 1;
+    public const SIMPLE = 0;
+    public const FILE_ARRAY = 1;
 
     /**
      * @var AdapterInterface|false
@@ -62,10 +63,10 @@ class Factory
      * @param string $class
      * @throws \Exception
      */
-    static public function setStorageAdapter(string $class) : void
+    public static function setStorageAdapter(string $class): void
     {
-        if(!class_exists($class)){
-            throw new \Exception('Undefined storage adapter '.$class);
+        if (!class_exists($class)) {
+            throw new \Exception('Undefined storage adapter ' . $class);
         }
         self::$storageAdapter = $class;
     }
@@ -75,7 +76,7 @@ class Factory
      * @param CacheInterface $core
      * @return void
      */
-    public static function setCacheCore($core) : void
+    public static function setCacheCore($core): void
     {
         self::$cache = $core;
     }
@@ -94,15 +95,16 @@ class Factory
      * @param int $type -type of the object being created, Config class constant
      * @param string $name - identifier
      * @param bool $useCache - optional , default true. Use cache if available
-     * @return ConfigInterface
+     * @return ConfigInterface<string,mixed>
      */
-    static public function config(int $type , string $name , bool $useCache = true) : ConfigInterface
+    public static function config(int $type, string $name, bool $useCache = true): ConfigInterface
     {
         $store = self::$store;
         $cache = self::$cache;
 
-        if(!$store)
+        if (!$store) {
             $store = self::connectLocalStore();
+        }
 
         $config = false;
         $configKey = $type . '_' . $name;
@@ -110,35 +112,36 @@ class Factory
         /*
          * Check if config is already loaded
          */
-        if($useCache && $store->keyExists($configKey))
+        if ($useCache && $store->keyExists($configKey)) {
             return $store->get($configKey);
+        }
 
         /*
          * If individual keys
          */
-        if($useCache && $cache && $config = $cache->load($configKey))
-        {
-            $store->set($configKey , $config);
+        if ($useCache && $cache && $config = $cache->load($configKey)) {
+            $store->set($configKey, $config);
             return $config;
         }
 
-        switch($type)
-        {
-            case self::File_Array :
-                $config =  static::storage()->get($name,$useCache);
+        switch ($type) {
+            case self::FILE_ARRAY:
+                $config = static::storage()->get($name, $useCache);
                 break;
-            case self::Simple :
+            case self::SIMPLE:
                 $config = new Config\Adapter($name);
                 break;
         }
 
-        if($useCache)
-            $store->set($configKey , $config);
+        if ($useCache) {
+            $store->set($configKey, $config);
+        }
 
-        if($useCache && $cache)
-            $cache->save($config , $configKey);
-        else
+        if ($useCache && $cache) {
+            $cache->save($configKey, $config);
+        } else {
             self::cache();
+        }
 
         return $config;
     }
@@ -147,9 +150,9 @@ class Factory
      * Instantiate storage
      * @return AdapterInterface
      */
-    static protected function connectLocalStore()
+    protected static function connectLocalStore()
     {
-        self::$store =  \Dvelum\Store\Factory::get( \Dvelum\Store\Factory::LOCAL , 'class_' . __CLASS__);
+        self::$store = \Dvelum\Store\Factory::get(\Dvelum\Store\Factory::LOCAL, 'class_' . __CLASS__);
         return self::$store;
     }
 
@@ -158,13 +161,13 @@ class Factory
      * @param mixed $key - optional
      * @return void
      */
-    static public function cache($key = false) : void
+    public static function cache($key = false): void
     {
-        if(!self::$cache)
+        if (!self::$cache) {
             return;
+        }
 
-        if($key === false)
-        {
+        if ($key === false) {
             /**
              * @todo  NEED REFACTORING !!!
              */
@@ -174,32 +177,29 @@ class Factory
                 self::$cache->save($v , $k);
             }
             */
-        }
-        else
-        {
-            if(self::$store && self::$store->keyExists($key))
-            {
-                self::$cache->save(self::$store->get($key), (string) $key);
+        } else {
+            if (self::$store && self::$store->keyExists($key)) {
+                self::$cache->save((string)$key, self::$store->get($key));
             }
         }
     }
 
     /**
      * Get configuration storage
-     * @param bool $force  - Reset runtime cache reload object, optional default false
+     * @param bool $force - Reset runtime cache reload object, optional default false
      * @return Storage\StorageInterface
      */
-    static public function storage($force = false) : Config\Storage\StorageInterface
+    public static function storage($force = false): Config\Storage\StorageInterface
     {
         static $store = false;
 
-        if($force){
+        if ($force) {
             $store = false;
         }
 
-        if(!$store){
+        if (!$store) {
             /**
-             * @var Config\Storage\StorageInterface $store;
+             * @var Config\Storage\StorageInterface $store ;
              */
             $store = new self::$storageAdapter();
         }
@@ -208,12 +208,15 @@ class Factory
 
     /**
      * Create new config object
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param string|null $name
-     * @return ConfigInterface
+     * @return ConfigInterface<string,mixed>
      */
-    static public function create(array $data, ?string $name = null) : ConfigInterface
+    public static function create(array $data, ?string $name = null): ConfigInterface
     {
+        /**
+         * @var ConfigInterface<string,mixed> $config
+         */
         $config = new Config\Adapter($name);
         $config->setData($data);
         return $config;

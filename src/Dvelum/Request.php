@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,13 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum;
 
 use Dvelum\Config\ConfigInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Request wrapper
@@ -39,49 +42,36 @@ use Dvelum\Config\ConfigInterface;
 class Request
 {
     /**
-     * @var ConfigInterface $config
+     * @var array<string,mixed> $config
      */
-    protected $config;
+    protected array $config = [];
 
     /**
      * @var string $uri
      */
-    protected $uri;
+    protected string $uri;
 
     /**
      * Uri parts
-     * @var array
+     * @var array<int,string>
      */
-    protected $parts = [];
+    protected array $parts = [];
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $updatedGet = [];
+    protected array $updatedGet = [];
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $updatedPost = [];
+    protected array $updatedPost = [];
 
-    /**
-     * @return Request
-     */
-    static public function factory()
+    public function __construct()
     {
-        static $instance = null;
-
-        if(empty($instance)){
-            $instance = new static();
+        $uri = $_SERVER['REQUEST_URI'] ?? '';
+        if (empty($uri)) {
+            $uri = '/';
         }
-
-        return $instance;
-    }
-
-    private function __construct()
-    {
-        if(!isset($_SERVER['REQUEST_URI'])) {
-            $_SERVER['REQUEST_URI'] = '/';
-        }
-        $this->uri = $this->parseUri($_SERVER['REQUEST_URI']);
+        $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
     }
 
@@ -89,43 +79,47 @@ class Request
      * @param string $string
      * @return string
      */
-    protected function parseUri(string $string) : string
+    protected function parseUri(string $string): string
     {
-        if(strpos($string , '?')!==false) {
-            $string = substr($string , 0 , strpos($string , '?'));
+        if (strpos($string, '?') !== false) {
+            $string = substr($string, 0, strpos($string, '?'));
         }
 
-        $string = str_ireplace(array(
-            '.html' ,
-            '.php' ,
-            '.xml' ,
-            '.phtml' ,
-            '.json'
-        ) , '' , $string);
+        $string = str_ireplace(
+            [
+                '.html',
+                '.php',
+                '.xml',
+                '.phtml',
+                '.json'
+            ],
+            '',
+            $string
+        );
 
-        return (string)preg_replace("/[^A-Za-z0-9_\.\-\/]/i" , '' , $string);
+        return (string)preg_replace("/[^A-Za-z0-9_\.\-\/]/i", '', $string);
     }
 
 
     /**
      * Explode request URI to parts
      * @param string $uri
-     * @return array
+     * @return array<int,string>
      */
-    protected function detectParts(string $uri) : array
+    protected function detectParts(string $uri): array
     {
         $parts = [];
 
         $wwwRoot = $this->wwwRoot();
         $rootLen = strlen($wwwRoot);
 
-        if(substr($uri, 0 , $rootLen) === $wwwRoot) {
+        if (substr($uri, 0, $rootLen) === $wwwRoot) {
             $uri = substr($uri, $rootLen);
         }
 
-        $array = explode('/' , $uri);
+        $array = explode('/', $uri);
 
-        for($i = 0, $sz = count($array); $i < $sz; $i++) {
+        for ($i = 0, $sz = count($array); $i < $sz; $i++) {
             $parts[] = $array[$i];
         }
 
@@ -135,10 +129,10 @@ class Request
 
     /**
      * Set configuration options
-     * @param ConfigInterface $config
+     * @param array<string,mixed> $config
      * @return void
      */
-    public function setConfig(ConfigInterface $config) : void
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
@@ -149,9 +143,9 @@ class Request
      * @param mixed $value
      * @return void
      */
-    public function setConfigOption(string $name , $value) : void
+    public function setConfigOption(string $name, $value): void
     {
-        $this->config->set($name, $value);
+        $this->config['name'] = $value;
     }
 
     /**
@@ -161,13 +155,13 @@ class Request
      * @param int $index — index of the part
      * @return null|string
      */
-    public function getPart(int $index) : ?string
+    public function getPart(int $index): ?string
     {
-        if(isset($this->parts[$index]) && strlen($this->parts[$index])) {
+        if (isset($this->parts[$index]) && strlen((string)$this->parts[$index])) {
             return $this->parts[$index];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -179,35 +173,35 @@ class Request
      * @param mixed $default — default value if the parameter is missing.
      * @return mixed
      */
-    public function get(string $name , string $type , $default)
+    public function get(string $name, string $type, $default)
     {
-        if(isset($this->updatedGet[$name])) {
-            return Filter::filterValue($type , $this->updatedGet[$name]);
+        if (isset($this->updatedGet[$name])) {
+            return Filter::filterValue($type, $this->updatedGet[$name]);
         }
 
-        if(!isset($_GET[$name])) {
+        if (!isset($_GET[$name])) {
             return $default;
-        } else {
-            return Filter::filterValue($type , $_GET[$name]);
         }
+
+        return Filter::filterValue($type, $_GET[$name]);
     }
 
     /**
      * Get all parameters passed by the $_POST method in an array
-     * @return array
+     * @return array<string,mixed>
      */
-    public function postArray() : array
+    public function postArray(): array
     {
-        return array_merge($_POST , $this->updatedPost);
+        return array_merge($_POST, $this->updatedPost);
     }
 
     /**
      * Get all parameters passed by the $_GET method in an array
-     * @return array
+     * @return array<string,mixed>
      */
-    public function getArray() : array
+    public function getArray(): array
     {
-        return array_merge($_GET , $this->updatedGet);
+        return array_merge($_GET, $this->updatedGet);
     }
 
     /**
@@ -227,9 +221,9 @@ class Request
 
         if (!isset($_POST[$name])) {
             return $default;
-        } else {
-            return Filter::filterValue($type, $_POST[$name]);
         }
+
+        return Filter::filterValue($type, $_POST[$name]);
     }
 
     /**
@@ -237,52 +231,55 @@ class Request
      * @param string $name — parameter name
      * @param string $type —   the value type defining the way the data will be filtered.
      * The ‘Filter’ chapter expands on the list of supported types. Here is the basic list:
-     * integer , boolean , float , string, cleaned_string , array и др.
-     * @return boolean
+     * integer , bool , float , string, cleaned_string , array и др.
+     * @return bool
      */
-    public function validatePost(string $name, string $type)
+    public function validatePost(string $name, string $type): bool
     {
         if (isset($this->updatedPost[$name])) {
             return ($this->updatedPost[$name] === Filter::filterValue($type, $this->updatedPost[$name]));
         }
+
         if (!isset($_POST[$name])) {
             return false;
-        } else {
-            return ($_POST[$name] === Filter::filterValue($type, $_POST[$name]));
         }
+
+        return ($_POST[$name] === Filter::filterValue($type, $_POST[$name]));
     }
 
     /**
      * Build system request URL
      * The method creates a string based on the defined parameter delimiter and
      * the parameter values array
-     * @param array $parts — request parameters array
+     * @param array<int,string> $parts — request parameters array
      * @return string
      */
-    public function url(array $parts) : string
+    public function url(array $parts): string
     {
-        return strtolower($this->wwwRoot() . implode( '/' , $parts));
+        return strtolower($this->wwwRoot() . implode('/', $parts));
     }
 
     /**
      * Process ExtJs Filters
      * @param string $container
      * @param string $method
-     * @return array
+     * @return array<int|string,mixed>
      */
-    public function extFilters($container = 'storefilter' , $method = 'POST')
+    public function extFilters(string $container = 'storefilter', string $method = 'POST'): array
     {
-        if($method == 'POST'){
-            $data = self::post($container, 'raw', []);
-        }else{
-            $data = self::get($container, 'raw', []);
+        if ($method === 'POST') {
+            $data = $this->post($container, 'raw', []);
+        } else {
+            $data = $this->get($container, 'raw', []);
         }
 
-        if(is_string($data))
-            $data = json_decode($data , true);
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
 
-        if(empty($data))
+        if (empty($data)) {
             return [];
+        }
 
         $filter = new Filter\ExtJs();
 
@@ -293,7 +290,7 @@ class Request
      * Check if request is sent by XMLHttpRequest
      * @return bool
      */
-    public function isAjax() : bool
+    public function isAjax(): bool
     {
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
             return true;
@@ -306,7 +303,7 @@ class Request
      * Check if any POST requests have been sent
      * @return bool
      */
-    public function hasPost() : bool
+    public function hasPost(): bool
     {
         if (empty($_POST) && empty($this->updatedPost)) {
             return false;
@@ -325,40 +322,35 @@ class Request
     }
 
     /**
+     *
      * Get the list of sent files
-     * @return array
+     * @return array<string,array<string,array{name:string,type:string,tmp_name:string,error:string,size:int}>>
      */
-    public function files() : array
+    public function files(): array
     {
-        if(empty($_FILES)) {
+        if (empty($_FILES)) {
             return [];
         }
 
         $result = [];
 
-        if(empty($_FILES)) {
-            return $result;
-        }
-
-        foreach($_FILES as $key => $data)
-        {
-            if(!isset($data['name'])) {
+        foreach ($_FILES as $key => $data) {
+            if (!isset($data['name'])) {
                 continue;
             }
 
-            if(!is_array($data['name'])){
+            if (!is_array($data['name'])) {
                 $result[$key] = $data;
             } else {
-                foreach($data['name'] as $subKey => $value){
+                foreach ($data['name'] as $subKey => $value) {
                     $result[$key][$subKey] = [
-                        'name' => $data['name'][$subKey] ,
-                        'type' => $data['type'][$subKey] ,
-                        'tmp_name' => $data['tmp_name'][$subKey] ,
-                        'error' => $data['error'][$subKey] ,
+                        'name' => $data['name'][$subKey],
+                        'type' => $data['type'][$subKey],
+                        'tmp_name' => $data['tmp_name'][$subKey],
+                        'error' => $data['error'][$subKey],
                         'size' => $data['size'][$subKey]
                     ];
                 }
-
             }
         }
         return $result;
@@ -368,34 +360,38 @@ class Request
      * Check HTTP_SCHEME for https
      * @return bool
      */
-    public function isHttps() : bool
+    public function isHttps(): bool
     {
         static $scheme = false;
 
-        if($scheme === false){
-            $scheme = isset($_SERVER['HTTP_SCHEME']) ? $_SERVER['HTTP_SCHEME'] : (((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || 443 == $_SERVER['SERVER_PORT']) ? 'https' : 'http');
+        if ($scheme === false) {
+            if (isset($_SERVER['HTTP_SCHEME'])) {
+                $scheme = $_SERVER['HTTP_SCHEME'];
+            } else {
+                if ($_SERVER['SERVER_PORT'] === 443 || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')) {
+                    $scheme = 'https';
+                } else {
+                    $scheme = 'http';
+                }
+            }
         }
 
-        if($scheme ==='https'){
+        if ($scheme === 'https') {
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
     /**
      * Get web toot path
      * @return string
      */
-    public function wwwRoot() : string
+    public function wwwRoot(): string
     {
-        $wwwRoot =  '/';
-
-        if($this->config instanceof ConfigInterface && $this->config->offsetExists('wwwRoot')){
-            $wwwRoot = $this->config->get('wwwRoot');
+        if (isset($this->config['wwwRoot'])) {
+            return $this->config['wwwRoot'];
         }
-
-        return $wwwRoot;
+        return '/';
     }
 
     /**
@@ -435,25 +431,25 @@ class Request
      * @param string $name — parameter name
      * @param mixed $value — parameter value
      */
-    public function updatePost(string $name , $value) : void
+    public function updatePost(string $name, $value): void
     {
         $this->updatedPost[$name] = $value;
     }
 
     /**
      * Set POST data
-     * @param array $data
+     * @param array<string,mixed> $data
      */
-    public function setPostParams(array $data) : void
+    public function setPostParams(array $data): void
     {
         $this->updatedPost = $data;
     }
 
     /**
      * Set GET data
-     * @param array $data
+     * @param array<string,mixed> $data
      */
-    public function setGetParams(array $data) : void
+    public function setGetParams(array $data): void
     {
         $this->updatedGet = $data;
     }
@@ -463,7 +459,7 @@ class Request
      * @param string $name — parameter name
      * @param mixed $value — parameter value
      */
-    public function updateGet($name , $value) : void
+    public function updateGet(string $name, $value): void
     {
         $this->updatedGet[$name] = $value;
     }
@@ -471,10 +467,10 @@ class Request
     /**
      * Get request parts
      * The query string is divided into parts by the delimiter "/" and indexed from 0
-     * @param int $offset, optional default 0 - index to start from
-     * @return array
+     * @param int $offset , optional default 0 - index to start from
+     * @return array<int,string>
      */
-    public function getPathParts(int $offset = 0) : array
+    public function getPathParts(int $offset = 0): array
     {
         return array_slice($this->parts, $offset);
     }
@@ -484,7 +480,7 @@ class Request
      * @param string $uri
      * @return void
      */
-    public function setUri($uri) : void
+    public function setUri(string $uri): void
     {
         $this->uri = $this->parseUri($uri);
         $this->parts = $this->detectParts($this->uri);
@@ -492,11 +488,11 @@ class Request
 
     /**
      * Get request cookie
-     * @return array
+     * @return array<string,mixed>
      */
-    public function cookie():array
+    public function cookie(): array
     {
-        if(!empty($_COOKIE)){
+        if (!empty($_COOKIE)) {
             return $_COOKIE;
         }
         return [];

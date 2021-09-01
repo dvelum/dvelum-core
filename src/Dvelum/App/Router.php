@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -30,83 +31,93 @@ declare(strict_types=1);
 
 namespace Dvelum\App;
 
-use Dvelum\Request;
-use Dvelum\Response;
 use Dvelum\Lang;
+use Dvelum\Request;
+use Psr\Container\ContainerInterface;
+use Dvelum\Response\ResponseInterface;
 
 /**
  * Base class for routing of requests
  */
 abstract class Router implements Router\RouterInterface
 {
-    /**
-     * @var Request $request
-     */
-    protected $request;
-    /**
-     * @var Response $response
-     */
-    protected $response;
+    protected ContainerInterface $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * Route request
+     * Run action
      * @param Request $request
-     * @param Response $response
-     * @return void
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     * @throws \Exception
      */
-    abstract public function route(Request $request , Response $response) : void;
+    abstract public function route(Request $request, ResponseInterface $response): ResponseInterface;
 
     /**
      * Calc url for module
      * @param string $module — module name
      * @return string
      */
-    abstract public function findUrl(string $module) : string;
+    abstract public function findUrl(string $module): string;
 
     /**
      * Run controller
      * @param string $controller
      * @param null|string $action
      * @param Request $request
-     * @param Response $response
+     * @param ResponseInterface $response
      * @throws \Exception
      */
-    public function runController(string $controller , ?string $action, Request $request , Response $response) : void
-    {
-        if(!class_exists($controller)){
-            throw new \Exception('Undefined Controller: '. $controller);
+    public function runController(
+        string $controller,
+        ?string $action,
+        Request $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        if (!class_exists($controller)) {
+            throw new \Exception('Undefined Controller: ' . $controller);
         }
 
         /**
          * @var \Dvelum\App\Controller $controller
          */
-        $controller = new $controller($request, $response);
+        $controller = new $controller($request, $response, $this->container);
         $controller->setRouter($this);
 
-        if($response->isSent()){
-            return;
+        if ($response->isSent()) {
+            return $response;
         }
 
-        if($controller instanceof Router\RouterInterface){
+        if ($controller instanceof Router\RouterInterface) {
             $controller->route($request, $response);
-        }else{
-
-            if(empty($action)){
+        } else {
+            if (empty($action)) {
                 $action = 'index';
             }
 
-            if(!method_exists($controller , $action.'Action')) {
+            if (!method_exists($controller, $action . 'Action')) {
                 $action = 'index';
-                if(!method_exists($controller , $action.'Action')) {
-                     $response->error(Lang::lang()->get('WRONG_REQUEST').' ' . $request->getUri());
-                     return;
+                if (!method_exists($controller, $action . 'Action')) {
+                    $response->error(
+                        $this->container->get(Lang::class)->lang()->get('WRONG_REQUEST') . ' ' . $request->getUri()
+                    );
+                    return $response;
                 }
             }
-            $controller->{$action.'Action'}();
+            if ($action !== 'index') {
+                // Default JSON response from server actions
+                $response->setFormat(ResponseInterface::FORMAT_JSON);
+            }
+            $controller->{$action . 'Action'}();
         }
 
-        if(!$response->isSent() && method_exists($controller,'showPage')){
+        if (!$response->isSent() && method_exists($controller, 'showPage')) {
             $controller->showPage();
         }
+        return $response;
     }
 }

@@ -1,10 +1,11 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
  * MIT License
  *
- * Copyright (C) 2011-2020  Kirill Yegorov
+ * Copyright (C) 2011-2021  Kirill Yegorov
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,33 +26,28 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Frontend;
 
-use Dvelum\{App, Config, Config\ConfigInterface, Lang, Page\Page, Request, Response, Resource};
+use Dvelum\App;
+use Dvelum\Page\Page;
+use Dvelum\Resource;
 
 class Controller extends App\Controller
 {
     /**
-     * @var ConfigInterface
-     */
-    protected $frontendConfig;
-    /**
-     * @var Lang\Dictionary
-     */
-    protected $lang;
-    /**
      * @var Page
      */
-    protected $page;
+    private Page $page;
 
-    public function __construct(Request $request, Response $response)
+    public function getPage(): Page
     {
-        $this->page = Page::factory();
-        $this->frontendConfig = Config::storage()->get('frontend.php');
-        $this->lang = Lang::lang();
-        parent::__construct($request, $response);
+        if (!isset($this->page)) {
+            $this->page = Page::factory();
+        }
+        return $this->page;
     }
 
     /**
@@ -61,15 +57,20 @@ class Controller extends App\Controller
      */
     public function showPage(): void
     {
-        header('Content-Type: text/html; charset=utf-8');
-        $this->page->setTemplatesPath('public/');
+        $page = $this->getPage();
+        $page->setTemplatesPath('public/');
 
         $layoutPath = $this->page->getThemePath() . 'layout.php';
-        $this->render($layoutPath, [
-            'development' => $this->appConfig->get('development'),
-            'page' => $this->page,
-            'path' => $this->page->getThemePath(),
-            'resource' => Resource::factory()
-        ], false);
+        $this->render(
+            $layoutPath,
+            [
+                'development' => $this->appConfig->get('development'),
+                'page' => $page,
+                'path' => $page->getThemePath(),
+                'request' => $this->request,
+                'resource' => $this->container->get(Resource::class)
+            ],
+            false
+        );
     }
 }

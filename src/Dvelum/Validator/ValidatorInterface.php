@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,19 +26,22 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Validator;
+
 /**
  * Interface for validation classes
  * @package Validator
  * @author Kirill A Egorov 2011
  */
-interface ValidatorInterface{
+interface ValidatorInterface
+{
     /**
      * Validation method
      * @param mixed $value
      * @return bool
      */
-    static public function validate($value) : bool;
+    public static function validate($value): bool;
 }

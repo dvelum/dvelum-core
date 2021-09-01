@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,6 +26,7 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Dictionary;
@@ -35,19 +37,18 @@ use Dvelum\App\Dictionary;
 class Service
 {
     /**
-     * @var array
+     * @var array<string,DictionaryInterface>
      */
     protected $objects = [];
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $config = null;
+    protected ConfigInterface $config;
 
     /**
-     * @param ConfigInterface $config
-     * @return void
+     * @param ConfigInterface<string,mixed> $config
      */
-    public function setConfig(ConfigInterface $config) : void
+    public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
     }
@@ -56,9 +57,9 @@ class Service
      * @param string $name
      * @return DictionaryInterface
      */
-    public function get(string $name) : DictionaryInterface
+    public function get(string $name): DictionaryInterface
     {
-        if(!isset($this->objects[$name])){
+        if (!isset($this->objects[$name])) {
             $this->objects[$name] = new Dictionary\Adapter\File($name, $this->config);
         }
         return $this->objects[$name];

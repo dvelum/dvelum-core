@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,11 +26,12 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\Lang;
 
-use Dvelum\Lang;
+use Dvelum\Config\Storage\StorageInterface;
 use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
 
@@ -38,25 +40,28 @@ class Dictionary
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $loader;
+    protected array $loader;
 
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $data;
+    protected ConfigInterface $data;
+
+    private StorageInterface $storage;
 
     /**
      * @param string $name
-     * @param array $loaderConfig
+     * @param array<mixed,mixed> $loaderConfig
      */
-    public function __construct(string $name, array $loaderConfig)
+    public function __construct(string $name, array $loaderConfig, StorageInterface $storage)
     {
         $this->loader = $loaderConfig;
         $this->name = $name;
+        $this->storage = $storage;
     }
 
     /**
@@ -138,8 +143,8 @@ class Dictionary
     protected function loadData(): void
     {
         switch ($this->loader['type']) {
-            case Config\Factory::File_Array:
-                $this->data = Lang::storage()->get($this->loader['src'], true, true);
+            case Config\Factory::FILE_ARRAY:
+                $this->data = $this->storage->get($this->loader['src'], true, true);
                 break;
         }
     }

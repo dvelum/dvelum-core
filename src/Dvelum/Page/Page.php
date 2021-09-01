@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -33,84 +34,86 @@ namespace Dvelum\Page;
 class Page
 {
     /**
-     * @var array
+     * @var array<int|string,Page>
      */
-    static protected $pages = [];
+    protected static array $pages = [];
 
     /**
      * @var string
      */
-    protected $templatesPath = '';
+    protected string $templatesPath = '';
     /**
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
     /**
      * @var string
      */
-    protected $htmlTitle = '';
+    protected string $htmlTitle = '';
     /**
      * @var string
      */
-    protected $code = 'index';
+    protected string $code = 'index';
     /**
      * @var int
      */
-    protected $id = 0;
+    protected int $id = 0;
     /**
      * @var string
      */
-    protected $text = '';
+    protected string $text = '';
     /**
      * @var string
      */
-    protected $metaKeywords = '';
+    protected string $metaKeywords = '';
     /**
      * @var string
      */
-    protected $metaDescription = '';
+    protected string $metaDescription = '';
     /**
      * @var string|null
      */
-    protected $robots = null;
+    protected ?string $robots = null;
     /**
      * @var string|null
      */
-    protected $canonical = null;
+    protected ?string $canonical = null;
     /**
      * @var string
      */
-    protected $theme = 'default';
+    protected string $theme = 'default';
     /**
      * @var OpenGraph|null
      */
-    protected $openGraph = null;
+    protected ?OpenGraph $openGraph = null;
     /**
      * @var string|null
      */
-    protected $csrfToken = null;
+    protected ?string $csrfToken = null;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $properties = [];
+    protected array $properties = [];
 
-    static public function factory(string $id = 'default'):Page
+    public static function factory(string $id = 'default'): Page
     {
-        if(!isset(static::$pages[$id])){
+        if (!isset(static::$pages[$id])) {
             static::$pages[$id] = new static();
         }
         return static::$pages[$id];
     }
 
-    protected function __construct(){}
+    protected function __construct()
+    {
+    }
 
     /**
-     * @param array $properties
+     * @param array<string,mixed> $properties
      */
-    public function setProperties(array $properties) : void
+    public function setProperties(array $properties): void
     {
-        foreach ($properties as $k=>$v){
+        foreach ($properties as $k => $v) {
             $this->properties[$k] = $v;
         }
     }
@@ -122,8 +125,8 @@ class Page
      */
     public function getProperty(string $name)
     {
-        if(!isset($this->properties[$name])){
-            throw new \Exception('Undefined page property '.$name);
+        if (!isset($this->properties[$name])) {
+            throw new \Exception('Undefined page property ' . $name);
         }
         return $this->properties[$name];
     }
@@ -131,9 +134,9 @@ class Page
     /**
      * @return OpenGraph
      */
-    public function openGraph():OpenGraph
+    public function openGraph(): OpenGraph
     {
-        if(empty($this->openGraph)){
+        if (empty($this->openGraph)) {
             $this->openGraph = new OpenGraph();
         }
         return $this->openGraph;
@@ -238,9 +241,9 @@ class Page
     /**
      * @param string $text
      */
-    public function addText(string $text):void
+    public function addText(string $text): void
     {
-        $this->text.= $text;
+        $this->text .= $text;
     }
 
     /**

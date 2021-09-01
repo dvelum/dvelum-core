@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -25,10 +26,10 @@
  * SOFTWARE.
  *
  */
+
 declare(strict_types=1);
 
 namespace Dvelum\App\Code\Minify\Adapter;
-
 
 class JsMin implements AdapterInterface
 {
@@ -39,7 +40,7 @@ class JsMin implements AdapterInterface
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */
@@ -47,10 +48,10 @@ class JsMin implements AdapterInterface
     {
         $source = '';
 
-        foreach ($files as $file){
-            $source.= file_get_contents($file)."\n";
+        foreach ($files as $file) {
+            $source .= file_get_contents($file) . "\n";
         }
-        file_put_contents($toFile , \Dvelum\App\Code\Minify\Minify::factory()->minifyJs($source));
+        file_put_contents($toFile, \Dvelum\App\Code\Minify\Minify::factory()->minifyJs($source));
         return true;
     }
 }

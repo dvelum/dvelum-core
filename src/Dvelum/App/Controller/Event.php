@@ -1,4 +1,5 @@
 <?php
+
 /**
  * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum/dvelum
  *
@@ -55,7 +56,7 @@ class Event
      * Stop event propagation
      * @return void
      */
-    public function stopPropagation() : void
+    public function stopPropagation(): void
     {
         $this->stop = true;
     }
@@ -64,7 +65,7 @@ class Event
      * Is event propagation stopped
      * @return bool
      */
-    public function isPropagationStopped() : bool
+    public function isPropagationStopped(): bool
     {
         return $this->stop;
     }
@@ -73,7 +74,7 @@ class Event
      * Set error message
      * @param string $message
      */
-    public function setError(string $message) : void
+    public function setError(string $message): void
     {
         $this->stopPropagation();
         $this->error = true;
@@ -83,7 +84,7 @@ class Event
     /**
      * @return bool
      */
-    public function hasError() : bool
+    public function hasError(): bool
     {
         return $this->error;
     }
@@ -91,7 +92,7 @@ class Event
     /**
      * @return string
      */
-    public function getError() : string
+    public function getError(): string
     {
         return $this->errorMessage;
     }
@@ -100,7 +101,7 @@ class Event
      * Set event data
      * @param \stdClass $data
      */
-    public function setData(\stdClass $data) : void
+    public function setData(\stdClass $data): void
     {
         $this->data = $data;
     }
@@ -109,7 +110,7 @@ class Event
      * Get event data
      * @return \stdClass
      */
-    public function getData() : \stdClass
+    public function getData(): \stdClass
     {
         return $this->data;
     }

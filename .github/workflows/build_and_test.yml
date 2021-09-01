@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, 4.x-dev ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, 4.x-dev]
 
 jobs:
   build:
@@ -43,6 +43,12 @@ jobs:
       
     - name: PHPUnit tests
       run: ./vendor/bin/phpunit -c ./phpunit.xml.dist --coverage-clover coverage.xml
+
+    - name: Code Style check PHPCS
+      run: php ./vendor/bin/phpcs --standard=PSR12 ./src ./application/classes ./tests/unit/dvelum
+
+    - name: Code Style check PHPCS additional sniffs
+      run: php ./vendor/bin/phpcs --standard=Squiz --sniffs=Squiz.NamingConventions.ValidVariableName ./src ./application/classes ./tests/unit/dvelum
       
     - name: Send Coverage report
       run: php vendor/bin/codacycoverage clover coverage.xml 
