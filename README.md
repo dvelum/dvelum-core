@@ -3,7 +3,7 @@
 ![Build and Test](https://github.com/dvelum/dvelum-core/workflows/Build%20and%20Test/badge.svg?branch=master&event=push)
 
 
-##[Stable Branch: 3.x](https://github.com/dvelum/dvelum-core/tree/3.x)
+## [Stable Branch: 3.x](https://github.com/dvelum/dvelum-core/tree/3.x)
 
 DVelum 4.x Core
 ======
