@@ -379,9 +379,8 @@ class Request
 
         if ($scheme === 'https') {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -392,8 +391,8 @@ class Request
     {
         $wwwRoot = '/';
 
-        if ($this->config instanceof ConfigInterface && $this->config->offsetExists('wwwRoot')) {
-            $wwwRoot = $this->config->get('wwwRoot');
+        if (isset($this->config['wwwRoot'])) {
+            $wwwRoot = $this->config['wwwRoot'];
         }
 
         return $wwwRoot;
