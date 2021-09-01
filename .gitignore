@@ -1,2 +1,5 @@
 /vendor/
 /data/phpunit_report/
+.idea
+.php_cs
+.php_cs.cache
