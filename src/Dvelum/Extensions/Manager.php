@@ -218,7 +218,7 @@ class Manager
         // register dependencies
         if (!empty($dependencyPaths)) {
             foreach ($dependencyPaths as $file) {
-                if($this->di instanceof DependencyContainer || method_exists($this->di,'bindArray')){
+                if ($this->di instanceof DependencyContainer || method_exists($this->di, 'bindArray')) {
                     $this->di->bindArray(include $file);
                 }
             }

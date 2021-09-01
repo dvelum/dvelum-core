@@ -89,7 +89,7 @@ class Manager
     {
         $this->lang = $lang;
         $this->appConfig = $appConfig;
-        $this->language = (string) $appConfig->get('language');
+        $this->language = (string)$appConfig->get('language');
         $this->path = Config::storage()->getWrite();
         $this->baseDir = $appConfig->get('dictionary_folder');
         $this->cache = $cache;
@@ -132,7 +132,7 @@ class Manager
         self::$list = $list;
 
         if ($this->cache) {
-            $this->cache->save( self::CACHE_KEY_LIST, $list);
+            $this->cache->save(self::CACHE_KEY_LIST, $list);
         }
 
         return array_keys($list);

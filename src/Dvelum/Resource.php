@@ -376,7 +376,7 @@ class Resource
         }
 
         if ($this->cache) {
-            $this->cache->save($listHash,\md5($dataHash), 60);
+            $this->cache->save($listHash, \md5($dataHash), 60);
         }
 
         return \md5($dataHash);
@@ -393,7 +393,7 @@ class Resource
 
         if (!empty($this->cssFiles)) {
             /**
-             * @var array <int,\stdClass> $sorted
+             * @var array<int,\stdClass> $sorted
              */
             $sorted = Utils::sortByProperty($this->cssFiles, 'order');
             $this->cssFiles = $sorted;

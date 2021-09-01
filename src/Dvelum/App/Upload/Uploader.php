@@ -109,7 +109,7 @@ class Uploader
      * @param bool $formUpload - optional, default true
      * @return array<int,array> - uploaded files Info on error
      */
-    public function start(array $files, string $path, bool $formUpload = true) : array
+    public function start(array $files, string $path, bool $formUpload = true): array
     {
         $this->errors = [];
 

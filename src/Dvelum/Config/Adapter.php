@@ -138,7 +138,7 @@ class Adapter implements ConfigInterface
      * @param string $key
      * @return void
      */
-    public function remove(string $key) : void
+    public function remove(string $key): void
     {
         if (isset($this->data[$key])) {
             unset($this->data[$key]);
@@ -163,7 +163,7 @@ class Adapter implements ConfigInterface
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset) : bool
+    public function offsetExists($offset): bool
     {
         return isset($this->data[$offset]);
     }

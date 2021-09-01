@@ -95,7 +95,7 @@ interface DictionaryInterface
     /**
      * Get key for value
      * @param string $value
-     * @param bool $i  - case insensitive
+     * @param bool $i - case insensitive
      * @return mixed, false on error
      */
     public function getKeyByValue(string $value, bool $i = false);

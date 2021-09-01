@@ -78,7 +78,7 @@ interface ConfigInterface extends \ArrayAccess, \Iterator
      * @param string $key
      * @return void
      */
-    public function remove(string $key):void;
+    public function remove(string $key): void;
 
     /**
      * Get data handle

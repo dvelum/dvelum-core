@@ -145,7 +145,7 @@ class Request
      */
     public function setConfigOption(string $name, $value): void
     {
-        $this->config['name'] =  $value;
+        $this->config['name'] = $value;
     }
 
     /**
@@ -365,13 +365,12 @@ class Request
         static $scheme = false;
 
         if ($scheme === false) {
-
-            if(isset($_SERVER['HTTP_SCHEME'])){
+            if (isset($_SERVER['HTTP_SCHEME'])) {
                 $scheme = $_SERVER['HTTP_SCHEME'];
-            }else{
-                if ($_SERVER['SERVER_PORT'] === 443 || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')){
+            } else {
+                if ($_SERVER['SERVER_PORT'] === 443 || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')) {
                     $scheme = 'https';
-                }else{
+                } else {
                     $scheme = 'http';
                 }
             }
@@ -389,13 +388,10 @@ class Request
      */
     public function wwwRoot(): string
     {
-        $wwwRoot = '/';
-
         if (isset($this->config['wwwRoot'])) {
-            $wwwRoot = $this->config['wwwRoot'];
+            return $this->config['wwwRoot'];
         }
-
-        return $wwwRoot;
+        return '/';
     }
 
     /**

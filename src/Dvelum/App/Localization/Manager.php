@@ -119,7 +119,7 @@ class Manager
      * @param string|bool $lang - optional
      * @return array<int,string>
      */
-    public function getSubPackages($lang = false) : array
+    public function getSubPackages($lang = false): array
     {
         $data = [];
 
@@ -450,9 +450,8 @@ class Manager
     {
         if (file_exists($file) && is_writable($file)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -600,7 +599,6 @@ class Manager
     public function compileLangFiles(): void
     {
         $jsPath = $this->appConfig->get('js_lang_path');
-        ;
         $langs = $this->getLangs(false);
 
         /**

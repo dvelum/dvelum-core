@@ -29,7 +29,7 @@
 
 namespace Dvelum\Response;
 
-use Dvelum\Response\ResponseInterface ;
+use Dvelum\Response\ResponseInterface;
 
 class Stub extends Response
 {

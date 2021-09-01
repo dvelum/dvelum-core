@@ -124,32 +124,22 @@ class Paginator
         $s = '';
 
         if ($this->curPage > 1) {
-            $s .= '<a href="' . str_replace(
-                    $this->tplId,
-                    (string)($this->curPage - 1),
-                    $this->pageLinkTpl
-                ) . '"><div class="pager_item">&laquo;</div></a>';
+            $itemNumber = str_replace($this->tplId, (string)($this->curPage - 1), $this->pageLinkTpl);
+            $s .= '<a href="' . $itemNumber . '"><div class="pager_item">&laquo;</div></a>';
         }
-
 
         for ($i = 0, $sz = sizeof($digits); $i < $sz; $i++) {
             if ($digits[$i] === $this->curPage) {
                 $s .= '<div class="pager_item_selected">' . $digits[$i] . '</div>';
             } else {
-                $s .= '<a href="' . str_replace(
-                        $this->tplId,
-                        (string)$digits[$i],
-                        $this->pageLinkTpl
-                    ) . '"><div class="pager_item">' . $digits[$i] . '</div></a>';
+                $itemNumber = str_replace($this->tplId, (string)$digits[$i], $this->pageLinkTpl);
+                $s .= '<a href="' . $itemNumber . '"><div class="pager_item">' . $digits[$i] . '</div></a>';
             }
         }
 
         if ($this->curPage < $this->numPages) {
-            $s .= '<a href="' . str_replace(
-                    $this->tplId,
-                    (string)($this->curPage + 1),
-                    $this->pageLinkTpl
-                ) . '"><div class="pager_item">&raquo;</div></a>';
+            $itemNumber = str_replace($this->tplId, (string)($this->curPage + 1), $this->pageLinkTpl);
+            $s .= '<a href="' . $itemNumber . '"><div class="pager_item">&raquo;</div></a>';
         }
 
         return $s;

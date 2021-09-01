@@ -454,8 +454,12 @@ class Resize
      * @param int $height
      * @return array<int,int>
      */
-    protected static function calcHorizontalToHorizontal(int $sourceWidth, int $sourceHeight, int $width, int $height): array
-    {
+    protected static function calcHorizontalToHorizontal(
+        int $sourceWidth,
+        int $sourceHeight,
+        int $width,
+        int $height
+    ): array {
         $sourceProportion = $sourceWidth / $sourceHeight;
         $proportion = $width / $height;
 

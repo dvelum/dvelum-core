@@ -146,12 +146,12 @@ class Debug
         }
 
         $str .= '<b>Memory:</b> ' . number_format((memory_get_usage() / (1024 * 1024)), 3)
-                . "mb<br>\n"
-                . '<b>Memory peak:</b> ' . number_format((memory_get_peak_usage() / (1024 * 1024)), 3)
-                . "mb<br>\n"
-                . '<b>Includes:</b> ' . count(get_included_files()) . "<br>\n"
-                . '<b>Autoloaded:</b> ' . count($this->loadedClasses) . "<br>\n"
-                . '<b>Config files:</b> ' . count($this->loadedConfigs) . "<br>\n";
+            . "mb<br>\n"
+            . '<b>Memory peak:</b> ' . number_format((memory_get_peak_usage() / (1024 * 1024)), 3)
+            . "mb<br>\n"
+            . '<b>Includes:</b> ' . count(get_included_files()) . "<br>\n"
+            . '<b>Autoloaded:</b> ' . count($this->loadedClasses) . "<br>\n"
+            . '<b>Config files:</b> ' . count($this->loadedConfigs) . "<br>\n";
 
         if (!empty($this->dbProfilers)) {
             $str .= self::getQueryProfiles($options);
@@ -159,24 +159,22 @@ class Debug
 
 
         if ($options['configs']) {
-            $str .= "<b>Configs (" . count($this->loadedConfigs) . "):</b>\n<br> " . implode(
-                "\n\t <br>",
-                $this->loadedConfigs
-            ) . '<br>';
+            $str .= "<b>Configs (" . count($this->loadedConfigs) . "):</b>\n<br> " .
+                implode("\n\t <br>", $this->loadedConfigs)
+                . '<br>';
         }
 
         if ($options['autoloader']) {
-            $str .= "<b>Autoloaded (" . count($this->loadedClasses) . "):</b>\n<br> " . implode(
-                "\n\t <br>",
-                $this->loadedClasses
-            ) . '<br>';
+            $str .= "<b>Autoloaded (" .
+                count($this->loadedClasses) .
+                "):</b>\n<br> " .
+                implode("\n\t <br>", $this->loadedClasses)
+                . '<br>';
         }
 
         if ($options['includes']) {
-            $str .= "<b>Includes (" . count(get_included_files()) . "):</b>\n<br> " . implode(
-                "\n\t <br>",
-                get_included_files()
-            );
+            $str .= "<b>Includes (" . count(get_included_files()) . "):</b>\n<br> " .
+                implode("\n\t <br>", get_included_files());
         }
 
 
@@ -262,20 +260,19 @@ class Debug
             }
         }
 
+        $str .= '<b>Queries:</b> ' . $totalCount . '<br>' . '<b>Queries time:</b> ' .
+            number_format($totalTime, 5)
+            . 'sec.<br>';
 
-        $str .= '<b>Queries:</b> ' . $totalCount . '<br>' . '<b>Queries time:</b> ' . number_format(
-            $totalTime,
-            5
-        ) . 'sec.<br>';
         if ($options['sql']) {
             if (!empty($profiles)) {
                 foreach ($profiles as $queryProfile) {
-                    $str .= '<span style="color:blue;font-size: 11px;">' . number_format(
-                        $queryProfile['elapse'],
-                        5
-                    ) . 's. </span><span style="font-size: 11px;color:green;">' .
-                        $queryProfile['sql']
-                        . "</span><br>\n";
+                    $profileHtml = number_format($queryProfile['elapse'], 5);
+                    $str .= '<span style="color:blue;font-size: 11px;">';
+                    $str .= $profileHtml;
+                    $str .= 's. </span><span style="font-size: 11px;color:green;">';
+                    $str .= $queryProfile['sql'];
+                    $str .= "</span><br>\n";
                 }
             }
         }

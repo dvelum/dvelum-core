@@ -46,7 +46,7 @@ class Session extends Local
     /**
      * @inheritDoc
      */
-    protected function storageConnect() : void
+    protected function storageConnect(): void
     {
         @session_start();
 
