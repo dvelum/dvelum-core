@@ -45,9 +45,9 @@ class Item implements \ArrayAccess
      */
     protected $parent;
     /**
-     * @var array<int|string,mixed>
+     * @var mixed $data
      */
-    protected array $data;
+    protected $data;
     /**
      * @var int|null
      */

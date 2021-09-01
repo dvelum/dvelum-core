@@ -15,5 +15,7 @@ parameters:
 	polluteCatchScopeWithTryAssignments: true
 	ignoreErrors:
 	    - '#Unsafe usage of new static#'
-	level: 1
+	    - '#call_user_func_array expects callable#'
+	    - '#spl_autoload_register expects callable#'
+	level: max
 

@@ -42,9 +42,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class Request
 {
     /**
-     * @var ConfigInterface<string,mixed> $config
+     * @var array<string,mixed> $config
      */
-    protected ConfigInterface $config;
+    protected array $config = [];
 
     /**
      * @var string $uri
@@ -129,10 +129,10 @@ class Request
 
     /**
      * Set configuration options
-     * @param ConfigInterface<string,mixed> $config
+     * @param array<string,mixed> $config
      * @return void
      */
-    public function setConfig(ConfigInterface $config): void
+    public function setConfig(array $config): void
     {
         $this->config = $config;
     }
@@ -145,7 +145,7 @@ class Request
      */
     public function setConfigOption(string $name, $value): void
     {
-        $this->config->set($name, $value);
+        $this->config['name'] =  $value;
     }
 
     /**
