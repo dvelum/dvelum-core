@@ -47,15 +47,15 @@ class Adapter implements ConfigInterface
     protected $applyTo = null;
     /**
      * Config Data
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $data = [];
+    protected array $data = [];
 
     /**
      * Config name
      * @var string|null
      */
-    protected $name;
+    protected ?string $name;
 
     /**
      * Constructor
@@ -77,7 +77,7 @@ class Adapter implements ConfigInterface
 
     /**
      * Convert into an array
-     * @return array
+     * @return array<string,mixed>
      */
     public function __toArray(): array
     {
@@ -120,7 +120,7 @@ class Adapter implements ConfigInterface
 
     /**
      * Set property values using an array
-     * @param array $data
+     * @param array<string,mixed> $data
      */
     public function setData(array $data): void
     {
@@ -136,14 +136,13 @@ class Adapter implements ConfigInterface
     /**
      * Remove a parameter
      * @param string $key
-     * @return true
+     * @return void
      */
-    public function remove(string $key)
+    public function remove(string $key) : void
     {
         if (isset($this->data[$key])) {
             unset($this->data[$key]);
         }
-        return true;
     }
 
     /*
@@ -164,7 +163,7 @@ class Adapter implements ConfigInterface
      * @param mixed $offset
      * @return bool
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset) : bool
     {
         return isset($this->data[$offset]);
     }
@@ -240,7 +239,7 @@ class Adapter implements ConfigInterface
      * Get data handle
      * Hack method. Do not use it without understanding.
      * Get a direct link to the stored data array
-     * @return array
+     * @return array<string,mixed>
      */
     public function & dataLink(): array
     {

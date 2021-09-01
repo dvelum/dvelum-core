@@ -95,7 +95,7 @@ class Factory
      * @param int $type -type of the object being created, Config class constant
      * @param string $name - identifier
      * @param bool $useCache - optional , default true. Use cache if available
-     * @return ConfigInterface
+     * @return ConfigInterface<string,mixed>
      */
     public static function config(int $type, string $name, bool $useCache = true): ConfigInterface
     {
@@ -208,12 +208,15 @@ class Factory
 
     /**
      * Create new config object
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param string|null $name
-     * @return ConfigInterface
+     * @return ConfigInterface<string,mixed>
      */
     public static function create(array $data, ?string $name = null): ConfigInterface
     {
+        /**
+         * @var ConfigInterface<string,mixed> $config
+         */
         $config = new Config\Adapter($name);
         $config->setData($data);
         return $config;

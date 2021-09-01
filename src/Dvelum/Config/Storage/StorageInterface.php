@@ -35,12 +35,18 @@ use Dvelum\Config\ConfigInterface;
 
 interface StorageInterface
 {
+    /**
+     * @param string $localPath
+     * @param bool $useCache
+     * @param bool $merge
+     * @return ConfigInterface<int|string,mixed>
+     */
     public function get(string $localPath, bool $useCache = true, bool $merge = true): ConfigInterface;
 
     /**
      * Create new config file
      * @param string $id
-     * @return boolean
+     * @return bool
      */
     public function create(string $id): bool;
 
@@ -55,9 +61,9 @@ interface StorageInterface
      * Get list of available configs
      * @param string|bool $path - optional, default false
      * @param bool $recursive - optional, default false
-     * @return array
+     * @return array<int|string|int,mixed>
      */
-    public function getList($path = false, $recursive = false): array;
+    public function getList($path = false, bool $recursive = false): array;
 
     /**
      * Check if config file exists
@@ -68,7 +74,7 @@ interface StorageInterface
 
     /**
      * Get storage paths
-     * @return array
+     * @return array<int,string>
      */
     public function getPaths(): array;
 
@@ -100,20 +106,20 @@ interface StorageInterface
 
     /**
      * Get debug information. (loaded configs)
-     * @return array
+     * @return array<int,string>
      */
     public function getDebugInfo(): array;
 
     /**
      * Set configuration options
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     public function setConfig(array $options): void;
 
     /**
      * Save configuration data
-     * @param ConfigInterface $config
+     * @param ConfigInterface<int|string,mixed> $config
      * @return bool
      */
     public function save(ConfigInterface $config): bool;
@@ -125,7 +131,7 @@ interface StorageInterface
 
     /**
      * Replace paths data
-     * @param array $paths
+     * @param array<int,string> $paths
      */
     public function replacePaths(array $paths): void;
 }

@@ -51,9 +51,9 @@ class Config
      * @param mixed $type
      * @param mixed $name
      * @param bool $useCache
-     * @return ConfigInterface
+     * @return ConfigInterface<string,mixed>
      */
-    public static function factory($type, $name, $useCache = true): ConfigInterface
+    public static function factory($type, $name, bool $useCache = true): ConfigInterface
     {
         return Cfg\Factory::config($type, $name, $useCache);
     }

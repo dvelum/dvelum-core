@@ -49,9 +49,9 @@ class Application
 
     /**
      * Application config
-     * @var Config\ConfigInterface
+     * @var Config\ConfigInterface<string,mixed>
      */
-    protected $config;
+    protected Config\ConfigInterface $config;
 
     /**
      * @var \Dvelum\Cache\CacheInterface|null
@@ -63,7 +63,9 @@ class Application
      */
     protected $initialized = false;
 
-
+    /**
+     * @var ContainerInterface
+     */
     protected ContainerInterface $diContainer;
 
     public function __construct(ContainerInterface $container)
@@ -101,7 +103,7 @@ class Application
 
     /**
      * Start application
-     * @return void
+     * @return ResponseInterface
      */
     public function run(Request $request, ResponseInterface $response): ResponseInterface
     {
@@ -129,7 +131,7 @@ class Application
 
     /**
      * Start console application
-     * @return void
+     * @return ResponseInterface
      */
     public function runConsole(Request $request, ResponseInterface $response): ResponseInterface
     {
@@ -137,6 +139,11 @@ class Application
         return $this->routeConsole($request, $response);
     }
 
+    /**
+     * @param Request $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     protected function routeConsole(Request $request, ResponseInterface $response): ResponseInterface
     {
         $storage = $this->diContainer->get(ConfigStorageInterface::class);
@@ -182,7 +189,7 @@ class Application
             return;
         }
         /**
-         * @var $extensionManager
+         * @var \Dvelum\Extensions\Manager $extensionManager
          */
         $extensionManager = $this->diContainer->get(\Dvelum\Extensions\Manager::class);
         $extensionManager->loadExtensions();

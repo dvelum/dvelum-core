@@ -39,25 +39,25 @@ use Exception;
 class Manager implements ManagerInterface
 {
     /**
-     * @var array
+     * @var array<string,array>
      */
-    protected $dbConnections = [];
+    protected array $dbConnections = [];
     /**
-     * @var array
+     * @var array<string,array>
      */
-    protected $dbConfigs = [];
+    protected array $dbConfigs = [];
     /**
      * @var callable $connectionErrorHandler
      */
     protected $connectionErrorHandler;
 
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
 
     /**
-     * @param ConfigInterface $appConfig - Application config (main)
+     * @param ConfigInterface<string,mixed> $appConfig - Application config (main)
      */
     public function __construct(ConfigInterface $appConfig)
     {
@@ -109,7 +109,7 @@ class Manager implements ManagerInterface
     }
 
     /**
-     * @param array $cfg
+     * @param array<string,mixed> $cfg
      * @return Adapter
      * @throws \Exception
      */

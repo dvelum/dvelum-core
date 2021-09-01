@@ -81,7 +81,7 @@ abstract class AbstractAdapter extends Config\Adapter
     /**
      * File Read method, which is to be invoked within a certain adapter
      * @param string $name - configuration identifier, file path
-     * @return array
+     * @return array<string,mixed>
      */
     abstract protected function readFile(string $name): array;
 }

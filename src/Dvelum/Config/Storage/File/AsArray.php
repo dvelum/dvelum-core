@@ -40,9 +40,9 @@ class AsArray implements StorageInterface
 {
     /**
      * Runtime cache of configuration files
-     * @var array
+     * @var array<string,mixed>
      */
-    protected static $runtimeCache = [];
+    protected static array $runtimeCache = [];
     /**
      * Storage configuration options
      * @var array<string,mixed>
@@ -50,9 +50,9 @@ class AsArray implements StorageInterface
     protected $config = [];
     /**
      * Debugger log
-     * @var array
+     * @var array<int,string>
      */
-    protected $debugInfo = [];
+    protected array $debugInfo = [];
 
     /**
      * @param array<string,mixed> $config
@@ -65,9 +65,9 @@ class AsArray implements StorageInterface
     /**
      * Get config by local path
      * @param string $localPath
-     * @param bool $useCache , optional
-     * @param bool $merge , optional merge with main config
-     * @return ConfigInterface
+     * @param bool $useCache - optional
+     * @param bool $merge - optional merge with main config
+     * @return ConfigInterface<string,mixed>
      * @throws \Exception
      */
     public function get(string $localPath, bool $useCache = true, bool $merge = true): ConfigInterface
@@ -83,7 +83,7 @@ class AsArray implements StorageInterface
             return static::$runtimeCache[$key];
         }
         /**
-         * @var array|false $data
+         * @var array<string,mixed>|false $data
          */
         $data = false;
 
@@ -114,7 +114,7 @@ class AsArray implements StorageInterface
             } else {
                 $cfgData = include $cfg;
                 /**
-                 * @var array|false $data
+                 * @var array<string,mixed>|false $data
                  */
                 if ($data === false) {
                     $data = [];
@@ -128,6 +128,9 @@ class AsArray implements StorageInterface
             throw new \Exception('Getting undefined config [' . $localPath . ']');
         }
 
+        /**
+         * @var ConfigInterface<string,mixed> $object
+         */
         $object = new Config\File\AsArray($this->config['file_array']['write'] . $localPath, false);
 
         if ($this->config['file_array']['apply_to'] !== false && $merge) {
@@ -194,7 +197,7 @@ class AsArray implements StorageInterface
      * Get list of available configs
      * @param bool $path - optional, default false
      * @param bool $recursive - optional, default false
-     * @return array
+     * @return array<int,string>
      */
     public function getList($path = false, $recursive = false): array
     {
@@ -234,7 +237,7 @@ class AsArray implements StorageInterface
 
     /**
      * Get storage paths
-     * @return array
+     * @return array<int,string>
      */
     public function getPaths(): array
     {
@@ -281,7 +284,7 @@ class AsArray implements StorageInterface
 
     /**
      * Get debug information. (loaded configs)
-     * @return array
+     * @return array<int,string>
      */
     public function getDebugInfo(): array
     {
@@ -290,7 +293,7 @@ class AsArray implements StorageInterface
 
     /**
      * Set configuration options
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     public function setConfig(array $options): void
@@ -302,7 +305,7 @@ class AsArray implements StorageInterface
 
     /**
      * Save configuration data
-     * @param ConfigInterface $config
+     * @param ConfigInterface<string,mixed> $config
      * @return bool
      */
     public function save(ConfigInterface $config): bool
@@ -357,7 +360,7 @@ class AsArray implements StorageInterface
 
     /**
      * Replace paths data
-     * @param array $paths
+     * @param array<int,mixed> $paths
      */
     public function replacePaths(array $paths): void
     {

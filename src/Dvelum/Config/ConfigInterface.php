@@ -33,7 +33,8 @@ namespace Dvelum\Config;
 
 /**
  * Interface ConfigInterface
- * @package Dvelum\Config
+ * @extends  \ArrayAccess<string,mixed>
+ * @extends \Iterator<string,mixed>
  */
 interface ConfigInterface extends \ArrayAccess, \Iterator
 {
@@ -41,13 +42,13 @@ interface ConfigInterface extends \ArrayAccess, \Iterator
 
     /**
      * Convert into an array
-     * @return array
+     * @return array<int|string,mixed>
      */
     public function __toArray(): array;
 
     /**
      * Get the number of elements
-     * @return integer
+     * @return int
      */
     public function getCount(): int;
 
@@ -68,22 +69,22 @@ interface ConfigInterface extends \ArrayAccess, \Iterator
 
     /**
      * Set property values using an array
-     * @param array $data
+     * @param array<int|string,mixed> $data
      */
     public function setData(array $data): void;
 
     /**
      * Remove a parameter
      * @param string $key
-     * @return true
+     * @return void
      */
-    public function remove(string $key);
+    public function remove(string $key):void;
 
     /**
      * Get data handle
      * Hack method. Do not use it without understanding.
      * Get a direct link to the stored data array
-     * @return array
+     * @return array<int|string,mixed>
      */
     public function & dataLink(): array;
 

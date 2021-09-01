@@ -44,21 +44,21 @@ use Dvelum\Utils;
 class Classmap
 {
     /**
-     * @var array<string,string>
+     * @var array<int|string,string>
      */
     protected array $map = [];
     /**
-     * @var ConfigInterface<string,mixed> $appConfig
+     * @var ConfigInterface<int|string,mixed> $appConfig
      */
     protected ConfigInterface $appConfig;
     /**
-     * @var array<string,mixed>
+     * @var array<int|string,mixed>
      */
     protected array $autoloaderCfg = [];
 
     /**
      * Classmap constructor.
-     * @param ConfigInterface<string,mixed> $appConfig
+     * @param ConfigInterface<int|string,mixed> $appConfig
      */
     public function __construct(ConfigInterface $appConfig)
     {

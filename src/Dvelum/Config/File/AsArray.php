@@ -43,7 +43,7 @@ class AsArray extends Config\File\AbstractAdapter
 {
     /**
      * @param string $name
-     * @return array
+     * @return array<string,mixed>
      */
     protected function readFile(string $name): array
     {
