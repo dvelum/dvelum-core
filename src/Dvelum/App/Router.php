@@ -52,7 +52,7 @@ abstract class Router implements Router\RouterInterface
      * Run action
      * @param Request $request
      * @param ResponseInterface $response
-     * @return void
+     * @return ResponseInterface
      * @throws \Exception
      */
     abstract public function route(Request $request, ResponseInterface $response): ResponseInterface;

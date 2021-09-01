@@ -56,7 +56,7 @@ interface ResponseInterface
     /**
      * Send error message
      * @param string $message
-     * @param array $errors
+     * @param array<int,string> $errors
      * @return void
      * @throws \Exception
      */
@@ -64,8 +64,8 @@ interface ResponseInterface
 
     /**
      * Send success response
-     * @param array $data
-     * @param array $params
+     * @param array<int|string,mixed> $data
+     * @param array<int|string,mixed> $params
      * @return void
      */
     public function success(array $data = [], array $params = []): void;
@@ -79,7 +79,7 @@ interface ResponseInterface
 
     /**
      * Send JSON
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @return void
      */
     public function json(array $data = []): void;

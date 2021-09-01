@@ -39,26 +39,26 @@ abstract class Adapter
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
     /**
-     * @var array
+     * @var Form\Error[] $errors
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
-     * @var ConfigInterface $config
+     * @var ConfigInterface<int|string,mixed> $config
      */
-    protected $config;
+    protected ConfigInterface $config;
     /**
      * @var Lang\Dictionary
      */
-    protected $lang;
+    protected Lang\Dictionary $lang;
 
     /**
      * Adapter constructor.
      * @param Request $request
      * @param Lang\Dictionary $lang
-     * @param ConfigInterface $config
+     * @param ConfigInterface<int|string,mixed> $config
      */
     public function __construct(Request $request, Lang\Dictionary $lang, ConfigInterface $config)
     {

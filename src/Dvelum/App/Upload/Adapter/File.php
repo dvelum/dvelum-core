@@ -38,9 +38,10 @@ class File extends AbstractAdapter
 {
     /**
      * Upload file
-     * @param array $data- $_FILES array item
+     * @param array<string,mixed> $data $_FILES array item
      * @param bool $formUpload - optional, default true
-     * @return array|false on error
+     * @phpstan-return array<string,mixed>|false on error
+     * @return array{name:string,path:string,type:string,size:int}
      */
     public function upload(array $data, string $path, bool $formUpload = true)
     {
@@ -96,7 +97,7 @@ class File extends AbstractAdapter
         while (file_exists($path . $namePart . $ext)) {
             $parts = explode('-', $namePart);
             $el = array_pop($parts);
-            $el = intval($el);
+            $el = (int)($el);
             $el++;
             $parts[] = $el;
             $namePart = implode('-', $parts);
@@ -134,7 +135,7 @@ class File extends AbstractAdapter
 
     /**
      * Create filename for uploaded file
-     * @param array $fileData
+     * @param array<string,mixed> $fileData
      * @return string|null
      */
     protected function createUploadedName(array $fileData): ?string

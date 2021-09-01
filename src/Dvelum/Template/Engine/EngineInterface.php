@@ -38,6 +38,11 @@ use Dvelum\Template\Storage;
 
 interface EngineInterface
 {
+    /**
+     * @param ConfigInterface<string,mixed> $config
+     * @param Storage $storage
+     * @param CacheInterface|null $cache
+     */
     public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache);
 
     /**
@@ -108,14 +113,14 @@ interface EngineInterface
 
     /**
      * Get template data
-     * @return array
+     * @return array<string,mixed>
      */
     public function getData(): array;
 
     /**
      * Redefine template data using an associative key-value array,
      * old and new data merge
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
     public function setData(array $data): void;
@@ -130,7 +135,7 @@ interface EngineInterface
     /**
      * Render sub template
      * @param string $templatePath
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param bool|true $useCache
      * @return string
      */

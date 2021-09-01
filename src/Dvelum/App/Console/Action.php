@@ -38,29 +38,31 @@ abstract class Action implements ActionInterface
 {
     /**
      * Main application config
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $config;
+    protected array $config;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $stat = [];
+    protected array $stat = [];
     /**
      * Action params
-     * @var array
+     * @var array<int,mixed>
      */
-    protected $params = [];
-
+    protected array $params = [];
+    /**
+     * @var ContainerInterface
+     */
     protected ContainerInterface $diContainer;
 
     /**
-     * @param ConfigInterface $appConfig
-     * @param array $params
-     * @param array $config
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param array<int,mixed> $params
+     * @param array<string,mixed> $config
      * @return void
      */
     public function init(

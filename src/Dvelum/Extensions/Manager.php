@@ -34,6 +34,7 @@ use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\Config\Storage\StorageInterface;
 use Dvelum\Config\Storage\StorageInterface as ConfigStorageInterface;
+use Dvelum\DependencyContainer;
 use Dvelum\Orm;
 use Dvelum\Autoload;
 use Dvelum\File;
@@ -50,33 +51,36 @@ use Psr\Container\ContainerInterface;
 class Manager
 {
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $extensionsConfig;
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $config;
+    protected ConfigInterface $config;
     /**
      * @var Autoload
      */
-    protected $autoloader;
+    protected Autoload $autoloader;
     /**
      * Loaded modules index
-     * @var array
+     * @var array<string,array>
      */
-    protected $loadedExtensions = [];
+    protected array $loadedExtensions = [];
 
+    /**
+     * @var ContainerInterface
+     */
     protected ContainerInterface $di;
 
     /**
      * Manager constructor.
-     * @param ConfigInterface $appConfig
-     * @param Autoload $autoloader
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param ContainerInterface $di
      * @throws Exception
      */
     public function __construct(ConfigInterface $appConfig, ContainerInterface $di)
@@ -101,7 +105,7 @@ class Manager
     /**
      * Add extension to registry
      * @param string $extensionId
-     * @param array $config
+     * @param array<string,mixed> $config
      * @return bool
      */
     public function add(string $extensionId, array $config): bool
@@ -214,7 +218,9 @@ class Manager
         // register dependencies
         if (!empty($dependencyPaths)) {
             foreach ($dependencyPaths as $file) {
-                $this->di->bindArray(include $file);
+                if($this->di instanceof DependencyContainer || method_exists($this->di,'bindArray')){
+                    $this->di->bindArray(include $file);
+                }
             }
         }
     }

@@ -88,7 +88,7 @@ class Csrf
 
     /**
      * Set config options (storage , lifetime , cleanupLimit)
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      * @throws Exception
      */
@@ -103,11 +103,11 @@ class Csrf
         }
 
         if (isset($options['lifetime'])) {
-            static::$lifetime = intval($options['lifetime']);
+            static::$lifetime = (int)($options['lifetime']);
         }
 
         if (isset($options['cleanupLimit'])) {
-            static::$cleanupLimit = intval($options['cleanupLimit']);
+            static::$cleanupLimit = (int)($options['cleanupLimit']);
         }
     }
 

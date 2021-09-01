@@ -351,11 +351,11 @@ class Resize
 
     /**
      * Detect layout orientation
-     * @param integer $width
-     * @param integer $height
-     * @return integer - orientation constant Image_Resize::L_TYPE_S , Image_Resize::L_TYPE_H , Image_Resize::L_TYPE_V
+     * @param int $width
+     * @param int $height
+     * @return int - orientation constant Image_Resize::L_TYPE_S , Image_Resize::L_TYPE_H , Image_Resize::L_TYPE_V
      */
-    public static function detectLayout($width, $height)
+    public static function detectLayout(int $width, int $height): int
     {
         if ($width == $height) {
             return self::L_TYPE_S;
@@ -374,7 +374,7 @@ class Resize
      * @param string $newImgPath
      * @return bool
      */
-    public static function cropResize($imgPath, $width, $height, $newImgPath): bool
+    public static function cropResize(string $imgPath, int $width, int $height, string $newImgPath): bool
     {
         /*
          * Get Image size info
@@ -452,9 +452,9 @@ class Resize
      * @param int $sourceHeight
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
-    protected static function calcHorizontalToHorizontal($sourceWidth, $sourceHeight, $width, $height): array
+    protected static function calcHorizontalToHorizontal(int $sourceWidth, int $sourceHeight, int $width, int $height): array
     {
         $sourceProportion = $sourceWidth / $sourceHeight;
         $proportion = $width / $height;
@@ -470,7 +470,7 @@ class Resize
      * @param int $sourceHeight
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
     protected static function calcHorizontalToVertical(int $sourceHeight, int $width, int $height): array
     {
@@ -489,7 +489,7 @@ class Resize
      * @param int $sourceWidth
      * @param int $width
      * @param int $height
-     * @return array
+     * @return array<int,int>
      */
     protected static function calcVerticalToHorizontal($sourceWidth, $width, $height): array
     {
@@ -506,7 +506,7 @@ class Resize
     /**
      * @param int $sourceWidth
      * @param int $sourceHeight
-     * @return array
+     * @return array<int,int>
      */
     protected static function calcSquareToSquare(int $sourceWidth, int $sourceHeight): array
     {

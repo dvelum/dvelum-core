@@ -36,15 +36,15 @@ abstract class AbstractAdapter
     /**
      * @var string
      */
-    protected $error = '';
+    protected string $error = '';
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $config;
+    protected array $config;
 
     /**
      * AbstractAdapter constructor.
-     * @param array $config
+     * @param array<string,mixed> $config
      */
     public function __construct(array $config)
     {
@@ -62,9 +62,9 @@ abstract class AbstractAdapter
 
     /**
      * Upload file
-     * @param array $data- $_FILES array item
+     * @param array<string,mixed> $data $_FILES array item
      * @param bool $formUpload - optional, default true
-     * @return array|false on error
+     * @return array<int,mixed>|false on error
      */
     abstract public function upload(array $data, string $path, bool $formUpload = true);
 }

@@ -40,17 +40,21 @@ class File implements DictionaryInterface
     /**
      * @var string $name
      */
-    protected $name;
+    protected string $name;
 
     /**
-     * @var Config\ConfigInterface
+     * @var Config\ConfigInterface<string,mixed>
      */
-    protected $data;
+    protected Config\ConfigInterface $data;
 
+    /**
+     * @param string $name
+     * @param Config\ConfigInterface<string,mixed> $config
+     * @throws \Exception
+     */
     public function __construct(string $name, Config\ConfigInterface $config)
     {
         $this->name = $name;
-
         $configPath = $config->get('configPath') . $name . '.php';
 
         if (!Config::storage()->exists($configPath)) {
@@ -91,7 +95,7 @@ class File implements DictionaryInterface
 
     /**
      * Get dictionary data
-     * @return array
+     * @return array<int|string,mixed>
      */
     public function getData(): array
     {

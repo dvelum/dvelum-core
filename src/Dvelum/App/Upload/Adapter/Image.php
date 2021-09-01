@@ -40,7 +40,7 @@ class Image extends File
 {
     /**
      * Create filename for uploaded file
-     * @param array $fileData
+     * @param array<string,mixed> $fileData
      * @return string|null
      */
     protected function createUploadedName(array $fileData): ?string
@@ -51,13 +51,14 @@ class Image extends File
             return null;
         }
         /**
-         * @var array $info
+         * @var array<int,mixed>|false $info
          */
         $info = getimagesize($fileData['tmp_name']);
 
-        if (!isset($info[2])) {
+        if ($info === false || !isset($info[2])) {
             return null;
         }
+
         $ext = \Dvelum\File::getExt($name);
         $name = str_replace($ext, '', $name);
         // fix file extension from image type
@@ -66,7 +67,11 @@ class Image extends File
     }
 
     /**
-     * @inheritDoc
+     * @param array<string,mixed> $data
+     * @param string $path
+     * @param bool $formUpload
+     * @phpstan-return array<string,mixed>|false
+     * @return array{name:string,path:string,type:string,size:int,thumb:string}|false
      */
     public function upload(array $data, string $path, bool $formUpload = true)
     {
@@ -91,7 +96,7 @@ class Image extends File
                         Resize::resizeToFrame($data['path'], $xy[0], $xy[1], $newName);
                         break;
                 }
-                if ($name == 'icon') {
+                if ($name === 'icon') {
                     $data['thumb'] = $newName;
                 }
             }

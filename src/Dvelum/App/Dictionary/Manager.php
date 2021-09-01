@@ -47,13 +47,13 @@ class Manager
      * Base path
      * @var string
      */
-    protected $baseDir = '';
+    protected string $baseDir = '';
 
     /**
      * Path to localized dictionary
      * @var string
      */
-    protected $path = '';
+    protected string $path = '';
     /**
      * @var CacheInterface|false
      */
@@ -61,27 +61,27 @@ class Manager
     /**
      * @var string
      */
-    protected $language = '';
+    protected string $language = '';
     /**
-     * @var false|mixed|null
+     * @var array<string,string>|null
      */
     protected static $list = null;
 
     /**
      * Valid dictionary local cache
-     * @var array
+     * @var array<string,bool>
      */
-    protected static $validDictionary = [];
+    protected static array $validDictionary = [];
 
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
 
     protected Lang $lang;
 
     /**
-     * @param ConfigInterface $appConfig
+     * @param ConfigInterface<string,mixed> $appConfig
      * @param CacheInterface|false $cache
      * @throws \Exception
      */
@@ -89,7 +89,7 @@ class Manager
     {
         $this->lang = $lang;
         $this->appConfig = $appConfig;
-        $this->language = $appConfig->get('language');
+        $this->language = (string) $appConfig->get('language');
         $this->path = Config::storage()->getWrite();
         $this->baseDir = $appConfig->get('dictionary_folder');
         $this->cache = $cache;
@@ -101,7 +101,7 @@ class Manager
 
     /**
      * Get list of dictionaries
-     * @return array
+     * @return array<int,string>
      * @throws \Exception
      */
     public function getList(): array
@@ -132,7 +132,7 @@ class Manager
         self::$list = $list;
 
         if ($this->cache) {
-            $this->cache->save($list, self::CACHE_KEY_LIST);
+            $this->cache->save( self::CACHE_KEY_LIST, $list);
         }
 
         return array_keys($list);
@@ -141,12 +141,12 @@ class Manager
     /**
      * Create dictionary
      * @param string $name
-     * @param string|bool $language , optional
+     * @param string|bool $language - optional
      * @return bool
      */
     public function create(string $name, $language = false): bool
     {
-        if ($language == false) {
+        if ($language === false) {
             $language = $this->language;
         }
 
@@ -288,7 +288,7 @@ class Manager
         $s = md5($s);
 
         if ($this->cache) {
-            $this->cache->save($s, self::CACHE_KEY_DATA_HASH);
+            $this->cache->save(self::CACHE_KEY_DATA_HASH, $s);
         }
 
         return $s;

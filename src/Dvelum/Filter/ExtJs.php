@@ -36,9 +36,9 @@ use Dvelum\Db\Select\Filter;
 class ExtJs
 {
     /**
-     * @var array
+     * @var array<string,string>
      */
-    protected $operators = [
+    protected array $operators = [
         'gt' => Filter::GT,
         'lt' => Filter::LT,
         'like' => Filter::LIKE,
@@ -52,7 +52,7 @@ class ExtJs
     /**
      * Convert filters from ExtJs UI
      * into Db\Select\Filter
-     * @param array $values
+     * @param array<mixed,mixed> $values
      * @return Filter[]
      */
     public function toDbSelect(array $values): array
@@ -73,7 +73,7 @@ class ExtJs
                 continue;
             }
 
-            if ($operator == 'like') {
+            if ($operator === 'like') {
                 $result[] = new Filter($field, $value . '%', $this->operators[$operator]);
             } else {
                 $result[] = new Filter($field, $value, $this->operators[$operator]);

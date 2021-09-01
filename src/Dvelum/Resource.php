@@ -45,24 +45,25 @@ class Resource
      * @phpstan-var array<string,mixed>
      * @var array{jsCacheUrl:string,jsCachePath:string,cssCacheUrl:string,cssCachePath:string,wwwRoot:string,wwwPath:string,cache:CacheInterface|null}
      */
-    protected $config;
+    protected array $config;
 
     /**
      * @var CacheInterface|null
      */
-    protected $cache = null;
+    protected ?CacheInterface $cache = null;
     /**
-     * @var array
+     * {file:string,order:int,tag:string|false,minified:bool}
+     * @var array<string,\stdClass>
      */
-    protected $jsFiles = [];
+    protected array $jsFiles = [];
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $rawFiles = [];
+    protected array $rawFiles = [];
     /**
-     * @var array
+     * @var array<int|string,\stdClass>
      */
-    protected $cssFiles = [];
+    protected array $cssFiles = [];
     /**
      * @var string
      */
@@ -90,13 +91,13 @@ class Resource
     /**
      * Add javascript file to the contentent
      *
-     * @param string $file- file path relate to document root
+     * @param string $file - file path relate to document root
      * @param mixed $order - include order
-     * @param boolean $minified - file already minified
+     * @param bool $minified - file already minified
      * @param string|bool $tag
      * @return void
      */
-    public function addJs(string $file, $order = false, $minified = false, $tag = false): void
+    public function addJs(string $file, $order = false, bool $minified = false, $tag = false): void
     {
         if ($file[0] === '/') {
             $file = substr($file, 1);
@@ -195,10 +196,10 @@ class Resource
      * Include JS resources by tag
      * @param bool $useMin
      * @param bool $compile
-     * @param mixed $tag
+     * @param string|false $tag
      * @return string
      */
-    public function includeJsByTag($useMin = false, $compile = false, $tag = false): string
+    public function includeJsByTag(bool $useMin = false, bool $compile = false, $tag = false): string
     {
         $s = '';
         $fileList = $this->jsFiles;
@@ -213,6 +214,9 @@ class Resource
          * javascript files
          */
         if (!empty($fileList)) {
+            /**
+             * @var array<int,\stdClass> $fileList
+             */
             $fileList = Utils::sortByProperty($fileList, 'order');
             if ($compile) {
                 $s .= '<script type="text/javascript" src="' . $this->config['wwwRoot'];
@@ -233,12 +237,12 @@ class Resource
 
     /**
      * Returns javascript source tags. Include order: Files , Raw , Inline
-     * @param boolean $useMin - use Js minify
-     * @param boolean $compile - compile Files into one
-     * @param mixed $tag
+     * @param bool $useMin - use Js minify
+     * @param bool $compile - compile Files into one
+     * @param string|false $tag
      * @return string
      */
-    public function includeJs($useMin = false, $compile = false, $tag = false): string
+    public function includeJs(bool $useMin = false, bool $compile = false, $tag = false): string
     {
         $fileList = $this->jsFiles;
 
@@ -312,16 +316,16 @@ class Resource
 
     /**
      * Compile JS files cache
-     * @param array $files - file paths relative to the document root directory
-     * @param boolean $minify - minify scripts
+     * @param array<int,\stdClass> $files - file paths relative to the document root directory
+     * @param bool $minify - minify scripts
      * @return string  - cached file path
      */
-    protected function compileJsFiles(array $files, bool $minify /*deprecated*/): string
+    protected function compileJsFiles(array $files, bool $minify): string
     {
         $validHash = $this->getFileHash(Utils::fetchCol('file', $files));
 
         $cacheFile = Utils::createCachePath($this->config['jsCachePath'], $validHash . '.js');
-        $cachedUrl = \str_replace($this->config->get('jsCachePath'), $this->config['jsCacheUrl'], $cacheFile);
+        $cachedUrl = \str_replace($this->config['jsCachePath'], $this->config['jsCacheUrl'], $cacheFile);
 
         if (!file_exists($cacheFile)) {
             $src = '';
@@ -345,10 +349,10 @@ class Resource
 
     /**
      * Get a hash for the file list. Used to check for changes in files.
-     * @param array $files - File paths relative to the document root directory
+     * @param array<int,string> $files - File paths relative to the document root directory
      * @return string
      */
-    public function getFileHash(array $files)
+    public function getFileHash(array $files): string
     {
         $listHash = \md5(\serialize($files));
         /**
@@ -372,7 +376,7 @@ class Resource
         }
 
         if ($this->cache) {
-            $this->cache->save(\md5($dataHash), $listHash, 60);
+            $this->cache->save($listHash,\md5($dataHash), 60);
         }
 
         return \md5($dataHash);
@@ -383,12 +387,16 @@ class Resource
      * @param bool $combine
      * @return string
      */
-    public function includeCss($combine = false): string
+    public function includeCss(bool $combine = false): string
     {
         $s = '';
 
         if (!empty($this->cssFiles)) {
-            $this->cssFiles = Utils::sortByProperty($this->cssFiles, 'order');
+            /**
+             * @var array <int,\stdClass> $sorted
+             */
+            $sorted = Utils::sortByProperty($this->cssFiles, 'order');
+            $this->cssFiles = $sorted;
 
             if ($combine) {
                 $fileList = [];
@@ -463,7 +471,7 @@ class Resource
     }
 
     /**
-     * @return
+     * @return array<string,mixed>
      */
     public function getConfig(): array
     {

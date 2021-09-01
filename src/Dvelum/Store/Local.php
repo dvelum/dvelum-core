@@ -40,13 +40,13 @@ namespace Dvelum\Store;
 class Local implements AdapterInterface
 {
     /**
-     * @var array $storage
+     * @var array<string,mixed> $storage
      */
-    protected $storage;
+    protected array $storage;
     /**
      * @var string $name
      */
-    protected $name;
+    protected string $name;
 
     /**
      * Local constructor.
@@ -62,14 +62,14 @@ class Local implements AdapterInterface
      * Instantiate storage
      * @return void
      */
-    protected function storageConnect()
+    protected function storageConnect(): void
     {
         $this->storage = [];
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Dvelum/Store/Store_Interface#getData()
+     * @inerhitDoc
+     * @return array<string,mixed>
      */
     public function getData(): array
     {
@@ -97,18 +97,20 @@ class Local implements AdapterInterface
     }
 
     /**
-     * Note that null value causes keyExists return false (for better perfomance)
-     * @inheritDoc
+     * Note that null value causes keyExists return false (for better performance)
+     * @param string $key ,
+     * @param mixed $val
      */
-    public function set($key, $value)
+    public function set(string $key, $val): void
     {
-        $this->storage[$key] = $value;
+        $this->storage[$key] = $val;
     }
 
     /**
      * @inheritDoc
+     * @param array<string,mixed> $array
      */
-    public function setValues(array $array)
+    public function setValues(array $array): void
     {
         foreach ($array as $k => $v) {
             $this->set($k, $v);
@@ -142,7 +144,7 @@ class Local implements AdapterInterface
 
     /**
      * Replace store data
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
     public function setData(array $data): void

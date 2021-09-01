@@ -37,31 +37,31 @@ class Debug
      * Script startup time
      * @var float
      */
-    protected $scriptStartTime;
+    protected float $scriptStartTime;
 
     /**
      * Script finish time
      * @var float
      */
-    protected $scriptStopTime;
+    protected float $scriptStopTime;
     /**
      * Database profiler
-     * @var array $dbProfilers
+     * @var array<mixed> $dbProfilers
      */
-    protected $dbProfilers = [];
+    protected array $dbProfilers = [];
 
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $loadedClasses = [];
+    protected array $loadedClasses = [];
     /**
-     * @var array
+     * @var array<string>
      */
-    protected $loadedConfigs = [];
+    protected array $loadedConfigs = [];
     /**
-     * @var array
+     * @var array<mixed>
      */
-    protected $cacheCores = [];
+    protected array $cacheCores = [];
 
     public static function instance(): self
     {
@@ -73,7 +73,7 @@ class Debug
     }
 
     /**
-     * @param array $data
+     * @param array<mixed> $data
      */
     public function setCacheCores(array $data): void
     {
@@ -105,7 +105,7 @@ class Debug
     }
 
     /**
-     * @param array $data
+     * @param array<string> $data
      */
     public function setLoadedClasses(array $data): void
     {
@@ -113,7 +113,7 @@ class Debug
     }
 
     /**
-     * @param array $data
+     * @param array<string> $data
      */
     public function setLoadedConfigs(array $data): void
     {
@@ -122,7 +122,7 @@ class Debug
 
     /**
      * Get debug information
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return string  - html formated results
      */
     public function getStats(array $options): string
@@ -240,7 +240,7 @@ class Debug
     }
 
     /**
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return string
      */
     protected function getQueryProfiles(array $options): string

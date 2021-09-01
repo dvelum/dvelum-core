@@ -43,29 +43,33 @@ class CryptService implements CryptServiceInterface
     /**
      * @var string
      */
-    private $chipper = 'aes-256-ctr';
+    private string $chipper = 'aes-256-ctr';
     /**
      * @var string
      */
-    private $hash = 'sha256';
+    private string $hash = 'sha256';
     /**
      * @var string|null
      */
-    private $privateKey = null;
+    private ?string $privateKey = null;
     /**
      * @var string|null
      */
-    private $privateKeyData = null;
+    private ?string $privateKeyData = null;
     /**
      * @var string
      */
-    private $error = '';
+    private string $error = '';
 
     /**
-     * @var array|null
+     * @var array<string,mixed>|null
      */
-    private $privateKeyOptions = null;
+    private ?array $privateKeyOptions = null;
 
+    /**
+     * @param ConfigInterface<string,mixed> $config
+     * @throws \Exception
+     */
     public function __construct(ConfigInterface $config)
     {
         $this->chipper = $config->get('chipper');
@@ -107,7 +111,7 @@ class CryptService implements CryptServiceInterface
 
     /**
      * Set private key generator options
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     public function setPrivateKeyOptions(array $options): void

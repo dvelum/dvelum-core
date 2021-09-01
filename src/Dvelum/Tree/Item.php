@@ -31,6 +31,9 @@ declare(strict_types=1);
 
 namespace Dvelum\Tree;
 
+/**
+ * @implements \ArrayAccess<string,mixed>
+ */
 class Item implements \ArrayAccess
 {
     /**
@@ -42,13 +45,13 @@ class Item implements \ArrayAccess
      */
     protected $parent;
     /**
-     * @var array
+     * @var array<int|string,mixed>
      */
-    protected $data;
+    protected array $data;
     /**
      * @var int|null
      */
-    protected $order;
+    protected ?int $order;
 
     /**
      * Item constructor.
@@ -130,7 +133,8 @@ class Item implements \ArrayAccess
     }
 
     /**
-     * @return array
+     * @phpstan-return  array{id:int|string,parent:int|string,data:array,order:int|null}
+     * @return array<string,mixed>
      */
     public function __toArray(): array
     {

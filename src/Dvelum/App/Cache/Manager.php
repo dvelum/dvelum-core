@@ -38,7 +38,7 @@ class Manager
     /**
      * @var array<string,CacheInterface> $connections
      */
-    protected static $connections = [];
+    protected static array $connections = [];
 
     /**
      * Register cache adapter

@@ -44,20 +44,20 @@ class Service
     protected $adapterClass;
 
     /**
-     * @var ConfigInterface $engineConfig
+     * @var ConfigInterface<string,mixed> $engineConfig
      */
-    protected $engineConfig;
+    protected ConfigInterface $engineConfig;
 
     /**
      * @var CacheInterface|null
      */
-    protected $cache = null;
+    protected ?CacheInterface $cache = null;
 
     protected Storage $storage;
 
     /**
      * Service constructor.
-     * @param ConfigInterface $config
+     * @param ConfigInterface<string,mixed> $config
      * @param CacheInterface|null $cache
      * @throws \Exception
      */

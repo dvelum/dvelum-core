@@ -138,7 +138,7 @@ class Factory
         }
 
         if ($useCache && $cache) {
-            $cache->save($config, $configKey);
+            $cache->save($configKey, $config);
         } else {
             self::cache();
         }
@@ -179,7 +179,7 @@ class Factory
             */
         } else {
             if (self::$store && self::$store->keyExists($key)) {
-                self::$cache->save(self::$store->get($key), (string)$key);
+                self::$cache->save((string)$key, self::$store->get($key));
             }
         }
     }

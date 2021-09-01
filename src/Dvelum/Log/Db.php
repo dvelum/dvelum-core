@@ -42,21 +42,21 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
      * Database Table
      * @var string
      */
-    protected $table;
+    protected string $table;
     /**
      * Database connection
      * @var \Dvelum\Db\Adapter
      */
-    protected $db;
+    protected \Dvelum\Db\Adapter $db;
     /**
      * Log name
      * @var string
      */
-    protected $name;
+    protected string $name;
     /**
-     * @var array
+     * @var array<string,string>
      */
-    protected $logFields = [
+    protected array $logFields = [
         'name' => 'name',
         'message' => 'message',
         'date' => 'date',
@@ -66,7 +66,7 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
     /**
      * @var string
      */
-    protected $lastError = '';
+    protected string $lastError = '';
 
     /**
      * Db constructor.
@@ -83,9 +83,9 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
 
     /**
      * Set log message
-     * @param MixedLog $level
+     * @param int|string $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
     public function log($level, $message, array $context = []): bool
@@ -109,10 +109,10 @@ class Db extends \Psr\Log\AbstractLogger implements LogInterface
 
     /**
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function logError(string $message, array $context = []): bool
+    public function logError($message, array $context = []): bool
     {
         return $this->log(LogLevel::ERROR, $message, $context);
     }

@@ -38,7 +38,7 @@ interface DictionaryInterface
     /**
      * DictionaryInterface constructor.
      * @param string $name
-     * @param ConfigInterface $config
+     * @param ConfigInterface<int|string,mixed> $config
      */
     public function __construct(string $name, ConfigInterface $config);
 
@@ -64,7 +64,7 @@ interface DictionaryInterface
 
     /**
      * Get dictionary data
-     * @return array
+     * @return array<int|string,string>
      */
     public function getData(): array;
 
@@ -85,20 +85,20 @@ interface DictionaryInterface
 
     /**
      * Get dictionary as JavaScript code representation
-     * @param boolean $addAll - add value 'All' with a blank key,
-     * @param boolean $addBlank - add empty value is used in drop-down lists
-     * @param string|boolean $allText , optional - text for not selected value
+     * @param bool $addAll - add value 'All' with a blank key,
+     * @param bool $addBlank - add empty value is used in drop-down lists
+     * @param string|bool $allText - optional - text for not selected value
      * @return string
      */
-    public function __toJs($addAll = false, $addBlank = false, $allText = false): string;
+    public function __toJs(bool $addAll = false, bool $addBlank = false, $allText = false): string;
 
     /**
      * Get key for value
      * @param string $value
-     * @param bool $i case insensitive
+     * @param bool $i  - case insensitive
      * @return mixed, false on error
      */
-    public function getKeyByValue(string $value, $i = false);
+    public function getKeyByValue(string $value, bool $i = false);
 
     /**
      * Save dictionary

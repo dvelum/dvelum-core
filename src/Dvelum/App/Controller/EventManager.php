@@ -32,13 +32,13 @@ namespace Dvelum\App\Controller;
 class EventManager
 {
     /**
-     * @var array
+     * @var array<string,array>
      */
-    protected $listeners = [];
+    protected array $listeners = [];
     /**
      * @var string
      */
-    protected $error = '';
+    protected string $error = '';
 
     public const BEFORE_LIST = 'before_list';
     public const AFTER_LIST = 'after_list';
@@ -52,7 +52,7 @@ class EventManager
 
     /**
      * @param string $event
-     * @param callable|array $handler [obj,method]
+     * @param callable|array<int,string> $handler [obj,method]
      * @return void
      */
     public function on(string $event, $handler): void
@@ -87,11 +87,14 @@ class EventManager
             if ($e->isPropagationStopped()) {
                 return false;
             }
-
             if (is_callable($listener->handler)) {
                 ($listener->handler)($e);
             } else {
-                call_user_func_array($listener->handler, [$e]);
+                /**
+                 * @var array<string,string>|callable $call
+                 */
+                $call = $listener->handler;
+                call_user_func_array($call, [$e]);
             }
 
             if ($e->hasError()) {

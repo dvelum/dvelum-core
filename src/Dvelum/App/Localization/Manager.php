@@ -44,29 +44,29 @@ use Exception;
 class Manager
 {
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected ConfigInterface $appConfig;
     /**
      * Message language
      * @var Lang\Dictionary
      */
-    protected $lang;
+    protected Lang\Dictionary $lang;
     /**
      * @var string
      */
-    protected $indexLanguage = 'en';
+    protected string $indexLanguage = 'en';
 
     /**
      * Localizations file path
-     * @var array
+     * @var array<int,string>
      */
-    protected $langsPaths;
+    protected array $langsPaths;
 
     protected Lang $langService;
 
     /**
-     * @param ConfigInterface $appConfig
+     * @param ConfigInterface<string,mixed> $appConfig
      */
     public function __construct(ConfigInterface $appConfig, Lang $lang)
     {
@@ -79,9 +79,9 @@ class Manager
     /**
      * Get list of system languages
      * @param bool $onlyMain - optional. Get only global locales without subpackages
-     * @return array
+     * @return array<int,string>
      */
-    public function getLangs($onlyMain = true): array
+    public function getLangs(bool $onlyMain = true): array
     {
         $langStorage = $this->langService->getStorage();
         $langs = $langStorage->getList(false, !$onlyMain);
@@ -117,9 +117,9 @@ class Manager
     /**
      * Get language subpackages
      * @param string|bool $lang - optional
-     * @return array
+     * @return array<int,string>
      */
-    public function getSubPackages($lang = false)
+    public function getSubPackages($lang = false) : array
     {
         $data = [];
 
@@ -145,7 +145,7 @@ class Manager
 
     /**
      * Get list of sub dictionaries (names only)
-     * @return array
+     * @return array<int,string>
      */
     public function getSubDictionaries(): array
     {
@@ -223,9 +223,9 @@ class Manager
     /**
      * Get dictionary_index
      * @param string $dictionary
-     * @return bool|array
+     * @return array<int|string,mixed>|false
      */
-    public function getIndex($dictionary = '')
+    public function getIndex(string $dictionary = '')
     {
         $subPackage = basename($dictionary);
         $indexName = $this->getIndexName($subPackage);
@@ -247,12 +247,12 @@ class Manager
 
     /**
      * Update index content
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @param string $dictionary - optional
      * @return void
      * @throws Exception
      */
-    public function updateIndex($data, $dictionary): void
+    public function updateIndex(array $data, string $dictionary): void
     {
         $subPackage = basename($dictionary);
         $indexName = $this->getIndexName($subPackage);
@@ -276,9 +276,10 @@ class Manager
     /**
      * Get localization config
      * @param string $dictionary
-     * @return array
+     * @return array{id:int|string,key:string,title:string,sync:bool}[]
+     * @phpstan-return array<int,array>
      */
-    public function getLocalization($dictionary): array
+    public function getLocalization(string $dictionary): array
     {
         $dictionaryData = $this->langService->getStorage()->get($dictionary . '.php')->__toArray();
 
@@ -323,10 +324,10 @@ class Manager
      * @return void
      * @throws \Exception
      */
-    public function addToIndex($key, $dictionary = ''): void
+    public function addToIndex(string $key, string $dictionary = ''): void
     {
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
         $index = $this->getIndex($dictionary);
         if (empty($index)) {
@@ -350,7 +351,7 @@ class Manager
     public function removeFromIndex($key, $dictionary = ''): void
     {
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
         $index = $this->getIndex($dictionary);
         if (empty($index)) {
@@ -372,7 +373,7 @@ class Manager
      * Add dictionary record
      * @param string $dictionary
      * @param string $key
-     * @param array $langs
+     * @param string[] $langs
      * @return void
      * @throws Exception
      */
@@ -394,7 +395,7 @@ class Manager
         }
 
         /**
-         * @var array $index
+         * @var array<int|string,mixed> $index
          */
         if (empty($index)) {
             $index = [];
@@ -445,7 +446,7 @@ class Manager
      * @param string $file
      * @return bool
      */
-    protected function checkCanEdit($file): bool
+    protected function checkCanEdit(string $file): bool
     {
         if (file_exists($file) && is_writable($file)) {
             return true;
@@ -461,7 +462,7 @@ class Manager
      * @return void
      * @throws Exception
      */
-    public function removeRecord($dictionary, $key): void
+    public function removeRecord(string $dictionary, string $key): void
     {
         $isSub = false;
 
@@ -518,11 +519,11 @@ class Manager
     /**
      * Update localization records
      * @param string $dictionary
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @return void
      * @throws Exception
      */
-    public function updateRecords($dictionary, $data): void
+    public function updateRecords(string $dictionary, array $data): void
     {
         $writePath = $this->langService->getStorage()->getWrite() . $dictionary . '.php';
 
@@ -538,11 +539,11 @@ class Manager
     }
 
     /**
-     * Check if dictionary exists (only sub dictionaies not languages)
+     * Check if dictionary exists (only sub dictionaries not languages)
      * @param string $name
      * @return bool
      */
-    public function dictionaryExists($name): bool
+    public function dictionaryExists(string $name): bool
     {
         $list = $this->getSubDictionaries();
 
@@ -559,7 +560,7 @@ class Manager
      * @return void
      * @throws Exception
      */
-    public function createDictionary($name): void
+    public function createDictionary(string $name): void
     {
         $writePath = $this->langService->getStorage()->getWrite();
         $indexPath = $writePath . $this->getIndexName($name);

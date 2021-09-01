@@ -42,19 +42,19 @@ class Controller
     /**
      * @var Request
      */
-    protected $request;
+    protected Request $request;
     /**
      * @var ResponseInterface
      */
-    protected $response;
+    protected ResponseInterface $response;
     /**
-     * @var Config\ConfigInterface
+     * @var Config\ConfigInterface<string,mixed>
      */
-    protected $appConfig;
+    protected Config\ConfigInterface $appConfig;
     /**
      * @var RouterInterface
      */
-    protected $router;
+    protected RouterInterface $router;
 
     protected ContainerInterface $container;
 
@@ -84,7 +84,7 @@ class Controller
     /**
      * Render template
      * @param string $templatePath
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param bool $cacheResult
      */
     public function render(string $templatePath, array $data, bool $cacheResult = true): void

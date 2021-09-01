@@ -34,10 +34,9 @@ use Dvelum\Response\ResponseInterface ;
 class Stub extends Response
 {
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $headers = [];
-
+    protected array $headers = [];
 
     public function send(): void
     {

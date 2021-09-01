@@ -92,7 +92,7 @@ class Response implements ResponseInterface
     /**
      * Send error message
      * @param string $message
-     * @param array $errors
+     * @param array<int,string> $errors
      * @return void
      * @throws \Exception
      */
@@ -112,8 +112,8 @@ class Response implements ResponseInterface
 
     /**
      * Send success response
-     * @param array $data
-     * @param array $params
+     * @param array<string|int,mixed> $data
+     * @param array<string,mixed> $params
      * @return void
      */
     public function success(array $data = [], array $params = []): void
@@ -145,7 +145,7 @@ class Response implements ResponseInterface
 
     /**
      * Send JSON
-     * @param array $data
+     * @param array<int|string,mixed> $data
      * @return void
      */
     public function json(array $data = []): void

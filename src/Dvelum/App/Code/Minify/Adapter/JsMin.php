@@ -40,7 +40,7 @@ class JsMin implements AdapterInterface
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */

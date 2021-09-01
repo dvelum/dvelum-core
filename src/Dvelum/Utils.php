@@ -86,7 +86,7 @@ class Utils
      * Fetch array column
      * @param string $key
      * @param array<int|string,mixed> $data
-     * @return array<int|string,mixed>
+     * @return array<int,mixed>
      * @throws \Exception
      */
     public static function fetchCol(string $key, array $data): array

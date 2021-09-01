@@ -36,7 +36,7 @@ class Sql extends \Dvelum\Log\File implements LogInterface
     /**
      * @param mixed $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
     public function log($level, $message, array $context = []): bool

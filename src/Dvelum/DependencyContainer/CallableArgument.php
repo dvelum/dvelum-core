@@ -35,6 +35,9 @@ use Psr\Container\ContainerInterface;
 
 class CallableArgument implements ArgumentInterface
 {
+    /**
+     * @var callable
+     */
     private $handler;
 
     public function __construct(callable $handler)

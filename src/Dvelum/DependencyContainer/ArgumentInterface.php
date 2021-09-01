@@ -35,5 +35,9 @@ use Psr\Container\ContainerInterface;
 
 interface ArgumentInterface
 {
+    /**
+     * @param ContainerInterface $c
+     * @return mixed
+     */
     public function get(ContainerInterface $c);
 }

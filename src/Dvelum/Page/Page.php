@@ -34,67 +34,67 @@ namespace Dvelum\Page;
 class Page
 {
     /**
-     * @var array
+     * @var array<int|string,Page>
      */
-    protected static $pages = [];
+    protected static array $pages = [];
 
     /**
      * @var string
      */
-    protected $templatesPath = '';
+    protected string $templatesPath = '';
     /**
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
     /**
      * @var string
      */
-    protected $htmlTitle = '';
+    protected string $htmlTitle = '';
     /**
      * @var string
      */
-    protected $code = 'index';
+    protected string $code = 'index';
     /**
      * @var int
      */
-    protected $id = 0;
+    protected int $id = 0;
     /**
      * @var string
      */
-    protected $text = '';
+    protected string $text = '';
     /**
      * @var string
      */
-    protected $metaKeywords = '';
+    protected string $metaKeywords = '';
     /**
      * @var string
      */
-    protected $metaDescription = '';
+    protected string $metaDescription = '';
     /**
      * @var string|null
      */
-    protected $robots = null;
+    protected ?string $robots = null;
     /**
      * @var string|null
      */
-    protected $canonical = null;
+    protected ?string $canonical = null;
     /**
      * @var string
      */
-    protected $theme = 'default';
+    protected string $theme = 'default';
     /**
      * @var OpenGraph|null
      */
-    protected $openGraph = null;
+    protected ?OpenGraph $openGraph = null;
     /**
      * @var string|null
      */
-    protected $csrfToken = null;
+    protected ?string $csrfToken = null;
 
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $properties = [];
+    protected array $properties = [];
 
     public static function factory(string $id = 'default'): Page
     {
@@ -109,7 +109,7 @@ class Page
     }
 
     /**
-     * @param array $properties
+     * @param array<string,mixed> $properties
      */
     public function setProperties(array $properties): void
     {

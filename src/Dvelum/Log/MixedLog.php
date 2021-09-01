@@ -36,11 +36,11 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
     /**
      * @var File
      */
-    protected $logFile;
+    protected File $logFile;
     /**
      * @var Db
      */
-    protected $logDb;
+    protected Db $logDb;
 
     public function __construct(File $logFile, Db $logDb)
     {
@@ -49,12 +49,12 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
     }
 
     /**
-     * @param MixedLog $level
+     * @param int|string $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function log($level, $message, array $context = array()): bool
+    public function log($level, $message, array $context = []): bool
     {
         if (!$this->logDb->log($level, $message, $context)) {
             $this->logFile->log($level, $message, $context);
@@ -66,10 +66,10 @@ class MixedLog extends \Psr\Log\AbstractLogger implements LogInterface
 
     /**
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function logError(string $message, array $context = []): bool
+    public function logError($message, array $context = []): bool
     {
         return $this->log(LogLevel::ERROR, $message, $context);
     }

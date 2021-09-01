@@ -37,16 +37,19 @@ class Storage
 {
     /**
      * Runtime cache of configuration files
-     * @var array
+     * @var array<string,mixed>
      */
-    protected static $runtimeCache = [];
+    protected static array $runtimeCache = [];
 
     /**
      * Storage configuration options
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
     protected ConfigInterface $config;
 
+    /**
+     * @param ConfigInterface<string,mixed> $config
+     */
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;
@@ -54,7 +57,7 @@ class Storage
 
     /**
      * Set configuration options
-     * @param array $options
+     * @param array<string,mixed> $options
      * @return void
      */
     public function setConfig(array $options): void
@@ -67,10 +70,10 @@ class Storage
     /**
      * Get template real path  by local path
      * @param string $localPath
-     * @param boolean $useCache , optional
+     * @param bool $useCache - optional
      * @return string | false
      */
-    public function get($localPath, $useCache = true)
+    public function get(string $localPath, bool $useCache = true)
     {
         $key = $localPath;
 
@@ -104,7 +107,7 @@ class Storage
 
     /**
      * Get template paths
-     * @return array
+     * @return array<int,string>
      */
     public function getPaths(): array
     {
@@ -123,7 +126,7 @@ class Storage
 
     /**
      * Set paths
-     * @param array $paths
+     * @param array<int,string> $paths
      */
     public function setPaths(array $paths): void
     {

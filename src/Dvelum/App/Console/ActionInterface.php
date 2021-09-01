@@ -37,9 +37,9 @@ use Psr\Container\ContainerInterface;
 interface ActionInterface
 {
     /**
-     * @param ConfigInterface $appConfig
-     * @param array $params
-     * @param array $config
+     * @param ConfigInterface<string,mixed> $appConfig
+     * @param array<int,mixed> $params
+     * @param array<string,mixed> $config
      * @param ContainerInterface $diContainer
      */
     public function init(

@@ -94,7 +94,12 @@ class DependencyContainer implements ContainerInterface
         $this->lazyInit = array_merge($this->lazyInit, $config);
     }
 
-    private function loadDependency($key)
+    /**
+     * @param string $key
+     * @return mixed|object
+     * @throws \ReflectionException
+     */
+    private function loadDependency(string $key)
     {
         $object = $this->lazyInit[$key];
 

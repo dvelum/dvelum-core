@@ -42,21 +42,21 @@ use Dvelum\App\Upload\Adapter\Image;
 class Uploader
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $config;
+    protected array $config;
     /**
-     * @var array
+     * @var AbstractAdapter[] $uploaders
      */
-    protected $uploaders;
+    protected array $uploaders;
     /**
-     * @var array
+     * @var array<int,string>
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     /**
      * Uploader constructor.
-     * @param array $config
+     * @param array<string,mixed> $config
      */
     public function __construct(array $config)
     {
@@ -88,9 +88,9 @@ class Uploader
     /**
      * Identify file type
      * @param string $extension
-     * @return mixed string | false
+     * @return string|false
      */
-    protected function identifyType($extension)
+    protected function identifyType(string $extension)
     {
         foreach ($this->config as $k => $v) {
             if (in_array($extension, $v['extensions'], true)) {
@@ -104,12 +104,12 @@ class Uploader
     /**
      * Multiple upload files
      *
+     * @param array<string,mixed> $files - array of Request::files() items
      * @param string $path
      * @param bool $formUpload - optional, default true
-     * @return array|false - uploaded files Info on error
-     * @property array $data - array of Request::files() items
+     * @return array<int,array> - uploaded files Info on error
      */
-    public function start(array $files, string $path, $formUpload = true)
+    public function start(array $files, string $path, bool $formUpload = true) : array
     {
         $this->errors = [];
 
@@ -195,7 +195,7 @@ class Uploader
 
     /**
      * Get upload errors
-     * @return array
+     * @return array<int,string>
      */
     public function getErrors(): array
     {

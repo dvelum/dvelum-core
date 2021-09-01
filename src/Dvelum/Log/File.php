@@ -56,9 +56,9 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
     }
 
     /**
-     * @param MixedLog $level
+     * @param int|string $level
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
     public function log($level, $message, array $context = []): bool
@@ -69,10 +69,10 @@ class File extends \Psr\Log\AbstractLogger implements LogInterface
 
     /**
      * @param string $message
-     * @param array $context
+     * @param array<mixed,mixed> $context
      * @return bool
      */
-    public function logError(string $message, array $context = []): bool
+    public function logError($message, array $context = []): bool
     {
         return $this->log(LogLevel::ERROR, $message, $context);
     }

@@ -39,10 +39,11 @@ class Factory
 {
     public const LOCAL = 1;
     public const SESSION = 2;
+
     /**
-     * @var array
+     * @var array<int,array<string,AdapterInterface>>
      */
-    protected static $instances = [];
+    protected static array $instances = [];
 
     /**
      * Store factory
@@ -51,7 +52,7 @@ class Factory
      * @return AdapterInterface
      * @throws \Exception
      */
-    public static function get($type = self::LOCAL, $name = 'default'): AdapterInterface
+    public static function get(int $type = self::LOCAL, string $name = 'default'): AdapterInterface
     {
         switch ($type) {
             case self::LOCAL:

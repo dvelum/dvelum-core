@@ -38,29 +38,29 @@ class Paginator
 {
     /**
      * Current page number
-     * @var integer
+     * @var int
      */
-    public $curPage;
+    public int $curPage;
     /**
      * Pages count
-     * @var integer
+     * @var int
      */
-    public $numPages;
+    public int $numPages;
     /**
      * Number of buttons
-     * @var integer
+     * @var int
      */
-    public $numLinks;
+    public int $numLinks;
     /**
      * URL template
      * @var string
      */
-    public $pageLinkTpl;
+    public string $pageLinkTpl;
     /**
      * String for replacing page number
      * @var string
      */
-    public $tplId = '[page]';
+    public string $tplId = '[page]';
 
     public function __toString()
     {
@@ -78,7 +78,7 @@ class Paginator
     }
 
     /**
-     * @return array
+     * @return array<int,int>
      */
     public function findNearbyPages(): array
     {
@@ -108,7 +108,7 @@ class Paginator
             return $digits;
         }
 
-        for ($i = $this->curPage - intval($this->numLinks / 2), $j = 0; $j < $this->numLinks; $i++, $j++) {
+        for ($i = $this->curPage - (int)($this->numLinks / 2), $j = 0; $j < $this->numLinks; $i++, $j++) {
             $digits[] = $i;
         }
 
@@ -116,7 +116,7 @@ class Paginator
     }
 
     /**
-     * @param array $digits
+     * @param array<int,int> $digits
      * @return string
      */
     public function createNumBtns(array $digits): string
@@ -125,31 +125,31 @@ class Paginator
 
         if ($this->curPage > 1) {
             $s .= '<a href="' . str_replace(
-                $this->tplId,
-                (string)($this->curPage - 1),
-                $this->pageLinkTpl
-            ) . '"><div class="pager_item">&laquo;</div></a>';
+                    $this->tplId,
+                    (string)($this->curPage - 1),
+                    $this->pageLinkTpl
+                ) . '"><div class="pager_item">&laquo;</div></a>';
         }
 
 
         for ($i = 0, $sz = sizeof($digits); $i < $sz; $i++) {
-            if ($digits[$i] == $this->curPage) {
+            if ($digits[$i] === $this->curPage) {
                 $s .= '<div class="pager_item_selected">' . $digits[$i] . '</div>';
             } else {
                 $s .= '<a href="' . str_replace(
-                    $this->tplId,
-                    $digits[$i],
-                    $this->pageLinkTpl
-                ) . '"><div class="pager_item">' . $digits[$i] . '</div></a>';
+                        $this->tplId,
+                        (string)$digits[$i],
+                        $this->pageLinkTpl
+                    ) . '"><div class="pager_item">' . $digits[$i] . '</div></a>';
             }
         }
 
         if ($this->curPage < $this->numPages) {
             $s .= '<a href="' . str_replace(
-                $this->tplId,
-                (string)($this->curPage + 1),
-                $this->pageLinkTpl
-            ) . '"><div class="pager_item">&raquo;</div></a>';
+                    $this->tplId,
+                    (string)($this->curPage + 1),
+                    $this->pageLinkTpl
+                ) . '"><div class="pager_item">&raquo;</div></a>';
         }
 
         return $s;

@@ -38,9 +38,9 @@ use Dvelum\Config\ConfigInterface;
 class Minify
 {
     /**
-     * @var ConfigInterface $config
+     * @var ConfigInterface<string,mixed> $config
      */
-    protected $config;
+    protected ConfigInterface $config;
 
     /**
      * @return Minify
@@ -53,7 +53,7 @@ class Minify
 
     /**
      * Minify constructor.
-     * @param ConfigInterface $config
+     * @param ConfigInterface<string,mixed> $config
      */
     protected function __construct(ConfigInterface $config)
     {
@@ -77,7 +77,7 @@ class Minify
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */
@@ -108,7 +108,7 @@ class Minify
 
     /**
      * Combine and minify code files
-     * @param array $files
+     * @param array<int,string> $files
      * @param string $toFile
      * @return bool
      */

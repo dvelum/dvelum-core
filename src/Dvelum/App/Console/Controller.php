@@ -49,14 +49,14 @@ class Controller extends App\Controller implements Router\RouterInterface
 
     /**
      * Launcher configuration
-     * @var Config\ConfigInterface
+     * @var Config\ConfigInterface<string,mixed>
      */
-    protected $consoleConfig;
+    protected Config\ConfigInterface $consoleConfig;
     /**
      * Action routes
-     * @var array $actions
+     * @var array<string,array> $actions
      */
-    protected $actions;
+    protected array $actions;
 
     /**
      * Controller constructor.
@@ -67,7 +67,7 @@ class Controller extends App\Controller implements Router\RouterInterface
     public function __construct(Request $request, ResponseInterface $response, ContainerInterface $container)
     {
         if (!defined('DVELUM_CONSOLE')) {
-            $this->response->redirect('/');
+            $response->redirect('/');
             exit;
         }
 

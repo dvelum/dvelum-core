@@ -42,22 +42,22 @@ class Lang
     /**
      * @var string
      */
-    protected $defaultDictionary = '';
+    protected string $defaultDictionary = '';
 
     protected StorageInterface $storage;
     /**
-     * @var array
+     * @var array<string, Lang\Dictionary>
      */
-    protected $dictionaries = [];
+    protected array $dictionaries = [];
     /**
-     * @var array
+     * @var array<string,array{src:string,type:int}>
      */
-    protected $loaders = [];
+    protected array $loaders = [];
 
     /**
      * @param StorageInterface $storage
      * @param string|null $defaultDictionary
-     * @param array<string,string|int> $loaders
+     * @param array<int,array{name:string,src:string,type:int}> $loaders
      * @throws \Exception
      */
     public function __construct(StorageInterface $storage, ?string $defaultDictionary = null, array $loaders = [])

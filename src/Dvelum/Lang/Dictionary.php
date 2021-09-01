@@ -40,22 +40,22 @@ class Dictionary
     /**
      * @var string
      */
-    protected $name;
+    protected string $name;
     /**
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $loader;
+    protected array $loader;
 
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
-    protected $data;
+    protected ConfigInterface $data;
 
     private StorageInterface $storage;
 
     /**
      * @param string $name
-     * @param array $loaderConfig
+     * @param array<mixed,mixed> $loaderConfig
      */
     public function __construct(string $name, array $loaderConfig, StorageInterface $storage)
     {

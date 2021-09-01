@@ -37,14 +37,17 @@ use Dvelum\App\Dictionary;
 class Service
 {
     /**
-     * @var array
+     * @var array<string,DictionaryInterface>
      */
     protected $objects = [];
     /**
-     * @var ConfigInterface
+     * @var ConfigInterface<string,mixed>
      */
     protected ConfigInterface $config;
 
+    /**
+     * @param ConfigInterface<string,mixed> $config
+     */
     public function __construct(ConfigInterface $config)
     {
         $this->config = $config;

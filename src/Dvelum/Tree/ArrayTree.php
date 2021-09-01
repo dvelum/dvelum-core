@@ -41,21 +41,22 @@ use Exception;
 class ArrayTree
 {
     /**
-     * @var array
+     * @var array{id:int|string,parent:int|string,order:int|null,data:array|mixed}[]
+     * @phpstan-var array<int|string,array>
      */
-    protected $items = [];
+    protected array $items = [];
     /**
-     * @var array
+     * @var array<int|string,array>
      */
-    protected $children = [];
+    protected array $children = [];
 
     /**
      * Set elements sorting order by ID
      * @param mixed $id — element identifier
-     * @param integer $order — sorting order
+     * @param int $order — sorting order
      * @return bool
      */
-    public function setItemOrder($id, $order): bool
+    public function setItemOrder($id, int $order): bool
     {
         if (!$this->itemExists($id)) {
             return false;
@@ -102,7 +103,7 @@ class ArrayTree
 
     /**
      * Add a node to the tree
-     * @param mixed $id — unique identifier
+     * @param int|string $id — unique identifier
      * @param mixed $parent — parent node identifier
      * @param mixed $data — node data
      * @param bool|int $order - sorting order, not required
@@ -152,7 +153,8 @@ class ArrayTree
     /**
      * Get node structure by ID
      * @param mixed $id
-     * @return array - an array with keys ('id','parent','order','data')
+     * @phpstan-return array<string,mixed> - an array with keys ('id','parent','order','data')
+     * @return array{id:int|string,parent:int|string,order:int|null,data:array|mixed}
      * @throws Exception
      */
     public function getItem($id): array
@@ -192,7 +194,7 @@ class ArrayTree
     /**
      * Get data on all child elements (recursively)
      * @param mixed $id - parent node identifier
-     * @return array - an array with keys ('id','parent','order','data')
+     * @return array<int,int|string>
      */
     public function getChildrenRecursive($id): array
     {
@@ -241,7 +243,7 @@ class ArrayTree
     /**
      * Get child nodes’ structures
      * @param mixed $id
-     * @return array
+     * @return array<int|string,array>
      */
     public function getChildren($id): array
     {
@@ -342,7 +344,8 @@ class ArrayTree
 
     /**
      * Get structures of the tree elements (nodes)
-     * @return array - an array with keys ('id','parent','order','data')
+     * @phpstan-return array<int|string,array>
+     * @return array<int|string,array{id:int|string,parent:int|string,order:int|null,data:array|mixed}>
      */
     public function getItems(): array
     {
@@ -352,7 +355,7 @@ class ArrayTree
     /**
      * Get list of parent nodes
      * @param mixed $id
-     * @return array
+     * @return array<int,int|string>
      */
     public function getParentsList($id): array
     {

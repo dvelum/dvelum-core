@@ -83,7 +83,7 @@ class Path extends Router
     ): ResponseInterface {
         if (strpos('\\Backend\\', $controller) !== false) {
             $response->redirect('/');
-            return $response->getPsrResponse();
+            return $response;
         }
 
         return parent::runController($controller, $action, $request, $response);

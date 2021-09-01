@@ -45,9 +45,9 @@ class ActiveTemplate implements EngineInterface
 {
     /**
      * Template data (local variables)
-     * @var array
+     * @var array<string,mixed>
      */
-    private $data = [];
+    private array $data = [];
     /**
      * @var CacheInterface|null $cache
      */
@@ -55,7 +55,7 @@ class ActiveTemplate implements EngineInterface
     /**
      * @var bool $useCache
      */
-    protected $useCache = false;
+    protected bool $useCache = false;
 
     /**
      * @var int|false $cacheLifetime
@@ -65,9 +65,9 @@ class ActiveTemplate implements EngineInterface
     protected Storage $storage;
 
     /**
-     * @var ConfigInterface $config
+     * @var ConfigInterface<string,mixed> $config
      */
-    protected $config;
+    protected ConfigInterface $config;
 
     public function __construct(ConfigInterface $config, Storage $storage, ?CacheInterface $cache)
     {
@@ -105,8 +105,9 @@ class ActiveTemplate implements EngineInterface
         $result = \ob_get_clean();
 
         if ($this->cache && $this->useCache) {
-            $this->cache->save($result, $hash, $this->cacheLifetime);
+            $this->cache->save($hash, $result, $this->cacheLifetime);
         }
+
         return (string)$result;
     }
 
@@ -123,7 +124,7 @@ class ActiveTemplate implements EngineInterface
 
     /**
      * Set multiple properties
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
     public function setProperties(array $data): void
@@ -196,7 +197,7 @@ class ActiveTemplate implements EngineInterface
 
     /**
      * Get template data
-     * @return array
+     * @return array<string,mixed>
      */
     public function getData(): array
     {
@@ -206,7 +207,7 @@ class ActiveTemplate implements EngineInterface
     /**
      * Redefine template data using an associative key-value array,
      * old and new data merge
-     * @param array $data
+     * @param array<string,mixed> $data
      * @return void
      */
     public function setData(array $data): void
@@ -217,7 +218,7 @@ class ActiveTemplate implements EngineInterface
     /**
      * Render sub template
      * @param string $templatePath
-     * @param array $data
+     * @param array<string,mixed> $data
      * @param bool|true $useCache
      * @return string
      * @throws Exception

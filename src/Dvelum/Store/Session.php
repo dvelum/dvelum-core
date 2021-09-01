@@ -41,12 +41,12 @@ class Session extends Local
     /**
      * @var string
      */
-    protected $prefix = 'sc_';
+    protected string $prefix = 'sc_';
 
     /**
      * @inheritDoc
      */
-    protected function storageConnect()
+    protected function storageConnect() : void
     {
         @session_start();
 

@@ -93,12 +93,12 @@ class File
     /**
      * Get file list
      * @param string $path
-     * @param array|false $filter - optional  aray of file extensions to search for
+     * @param array<int,string>|false $filter - optional  array of file extensions to search for
      * @param bool $recursive - optional    use recursion (default true)
      * @param int $type - optional File::Dirs_Only | File::Files_Dirs | File::Files_Only (default File::Files_Dirs)
      * @param int $mode - optional RecursiveIteratorIterator::SELF_FIRST | RecursiveIteratorIterator::CHILD_FIRST
      * (default RecursiveIteratorIterator::SELF_FIRST)
-     * @return array
+     * @return array<int,string>
      * @throws \Exception
      */
     public static function scanFiles(
@@ -228,7 +228,7 @@ class File
      * Extract all files
      * @param string $source
      * @param string $destination
-     * @param array|string|false $fileEntries - optional - The entries to extract.
+     * @param array<string>|string|false $fileEntries - optional - The entries to extract.
      * It accepts either a single entry name or an array of names.
      * @return bool
      */
@@ -257,7 +257,7 @@ class File
     /**
      * Get Archive items list
      * @param string $source
-     * @return array
+     * @return array<int,string>
      */
     public static function getZipItemsList(string $source): array
     {
@@ -272,7 +272,10 @@ class File
         $itemsList = [];
 
         while ($zipSize >= 0) {
-            $itemsList[] = $zip->getNameIndex((int)$zipSize);
+            $item = $zip->getNameIndex((int)$zipSize);
+            if ($item !== false) {
+                $itemsList[] = $item;
+            }
             --$zipSize;
         }
         return $itemsList;
@@ -436,8 +439,8 @@ class File
     /**
      * Checks writing permissions for files.
      * Returns array with paths (wich is not writable) or true on success
-     * @param array $files
-     * @return mixed
+     * @param array<string> $files
+     * @return true|array<string>
      */
     public static function checkWritePermission(array $files)
     {
@@ -459,8 +462,8 @@ class File
 
         if (empty($cantWrite)) {
             return true;
-        } else {
-            return $cantWrite;
         }
+
+        return $cantWrite;
     }
 }
