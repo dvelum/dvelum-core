@@ -85,7 +85,7 @@ class Manager
 
     /**
      * @param Lang $lang
-     * @param ConfigInterface $appConfig
+     * @param ConfigInterface<int|string,mixed> $appConfig
      * @param StorageInterface $configStorage
      * @param Service $service
      * @param CacheInterface|null $cache
