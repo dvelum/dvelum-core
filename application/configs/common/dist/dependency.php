@@ -82,7 +82,7 @@ return [
                 return $c->get('config.main')->get('language');
             }),
             new CallableArgument(static function(c $c){
-                $lang = $c->get('language');
+                $lang = $c->get('config.main')->get('language');
                 return [
                     [
                         'name' => $lang,
@@ -99,7 +99,7 @@ return [
             new CallableArgument(
                 static function (c $c) {
                     $config = $c->get('config.main');
-                    return call_user_func(
+                    return call_user_func_array(
                         [\Dvelum\Config\Factory::class, 'create'],
                         [
                             [
@@ -135,5 +135,15 @@ return [
             $transport->setOptions(new $cfg['config']['optionsAdapter']($cfg['config']['options']));
         }
         return $transport;
+    },
+    // ==================
+    Dvelum\App\Dictionary\Manager::class => static function(c $c){
+        return new Dvelum\App\Dictionary\Manager(
+            $c->get(\Dvelum\Lang::class),
+            $c->get('config.main'),
+            $c->get(\Dvelum\Config\Storage\StorageInterface::class),
+            $c->get(\Dvelum\App\Dictionary\Service::class),
+            $c->get(\Dvelum\Cache\CacheInterface::class)
+        );
     }
 ];

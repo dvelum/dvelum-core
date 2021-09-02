@@ -37,6 +37,7 @@ use Dvelum\Config;
 use Dvelum\Config\ConfigInterface;
 use Dvelum\File;
 use Dvelum\Lang;
+use Dvelum\Config\Storage\StorageInterface;
 
 class Manager
 {
@@ -54,10 +55,8 @@ class Manager
      * @var string
      */
     protected string $path = '';
-    /**
-     * @var CacheInterface|false
-     */
-    protected $cache = false;
+
+    protected ?CacheInterface $cache = null;
     /**
      * @var string
      */
@@ -80,19 +79,33 @@ class Manager
 
     protected Lang $lang;
 
+    protected StorageInterface $configStorage;
+
+    protected Service $service;
+
     /**
-     * @param ConfigInterface<string,mixed> $appConfig
-     * @param CacheInterface|false $cache
+     * @param Lang $lang
+     * @param ConfigInterface $appConfig
+     * @param StorageInterface $configStorage
+     * @param Service $service
+     * @param CacheInterface|null $cache
      * @throws \Exception
      */
-    protected function __construct(Lang $lang, ConfigInterface $appConfig, $cache = false)
-    {
+    public function __construct(
+        Lang $lang,
+        ConfigInterface $appConfig,
+        StorageInterface $configStorage,
+        Service $service,
+        ?CacheInterface $cache = null
+    ) {
+        $this->service = $service;
         $this->lang = $lang;
         $this->appConfig = $appConfig;
         $this->language = (string)$appConfig->get('language');
-        $this->path = Config::storage()->getWrite();
+        $this->path = $configStorage->getWrite();
         $this->baseDir = $appConfig->get('dictionary_folder');
         $this->cache = $cache;
+        $this->configStorage = $configStorage;
 
         if ($this->cache && $list = $this->cache->load(self::CACHE_KEY_LIST)) {
             self::$list = $list;
@@ -110,7 +123,7 @@ class Manager
             return array_keys(self::$list);
         }
 
-        $paths = Config::storage()->getPaths();
+        $paths = $this->configStorage->getPaths();
 
         $list = [];
 
@@ -153,14 +166,12 @@ class Manager
         $indexFile = $this->path . $this->baseDir . 'index/' . $name . '.php';
         $dictionaryFile = $this->path . $this->baseDir . $language . '/' . $name . '.php';
 
-        $configStorage = Config::storage();
-
         if (!file_exists($dictionaryFile)) {
             $dictionaryConfig = Config\Factory::create([], $dictionaryFile);
-            if ($configStorage->save($dictionaryConfig)) {
+            if ($this->configStorage->save($dictionaryConfig)) {
                 if (!file_exists($indexFile)) {
                     $indexConfig = Config\Factory::create([], $indexFile);
-                    if (!$configStorage->save($indexConfig)) {
+                    if (!$this->configStorage->save($indexConfig)) {
                         return false;
                     }
                 }
@@ -215,7 +226,7 @@ class Manager
             return true;
         }
 
-        if (Config::storage()->exists($this->baseDir . 'index/' . $name . '.php')) {
+        if ($this->configStorage->exists($this->baseDir . 'index/' . $name . '.php')) {
             self::$validDictionary[$name] = true;
             return true;
         }
@@ -294,24 +305,6 @@ class Manager
         return $s;
     }
 
-    /**
-     * Get Dictionary manager
-     * @return Manager
-     */
-    public static function factory(): Manager
-    {
-        static $manager = false;
-
-        if (!$manager) {
-            $cfg = Config::storage()->get('main.php');
-            $cacheManager = new \Dvelum\App\Cache\Manager();
-            $cache = $cacheManager->get('data');
-            $manager = new static($cfg, $cache);
-        }
-
-        return $manager;
-    }
-
 
     /**
      * Save changes
@@ -320,7 +313,7 @@ class Manager
      */
     public function saveChanges(string $name): bool
     {
-        $dict = Dictionary::factory($name);
+        $dict = $this->service->get($name);
         if (!$dict->save()) {
             return false;
         }
@@ -336,17 +329,16 @@ class Manager
      * @param string $name
      * @return bool
      */
-    public function rebuildIndex($name): bool
+    public function rebuildIndex(string $name): bool
     {
-        $dict = Dictionary::factory($name);
-        $storage = Config::storage();
+        $dict = $this->service->get($name);
 
         $filePath = $this->baseDir . 'index/' . $name . '.php';
-        $index = $storage->get($filePath, false, false);
+        $index = $this->configStorage->get($filePath, false, false);
 
         $index->removeAll();
         $index->setData(array_keys($dict->getData()));
-        $storage->save($index);
+        $this->configStorage->save($index);
 
         return true;
     }
@@ -357,11 +349,9 @@ class Manager
      * @param string $baseLocale
      * @return bool
      */
-    public function mergeLocales($name, $baseLocale): bool
+    public function mergeLocales(string $name, string $baseLocale): bool
     {
-        $storage = Config::storage();
-
-        $baseDict = $storage->get($this->baseDir . $baseLocale . '/' . $name . '.php', false, false);
+        $baseDict = $this->configStorage->get($this->baseDir . $baseLocale . '/' . $name . '.php', false, false);
 
         $locManager = new \Dvelum\App\Localization\Manager($this->appConfig, $this->lang);
 
@@ -372,13 +362,13 @@ class Manager
 
             $localPath = $this->baseDir . $locale . '/' . $name . '.php';
 
-            if (!$storage->exists($localPath)) {
+            if (!$this->configStorage->exists($localPath)) {
                 if (!$this->create($name, $locale)) {
                     return false;
                 }
             }
 
-            $dict = $storage->get($localPath, false, false);
+            $dict = $this->configStorage->get($localPath, false, false);
 
             // Add new records from base dictionary and remove redundant records from current
             $mergedData = array_merge(
@@ -390,9 +380,8 @@ class Manager
 
             $dict->removeAll();
             $dict->setData($mergedData);
-            $storage->save($dict);
+            $this->configStorage->save($dict);
         }
-
         return true;
     }
 }
