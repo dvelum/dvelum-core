@@ -61,7 +61,9 @@ return [
         'class' => \Dvelum\Extensions\Manager::class,
         'arguments' => [
             new Argument('config.main'),
-            new CallableArgument(static function(c $c){return $c;})
+            new CallableArgument(static function (c $c) {
+                return $c;
+            })
         ]
     ],
     'config.lang_storage' => static function (c $c) {
@@ -78,10 +80,10 @@ return [
         'class' => \Dvelum\Lang::class,
         'arguments' => [
             new Argument('LangStorage'),
-            new CallableArgument(static function(c $c){
+            new CallableArgument(static function (c $c) {
                 return $c->get('config.main')->get('language');
             }),
-            new CallableArgument(static function(c $c){
+            new CallableArgument(static function (c $c) {
                 $lang = $c->get('config.main')->get('language');
                 return [
                     [
@@ -137,13 +139,14 @@ return [
         return $transport;
     },
     // ==================
-    Dvelum\App\Dictionary\Manager::class => static function(c $c){
-        return new Dvelum\App\Dictionary\Manager(
-            $c->get(\Dvelum\Lang::class),
-            $c->get('config.main'),
-            $c->get(\Dvelum\Config\Storage\StorageInterface::class),
-            $c->get(\Dvelum\App\Dictionary\Service::class),
-            $c->get(\Dvelum\Cache\CacheInterface::class)
-        );
-    }
+    Dvelum\App\Dictionary\Manager::class => [
+        'class' => Dvelum\App\Dictionary\Manager::class,
+        'arguments' => [
+            new Argument(\Dvelum\Lang::class),
+            new Argument('config.main'),
+            new Argument(\Dvelum\Config\Storage\StorageInterface::class),
+            new Argument(\Dvelum\App\Dictionary\Service::class),
+            new Argument(\Dvelum\Cache\CacheInterface::class)
+        ]
+    ]
 ];
