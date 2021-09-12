@@ -39,7 +39,7 @@ jobs:
       run: composer install --prefer-dist --no-progress --no-suggest
 
     - name: Install ORM
-      run: composer require dvelum/dvelum-orm:dev-master
+      run: composer require dvelum/dvelum-orm:dev-develop
 
     - name: Enable ORM Extension
       run: php ./console.php /extension-add/dvelum/dvelum-orm
