@@ -26,7 +26,7 @@ class SelectTest extends TestCase
     public function testSelectSimpleFromString(): void
     {
         $sql = $this->getSelect();
-        $sql->from('table', 'id,name, date');
+        $sql->from('table', ['id','name', 'date']);
         $str = 'SELECT `table`.`id`, `table`.`name`, `table`.`date` FROM `table`;';
         $this->assertEquals($sql->assemble(), $str);
     }

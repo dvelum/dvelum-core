@@ -1,6 +1,6 @@
 <?php
 
-$dvelumRoot = str_replace('\\', '/', dirname(dirname(dirname(__FILE__))));
+$dvelumRoot = str_replace('\\', '/', dirname(__FILE__,3));
 // should be without last slash
 if ($dvelumRoot[strlen($dvelumRoot) - 1] == '/') {
     $dvelumRoot = substr($dvelumRoot, 0, -1);
@@ -46,6 +46,11 @@ $config = ConfigFactory::storage()->get('main.php');
 $config->set('development', 2);
 $configStorage->addPath('./application/configs/test/');
 
+// orm extension testing
+if(is_dir('./extensions/dvelum/dvelum-orm/configs/test')){
+    $configStorage->addPath('./extensions/dvelum/dvelum-orm/configs/test/');
+}
+
 /*
  * Setting autoloader config
  */
@@ -87,3 +92,6 @@ $diContainer->bindArray($configStorage->get('dependency.php')->__toArray());
 
 $app = new $appClass($diContainer);
 $app->runTestMode();
+
+$locator = \Dvelum\Test\ServiceLocator::factory();
+$locator->setContainer($diContainer);

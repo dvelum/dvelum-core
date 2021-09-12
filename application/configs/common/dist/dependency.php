@@ -45,18 +45,22 @@ return [
             new Argument('config.resource')
         ]
     ],
-    \Dvelum\Db\ManagerInterface::class => static function (c $c) {
-        $config = $c->get('config.main');
-        $useProfiler = false;
-        if ($config->get('development') && $config->get('debug_panel')) {
-            $useProfiler = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('debug_panel.php')->get(
-                'options'
-            )['sql'];
-        }
-        $config->set('use_db_profiler', $useProfiler);
-        $managerClass = $config->get('db_manager');
-        return new $managerClass($config);
-    },
+    \Dvelum\Db\ManagerInterface::class => [
+       'class' => \Dvelum\Db\Manager::class,
+       'arguments' => [
+            new CallableArgument(static function(c $c){
+                $config = $c->get('config.main');
+                $useProfiler = false;
+                if ($config->get('development') && $config->get('debug_panel')) {
+                    $useProfiler = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('debug_panel.php')->get(
+                        'options'
+                    )['sql'];
+                }
+                $config->set('use_db_profiler', $useProfiler);
+                return $config;
+            })
+        ]
+    ],
     \Dvelum\Extensions\Manager::class => [
         'class' => \Dvelum\Extensions\Manager::class,
         'arguments' => [

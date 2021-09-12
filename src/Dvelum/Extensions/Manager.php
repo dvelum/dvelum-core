@@ -1,11 +1,12 @@
 <?php
 
-/**
- * DVelum project https://github.com/dvelum/dvelum-core , https://github.com/dvelum
+/*
  *
- *  MIT License
+ * DVelum project https://github.com/dvelum/
  *
- *  Copyright (C) 2011-2020.  Kirill Yegorov
+ * MIT License
+ *
+ *  Copyright (C) 2011-2021  Kirill Yegorov https://github.com/dvelum/dvelum-core
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +25,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
+ *
  */
 
 declare(strict_types=1);

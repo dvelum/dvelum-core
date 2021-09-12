@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/integration/bootstrap.php" colors="true" convertErrorsToExceptions="false" convertNoticesToExceptions="false" convertWarningsToExceptions="false" backupGlobals="false" processIsolation="false" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage>
+    <include>
+      <directory suffix=".php">./application/classes</directory>
+      <directory suffix=".php">./src</directory>
+    </include>
+    <exclude>
+      <directory suffix=".phtml">./</directory>
+      <file>./bootstrap.php</file>
+      <file>./console.php</file>
+      <file>./console_client.php</file>
+    </exclude>
+    <report>
+      <html outputDirectory="./data/integration_report" lowUpperBound="35" highLowerBound="70"/>
+    </report>
+  </coverage>
+  <testsuite name="Main Test Suite">
+    <directory>./tests/unit/</directory>
+  </testsuite>
+  <testsuite name="ORM Test Suite">
+    <directory>./extensions/dvelum/dvelum-orm/tests/unit</directory>
+    <directory>./extensions/dvelum/dvelum-orm/tests/integration</directory>
+  </testsuite>
+  <logging/>
+</phpunit>

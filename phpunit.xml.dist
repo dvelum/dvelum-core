@@ -4,6 +4,7 @@
     <include>
       <directory suffix=".php">./application/classes</directory>
       <directory suffix=".php">./src</directory>
+      <directory suffix=".php">./extensions/dvelum/dvelum-orm/src</directory>
     </include>
     <exclude>
       <directory suffix=".phtml">./</directory>
@@ -17,6 +18,9 @@
   </coverage>
   <testsuite name="Main Test Suite">
     <directory>./tests/unit/</directory>
+  </testsuite>
+  <testsuite name="ORM Test Suite">
+    <directory>./extensions/dvelum/dvelum-orm/tests/unit</directory>
   </testsuite>
   <logging/>
 </phpunit>

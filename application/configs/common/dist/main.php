@@ -107,10 +107,6 @@ return array(
      */
     'application' => \Dvelum\App\Application\WebService::class,
     /*
-     * DB Manager
-     */
-    'db_manager' => \Dvelum\Db\Manager::class,
-    /*
      * Vendor library path
      */
     'vendor_lib'=> $docRoot . '/vendor/',
