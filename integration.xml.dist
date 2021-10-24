@@ -18,9 +18,5 @@
   <testsuite name="Main Test Suite">
     <directory>./tests/unit/</directory>
   </testsuite>
-  <testsuite name="ORM Test Suite">
-    <directory>./extensions/dvelum/dvelum-orm/tests/unit</directory>
-    <directory>./extensions/dvelum/dvelum-orm/tests/integration</directory>
-  </testsuite>
   <logging/>
 </phpunit>
