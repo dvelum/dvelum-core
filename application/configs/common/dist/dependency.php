@@ -1,8 +1,6 @@
 <?php
 
 use Psr\Container\ContainerInterface as c;
-use Dvelum\DependencyContainer\Argument;
-use Dvelum\DependencyContainer\CallableArgument;
 
 return [
     \Dvelum\App\Cache\Manager::class => \Dvelum\App\Cache\Manager::class,
@@ -18,13 +16,9 @@ return [
     'config.template_storage' => static function (c $c) {
         return $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template_storage.php');
     },
-    \Dvelum\Template\Storage::class => [
-        'class' => \Dvelum\Template\Storage::class,
-        'arguments' => [
-            new Argument('config.template_storage'),
-        ]
-    ],
-
+    \Dvelum\Template\Storage::class => static function (c $c) {
+        return new \Dvelum\Template\Storage($c->get('config.template_storage'));
+    },
     'config.resource' => static function (c $c) {
         $config = $c->get('config.main');
         return [
@@ -36,98 +30,65 @@ return [
             'wwwPath' => $config['wwwPath'],
             'cache' => $c->has(\Dvelum\Cache\CacheInterface::class) ? $c->get(
                 \Dvelum\Cache\CacheInterface::class
-            ) : null
+            ) : null,
         ];
     },
-    \Dvelum\Resource::class => [
-        'class' => \Dvelum\Resource::class,
-        'arguments' => [
-            new Argument('config.resource')
-        ]
-    ],
-    \Dvelum\Db\ManagerInterface::class => [
-       'class' => \Dvelum\Db\Manager::class,
-       'arguments' => [
-            new CallableArgument(static function(c $c){
-                $config = $c->get('config.main');
-                $useProfiler = false;
-                if ($config->get('development') && $config->get('debug_panel')) {
-                    $useProfiler = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('debug_panel.php')->get(
-                        'options'
-                    )['sql'];
-                }
-                $config->set('use_db_profiler', $useProfiler);
-                return $config;
-            })
-        ]
-    ],
-    \Dvelum\Extensions\Manager::class => [
-        'class' => \Dvelum\Extensions\Manager::class,
-        'arguments' => [
-            new Argument('config.main'),
-            new CallableArgument(static function (c $c) {
-                return $c;
-            })
-        ]
-    ],
+    \Dvelum\Resource::class => static function (c $c) {
+        return new  \Dvelum\Resource($c->get('config.resource'));
+    },
+    \Dvelum\Db\ManagerInterface::class => static function (c $c) {
+        $config = $config = $c->get('config.main');
+        $useProfiler = false;
+        if ($config->get('development') && $config->get('debug_panel')) {
+            $useProfiler = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('debug_panel.php')->get(
+                'options'
+            )['sql'];
+        }
+        $config->set('use_db_profiler', $useProfiler);
+        return new \Dvelum\Db\Manager($config);
+    },
+    \Dvelum\Extensions\Manager::class => static function (c $c) {
+        return new \Dvelum\Extensions\Manager($c->get('config.main'), $c);
+    },
     'config.lang_storage' => static function (c $c) {
         return $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('lang_storage.php')->__toArray();
     },
-    'LangStorage' => [
-        'class' => \Dvelum\Config\Storage\File\AsArray::class,
-        'arguments' => [
-            new Argument('config.lang_storage')
-        ]
-    ],
+    'LangStorage' => static function (c $c) {
+        return new \Dvelum\Config\Storage\File\AsArray($c->get('config.lang_storage'));
+    },
     // === services =======================================================================
-    \Dvelum\Lang::class => [
-        'class' => \Dvelum\Lang::class,
-        'arguments' => [
-            new Argument('LangStorage'),
-            new CallableArgument(static function (c $c) {
-                return $c->get('config.main')->get('language');
-            }),
-            new CallableArgument(static function (c $c) {
-                $lang = $c->get('config.main')->get('language');
-                return [
-                    [
-                        'name' => $lang,
-                        'src' => $lang . '.php',
-                        'type' => 1 // \Dvelum\Config\Factory::File_Array
-                    ]
-                ];
-            }),
-        ]
-    ],
-    \Dvelum\App\Dictionary\Service::class => [
-        'class' => \Dvelum\App\Dictionary\Service::class,
-        'arguments' => [
-            new CallableArgument(
-                static function (c $c) {
-                    $config = $c->get('config.main');
-                    return call_user_func_array(
-                        [\Dvelum\Config\Factory::class, 'create'],
-                        [
-                            [
-                                'configPath' => $config->get('dictionary_folder') . $config->get('language') . '/'
-                            ]
-                        ]
-                    );
-                }
-            )
-        ]
-    ],
-    \Dvelum\Template\Service::class => [
-        'class' => \Dvelum\Template\Service::class,
-        'arguments' => [
-            new CallableArgument(static function (c $c) {
-                return $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template.php');
-            }),
-            new Argument(\Dvelum\Template\Storage::class),
-            new Argument(\Dvelum\Cache\CacheInterface::class)
-        ]
-    ],
-
+    \Dvelum\Lang::class => static function (c $c) {
+        $lang = $c->get('config.main')->get('language');
+        return new \Dvelum\Lang(
+            $c->get('LangStorage'),
+            $lang,
+            [
+                [
+                    'name' => $lang,
+                    'src' => $lang . '.php',
+                    'type' => \Dvelum\Config\Factory::FILE_ARRAY,
+                ],
+            ]
+        );
+    },
+    \Dvelum\App\Dictionary\Service::class => static function (c $c) {
+        $config = $c->get('config.main');
+        $config = \Dvelum\Config\Factory::create(
+            [
+                [
+                    'configPath' => $config->get('dictionary_folder') . $config->get('language') . '/',
+                ],
+            ]
+        );
+        return new \Dvelum\App\Dictionary\Service($config);
+    },
+    \Dvelum\Template\Service::class => static function (c $c) {
+        return new \Dvelum\Template\Service(
+            $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('template.php'),
+            $c->get(\Dvelum\Template\Storage::class),
+            $c->get(\Dvelum\Cache\CacheInterface::class)
+        );
+    },
     \Laminas\Mail\Transport\TransportInterface::class => static function (c $c) {
         $cfg = $c->get(\Dvelum\Config\Storage\StorageInterface::class)->get('mail_transport.php')->__toArray();
         /**
@@ -143,14 +104,13 @@ return [
         return $transport;
     },
     // ==================
-    Dvelum\App\Dictionary\Manager::class => [
-        'class' => Dvelum\App\Dictionary\Manager::class,
-        'arguments' => [
-            new Argument(\Dvelum\Lang::class),
-            new Argument('config.main'),
-            new Argument(\Dvelum\Config\Storage\StorageInterface::class),
-            new Argument(\Dvelum\App\Dictionary\Service::class),
-            new Argument(\Dvelum\Cache\CacheInterface::class)
-        ]
-    ]
+    Dvelum\App\Dictionary\Manager::class => static function (c $c) {
+        return new  Dvelum\App\Dictionary\Manager(
+            $c->get(\Dvelum\Lang::class),
+            $c->get('config.main'),
+            $c->get(\Dvelum\Config\Storage\StorageInterface::class),
+            $c->get(\Dvelum\App\Dictionary\Service::class),
+            $c->get(\Dvelum\Cache\CacheInterface::class)
+        );
+    },
 ];
