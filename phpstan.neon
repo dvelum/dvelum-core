@@ -9,7 +9,6 @@ parameters:
 	scanDirectories:
 	    -  %currentWorkingDirectory%/application
 	    -  %currentWorkingDirectory%/src
-	    -  %currentWorkingDirectory%/extensions
 	    -  %currentWorkingDirectory%/tests/unit/dvelum/
 	autoload_files: []
 	polluteCatchScopeWithTryAssignments: true
