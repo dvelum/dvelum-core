@@ -61,7 +61,7 @@ jobs:
       run: php ./console.php /extension-add/dvelum/dvelum-orm
 
     - name: PHPStan tests
-      run: php -d memory_limit=256M ./vendor/bin/phpstan analyse src ./tests/unit/dvelum
+      run: php -d memory_limit=256M ./vendor/bin/phpstan analyse src ./tests/unit/dvelum extensions/dvelum/dvelum-orm/src
       
     - name: PHPUnit tests
       run: ./vendor/bin/phpunit -c ./integration.xml.dist --coverage-clover coverage.xml

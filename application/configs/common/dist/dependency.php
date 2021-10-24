@@ -74,11 +74,9 @@ return [
     \Dvelum\App\Dictionary\Service::class => static function (c $c) {
         $config = $c->get('config.main');
         $config = \Dvelum\Config\Factory::create(
-            [
                 [
                     'configPath' => $config->get('dictionary_folder') . $config->get('language') . '/',
                 ],
-            ]
         );
         return new \Dvelum\App\Dictionary\Service($config);
     },
